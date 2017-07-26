@@ -1,0 +1,97 @@
+<div class="container-fluid">
+
+	<div class="row">
+	
+		<div class="col-md-12" >
+	
+			<search-asset class="search-asset"></search-asset>
+	
+		</div>
+		
+	</div>	
+	
+	<div class="row">
+	
+    	<div class="col-md-6" >
+
+			<section *ngIf="isShowAssetData" class='asset-data-section'>
+			
+				<p class="asset-name-headline" style="padding-left:15px">{{asset.nameToShow}}</p>
+			    <div class="pull-left asset-rate"> {{assetData.close}}</div>
+			    <div class="pull-left">
+				    <div class="pull-left asset-daily-change" style="padding-top:8px;" [style.color]="getChangeColor()">{{getAssetChangeSign()}}{{assetData.netChangePercent.toFixed(2)}}%</div>
+				    <div class="pull-right asset-daily-change" style="padding-top:8px;" [style.color]="getChangeColor()" ><span style="font-size:24px;vertical-align:top;">(</span>{{getAssetChangeSign()}}{{assetData.netChange}}<span style="font-size:24px;vertical-align:top;">)</span></div>
+			    </div>
+			    <div class="last-trade-time">{{convertTimeStamp()}}</div>
+				
+				<div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetTechnicals" (click)="assetTechnicalsOn()">Technicals</div>			    
+			    <div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetPerformance" (click)="assetPerformanceOn()">Performance</div>
+			    <div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetSummary" (click)="assetSummaryOn()">Summary</div>
+				<div class="clearfix"></div>
+							
+				<section *ngIf="isShowAssetSummary" style="border-top:2px solid #42ddae;">
+				    
+				    
+				    <div class="pull-left asset-data-list">
+					    <div class='asset-data-div'>Previous Close <span class='pull-right'>{{assetData.previousClose}}</span></div>
+					    <div class='asset-data-div'>Open Price <span class='pull-right'> {{assetData.open}}</span></div>
+					    <div class='asset-data-div'>Day's Range <span class='pull-right'> {{assetData.low}} - {{assetData.high}}</span> </div>
+					    <div class='asset-data-div'>52 Week Range <span class='pull-right'> {{assetData.fiftyTwoWkLow}} - {{assetData.fiftyTwoWkHigh}} </span> </div>
+					    <div class='asset-data-div'>12 Month Return <span  class='pull-right'>{{assetData.twelveMnthPct}}%</span></div><br>
+				    </div>
+				    
+				    <div  class="pull-left asset-data-list">
+					    <div class='asset-data-div'>Volume <span class='pull-right'>{{assetData.volume}} </span></div>
+					    <div class='asset-data-div'>Average Volume (1 Month) <span class='pull-right'>{{assetData.monthlyAverageVolume}} </span></div>
+					    <div *ngIf="asset.type=='Stock'">
+						    <div class='asset-data-div'>Market Cap <span class='pull-right'>{{assetData.marketCap}}B </span></div>
+						    <div class='asset-data-div'>Dividend Yield YOY <span class='pull-right'>{{assetData.dividendYieldAnnual}}% </span></div>
+					    </div>
+					    <div *ngIf="asset.type.substring(0,6)=='Future'">
+						    <div class='asset-data-div'>Implied Volatility <span class='pull-right'>{{assetData.impliedVolatility}}% </span></div>
+						    <div class='asset-data-div'>Expiration Date	 <span class='pull-right'>{{convertExpirationDate()}} </span></div>
+						    <div class='asset-data-div'>Open Interest <span class='pull-right'>{{assetData.openInterest}} </span></div>
+					    </div>
+				    </div>
+				    
+				    
+				    
+				   <!--  <div class='asset-data-div'>moving Average: {{getMovingAverage()}}</div><br>
+				    <div class='asset-data-div'>Session Range: {{getSessionLow()}} - {{getSessionHigh()}}</div><br> -->
+				</section> 
+			  
+			  
+			    <section *ngIf="isShowAssetPerformance" style="border-top:2px solid #42ddae;">
+			    
+				    <div class="pull-left asset-data-list">
+					    <div class='asset-data-div'>1 Week Return <span class='pull-right'>{{oneWeekReturn.toFixed(2)}}%</span></div>
+					    <div class='asset-data-div'>1 Month Return <span class='pull-right' >{{oneMonthReturn.toFixed(2)}}%</span></div>
+					    <div class='asset-data-div'>3 Months Return <span class='pull-right' >{{threeMonthsReturn.toFixed(2)}}%</span> </div>
+					    <div class='asset-data-div'>6 Months Return <span class='pull-right'>{{sixMonthsReturn.toFixed(2)}}%</span></div>
+					    <div class='asset-data-div'>12 Month Return <span  class='pull-right'>{{assetData.twelveMnthPct}}%</span></div><br>
+				    </div>
+			    </section>
+			    
+			    
+			    <section *ngIf="isShowAssetTechnicals" style="border-top:2px solid #42ddae;">
+			    
+				    <div class="pull-left asset-data-list">
+					    <div class='asset-data-div'>50 Day Moving Average <span class='pull-right'>{{MA50}}</span></div>
+					    <div class='asset-data-div'>100 Day Moving Average <span class='pull-right'>{{MA100}}</span></div>
+					    <div class='asset-data-div'>200 Day Moving Average <span class='pull-right'>{{MA200}}</span> </div>
+					    <div class='asset-data-div'>Relative Strength Index <span class='pull-right'>{{RSI.toFixed(2)}}</span></div>
+					    <div class='asset-data-div'>Bolinger <span  class='pull-right'></span></div><br>
+				    </div>
+			    </section> 
+			  
+			  
+			    
+			  </section>
+  		</div>
+  
+  		<div class="col-md-6" ></div>
+  
+     </div>
+  
+</div>
+  

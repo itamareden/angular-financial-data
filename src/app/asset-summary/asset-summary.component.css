@@ -1,0 +1,94 @@
+
+
+.asset-name-headline{
+	font-size:40px; 
+	border-bottom:1px solid black;
+}
+
+.asset-rate{
+	font-size:37px; 
+	color:#3294c2; 
+	margin-left:15px; 
+	margin-right:6px;
+}
+
+.asset-daily-change{
+	font-size:28px; 
+	margin:0 6px;
+}
+
+
+.last-trade-time{
+	display:block; 
+	clear:left; 
+	margin-left:15px;
+	margin-bottom:15px;
+	font-size:18px;
+	font-family:segoe;
+	color:#959595;
+}
+
+
+.asset-data-list{
+	width:45%; 
+	min-width:250px; 
+	margin:15px 15px 0 15px;
+}
+
+.asset-data-div{
+	color:black;
+	font-size:19px;
+	font-family:segoe;
+	width:100%;
+	line-height:50px;
+	vertical-align:text-center;
+	border-bottom:1px solid powderblue;
+}
+
+
+.search-asset{
+	display:block; 
+	position:relative; 
+	max-width:50%;
+}
+
+.switch-view-button{
+	margin:0 1px 5px 1px;
+	font-width:bold;
+	color:#168fe9;
+	cursor:pointer;
+	padding:3px 5px;
+}
+
+.switch-view-button-active{
+	background:#168fe9;
+	color:white;
+	border-radius:5px;
+}
+
+
+
+@media only screen and (max-width: 1280px) {
+	
+	.asset-data-list{
+	width:95%; 
+	}
+	
+}
+
+
+
+@media only screen and (max-width: 992px) {
+	
+	.search-asset{
+		max-width:100%;
+	}
+	
+	.asset-data-list{
+	width:45%; 
+	}
+	
+	
+}
+
+

@@ -1,0 +1,27 @@
+.market-movers-list{
+	width:33.3%; 
+	min-width:250px; 
+	padding:20px 10px 20px 0;
+	position:relative;
+	display:block;
+}
+
+
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 920px) {
+	
+	.market-movers-list{
+		width:100%;
+	}
+	
+	
+	
+	
+}

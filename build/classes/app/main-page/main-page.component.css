@@ -1,0 +1,38 @@
+
+.serach-asset-input-decorator{
+	display:block;
+	position:relative;		/* Necessary if we want to make the absolute positioning of the list element work properly */  
+    margin-top:100px;
+    margin-left:auto;
+    margin-right:auto;
+	max-width:70%;
+	text-align:center;
+	border-radius:5px;
+	background:powderblue;
+	background-color: powderblue;
+	background-image: url(./style-resources/3px-tile.png);
+}
+
+
+.serach-asset{
+	display:block; 
+	position:relative; 
+	max-width:60%; 
+	margin:0 auto;
+}
+
+
+@media only screen and (max-width: 920px) {
+	
+	.serach-asset-input-decorator{
+		max-width:100%;
+	}
+	
+	.serach-asset{
+		max-width:90%;
+	}
+	
+	
+}
+	
+

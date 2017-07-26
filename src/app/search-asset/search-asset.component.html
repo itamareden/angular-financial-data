@@ -1,0 +1,16 @@
+
+
+<input type='text' name='search' class='search-asset-input'  [(ngModel)]='assetTyped' (focus)='isShowList=onFocus()' (blur)='isShowList=clear()'>
+			
+<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" >
+        <li class="list-group-item search-result-item"  *ngFor="let asset of ( assets | assetFilter:assetTyped:isShowList )"  
+         (click)="isSelected=true"  [routerLink]="['/asset', asset.symbol]">
+		        
+			          <p class="list-group-item-text pull-left asset-name">{{ asset.nameToShow}}</p>
+			          <p class='pull-right asset-type'>{{asset.type}}</p>
+			          <div class="clearfix"></div>
+		          
+         </li > 
+</ul>
+	         
+      

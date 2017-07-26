@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+.searchAsset{
+	position:absolute;
+	top:0px;
+    bottom:100px;
+    left:0px;
+    right:0px;
+    margin:auto;
+    width:1000px;
+    height:600px;
+	font-size:25px;
+	/* border:1px solid black; */
+}
+
+body{
+	font-family: Arial, Helvetica, sans-serif;
+}
