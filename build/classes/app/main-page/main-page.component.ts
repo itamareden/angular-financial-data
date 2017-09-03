@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Asset } from '../asset'
 
+
+
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
@@ -8,9 +10,14 @@ import { Asset } from '../asset'
 })
 export class MainPageComponent implements OnInit {
 
+     
+    
   constructor() { }
 
   ngOnInit() {
   }
+    
+    
+    
 
 }

@@ -1,0 +1,203 @@
+
+*{
+	font-family:segoe;
+	font-size:18px;
+	
+}
+
+li {
+    -webkit-border-radius: 0 !important;	/*	override bootstrap li...  */
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+.table-header{
+	text-align:center; 
+	color:white; 
+	font-weight:bold; 
+	font-size:24px; 
+	background:linear-gradient(to right,#255887,#2389c4); 
+	border:1px solid #255887;
+	border-radius:5px 5px 0 0;
+	height:50px;
+	line-height:50px;
+	vertical-align:text-center;
+}
+
+
+.assets-table-menu{
+	display:block;  
+	background:white; 
+	height:50px; 
+	border-left:1px solid #255887;
+	border-right:1px solid #255887;
+	border-bottom:2px solid #42ddae;
+}
+
+.row-in-table{
+	border-left:1px solid #255887; 
+	border-right:1px solid #255887;	
+}
+
+.last-row{
+	border-bottom:1px solid #255887;
+}
+
+
+.switch-view-button{
+	margin:10px 5px 0 5px;
+	font-width:bold;
+	color:#168fe9;
+	cursor:pointer;
+	padding:3px 5px;
+	float:right;
+	font-size:18px;
+}
+
+
+.switch-view-button-active{
+	background:#168fe9;
+	color:white;
+	border-radius:5px;
+}
+
+.question-mark-button{
+	font-size:20px; 
+    border:1px solid #1090cc;
+    color:#1090cc;
+    width:23px;
+    height:23px;
+    line-height:23px;
+    border-radius:2px;
+    text-align:center;
+    cursor:pointer;
+}
+
+.question-mark-button:hover{
+	background:#1090cc;
+	color:white;
+}
+
+
+.asset-name{
+	/* font-weight:bold;
+	width:100px;
+	margin-top:12px;
+	float:left; */
+
+	font-weight:bold;
+	width:100px;
+	float:left;
+	margin-top:0;	
+	text-align:left;
+}
+
+.asset-name-span{
+	color:#109ced;
+	cursor:pointer;
+}
+
+
+.asset-name-span:hover{
+	text-decoration: underline;
+}
+
+
+.asset-last-price{
+	/* width:60px; 
+	text-align:right; 
+	margin-right:40px;
+	margin-top:12px; 
+	float:left; */
+
+	width:60px; 
+	margin-right:40px;
+	float:none;
+	text-align:center;
+	display:inline;
+	margin-top:0;
+}
+
+.asset-net-change{
+	/* width:40px; 
+	text-align:right;
+	margin-top:12px;
+	float:left; */
+
+	width:40px; 
+	text-align:right;
+	margin-top:0;
+	float:right;
+}
+
+.assets-list{
+	/* max-width:630px;
+	margin:0 auto; */
+	
+	max-width:500px;
+	margin:0 auto;
+	text-align:center;
+}
+
+.asset-performance-bar-wrapper{
+	/* width:50%;
+	float:left;
+	margin-left:8%; */
+	
+	width:100%;
+	margin-left:0;
+	margin-top:10px;
+}
+
+
+
+
+
+@media only screen and (max-width: 700px) {
+	
+	.asset-performance-bar-wrapper{
+		width:100%;
+		margin-left:0;
+		margin-top:10px;
+	}
+	.assets-list{
+		text-align:center;
+	}
+	
+	.asset-name{
+		margin-top:0;	
+		text-align:left;
+	}
+	
+	.asset-last-price{
+		float:none;
+		text-align:center;
+		display:inline;
+		margin-top:0;
+	}
+	
+	.asset-net-change{
+		margin-top:0;
+		float:right;
+	}
+	
+}
+
+
+@media only screen and (max-width: 500px) {
+	
+	.switch-view-button{
+		font-size:14px;
+		margin:12px 3px 0 3px;
+	}
+	
+	.question-mark-button{
+	font-size:16px; 
+    width:20px;
+    height:20px;
+    line-height:20px;
+	}
+	
+}
+
+

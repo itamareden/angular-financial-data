@@ -1,0 +1,67 @@
+.explanation-window{
+	position:absolute; 
+	width:100%; 
+	max-width:630px;
+	background:white;  
+	border:1px solid #1090cc;
+	z-index:4;
+}
+
+
+.explanation-bar-wrapper{
+	margin-left:8%;
+	width:84%; 
+	margin-top:15px;
+}
+
+.verbal-explanation{
+	border-top:1px solid #1090cc; 
+	color:black; 
+	margin:10px 8%; 
+	padding:10px 0; 
+}
+
+.asterisk{
+	float:left;  
+	margin-right:10px; 
+	width:20px; 
+	font-size:14px;
+	padding-top:8px;
+	text-align:left;
+}
+
+.explanation{
+	float:left;  
+	font-size:14px; 
+	width:90%;	
+	padding-top:8px;
+	text-align:left;
+}
+
+.triangle-for-explanation{
+	top:14px;
+	border-color: #00ccff transparent  transparent;
+	border-width:  10px 5px 10px;
+	position: relative;  
+	border-style: solid;
+	float:left;  
+	margin-right:20px;
+}
+
+
+.bar-for-explanation{
+	height:10px;
+	float:left;  
+	margin-right:10px; 
+	width:20px;
+	margin-top:14px;
+}
+
+
+@media only screen and (max-width: 410px) {
+
+		.explanation{
+		width:85%;
+		}
+		
+}

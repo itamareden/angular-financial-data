@@ -1,15 +1,20 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { Asset } from '../asset'
-import { AssetsService } from '../assets.service'
-import { AssetDataService } from '../asset-data.service'
+import { AssetsService } from '../services/assets.service';
+import { AssetDataService } from '../services/asset-data.service';
 import { AssetInMarketMoversTable } from '../asset-in-market-movers-table'
 import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'top-assets-performance',
   templateUrl: './top-assets-performance.component.html',
   styleUrls: ['./top-assets-performance.component.css']
 })
+    
+   
+    
+    
 export class TopAssetsPerformanceComponent implements OnInit {
 
     @Input() num;
@@ -18,21 +23,28 @@ export class TopAssetsPerformanceComponent implements OnInit {
     observableAssetsDataForPerformance: Observable<AssetInMarketMoversTable[]>; 
     bestPerformingAssets:AssetInMarketMoversTable[];
     worstPerformingAssets:AssetInMarketMoversTable[];
-    mostTradedAssets:AssetInMarketMoversTable[];
+    mostActiveAssets:AssetInMarketMoversTable[];
+    isShowBestPerforming=true;
+    isShowWorstPerforming;
+    isShowMostActive;
+    isShowComponent;
     
     constructor(private assetsService: AssetsService, private assetDataService: AssetDataService) { }
 
-  ngOnInit() {
-      
-      this.getAssetsData("Stock");
-      
-  }
+    ngOnInit() {
+        
+        this.getAssetsData("Stock");
+          
+    }
     
  
     getAssetsData(assetType:string): void {
-    this.assetsService.getAllAssetsByType(assetType).then(assets => {this.assets=assets;
-                                                                     this.getAssetsDataForPerformance(this.assets)
-                                                                     this.interval=setInterval(()=>{this.getAssetsDataForPerformance(this.assets)},20000);} );
+        
+        this.assetsService.getAllAssetsByType(assetType).then(assets => {
+        
+        this.assets=assets;
+        this.getAssetsDataForPerformance(this.assets)
+        this.interval=setInterval(()=>{this.getAssetsDataForPerformance(this.assets)},6000000);} );
     }
     
     
@@ -44,21 +56,89 @@ export class TopAssetsPerformanceComponent implements OnInit {
         this.observableAssetsDataForPerformance = this.assetDataService.getAssetsDataForPerformance(assets);
         this.observableAssetsDataForPerformance.subscribe(assetsData => {
             
-                
                 this.bestPerformingAssets = assetsData.sort(comparePercentChangeHighToLow).slice(0,Number(this.num));
-                this.bestPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{item.name=asset.nameToShow})}); // convert the names to the names I set in assets.service
+                this.bestPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{
+                    
+                    item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
+                    
+                    if(asset.digitsAfterDecimalPoint!=null){
+                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                     }else{
+                        item.digitsAfterDecimalPoint=2;
+                       }
+                
+                    });
+                }); 
                 
                 this.worstPerformingAssets = assetsData.sort(comparePercentChangeLowToHigh).slice(0,Number(this.num));
-                this.worstPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{item.name=asset.nameToShow})});
-            
-                this.mostTradedAssets = assetsData.sort(compareVolume).slice(0,Number(this.num));
-                this.mostTradedAssets.map(item=>{item.volume=String(item.volume).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-                                                this.assetsService.getAsset(item.symbol).then(asset=>{item.name=asset.nameToShow})});
-                
+                this.worstPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{
                     
+                    item.name=asset.nameToShow;
+                
+                    if(asset.digitsAfterDecimalPoint!=null){
+                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                     }else{
+                        item.digitsAfterDecimalPoint=2;
+                       }
+                
+                    });
+                });
+            
+                this.mostActiveAssets = assetsData.sort(compareVolume).slice(0,Number(this.num));
+                this.mostActiveAssets.map(item=>{
+                    
+                    if(item.volume>1000000000){
+                                item.volume=item.volume/1000000000;
+                                item.volumeNotation = "B";  // M for millions , B for billions
+                        }else{
+                                item.volume=item.volume/1000000;
+                                item.volumeNotation = "M";
+                        }
+                        
+                    this.assetsService.getAsset(item.symbol).then(asset=>{
+                        
+                        item.name=asset.nameToShow;
+                        
+                        if(asset.digitsAfterDecimalPoint!=null){
+                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                     }else{
+                        item.digitsAfterDecimalPoint=2;
+                       }
+                
+                     });
+                 });
+                
+                    this.isShowComponent=true;  // show component only after it has data to show. 
                         });
+            
+          
                                                                                  
         }
+    
+    
+    
+    bestPerformingOn():void{
+        this.isShowBestPerforming =true;
+        this.isShowWorstPerforming =false;
+        this.isShowMostActive =false;
+     }
+    
+    
+    worstPerformingOn():void{
+        this.isShowWorstPerforming =true;
+        this.isShowBestPerforming =false;
+        this.isShowMostActive =false;
+     }
+    
+    
+    mostActiveOn():void{
+        this.isShowMostActive =true;
+        this.isShowBestPerforming =false;
+        this.isShowWorstPerforming =false;
+     }
+    
+    
+    
 
 }
 
@@ -89,3 +169,5 @@ function compareVolume(a,b) {
         return -1;
       return 0;
     }
+
+

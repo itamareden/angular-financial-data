@@ -1,0 +1,35 @@
+<!-- The ID is for closing the explanation by clicking anywhere on the page except this element  -->
+<div class="explanation-window" id="explanationWindow">	
+		
+		<div class="explanation-bar-wrapper"> 
+			<asset-performance-bar  [sessionLow]="'Lowest Price*'" [sessionHigh]="'Highest *Price'" [sessionLowReturn]="'Lowest Return**'" [sessionHighReturn]="'Highest **Return'" 
+			[greenWidth]="40" [redWidth]="60" [totalWidth]="'100%'" [openPriceLeft]="openPriceLeft" [lastPriceLeft]="lastPriceLeft"></asset-performance-bar>
+		</div>
+		<div class="verbal-explanation">
+			<div>
+				<span class="asterisk">*</span>
+				<span class="explanation">{{explanationsArr[positionInExplanationsArr][0]}}</span>
+			</div>
+			<div style="margin-top:5px;">
+				<span class="asterisk">**</span>
+				<span class="explanation">{{explanationsArr[positionInExplanationsArr][1]}}</span>
+			</div>
+			<div>
+				<span class="triangle-for-explanation" [hidden]="isShowOpenPrice != null ? false : true"></span>
+				<span class="explanation" [hidden]="isShowOpenPrice != null ? false : true">{{explanationsArr[positionInExplanationsArr][2]}}</span>
+			</div>
+			<div>
+				<span class="triangle-for-explanation" style="border-color: black transparent  transparent" [hidden]="isShowLastPrice != null ? false : true"></span>
+				<span class="explanation">{{explanationsArr[positionInExplanationsArr][3]}}</span>
+			</div>
+			<div>
+				<span class="bar-for-explanation" style="background:#27bc5b;"></span>
+				<span class="explanation">{{explanationsArr[positionInExplanationsArr][4]}}</span>
+			</div>
+			<div>
+				<span class="bar-for-explanation" style="background:#ea3e23;"></span>
+				<span class="explanation">{{explanationsArr[positionInExplanationsArr][5]}}</span>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+ 	</div>

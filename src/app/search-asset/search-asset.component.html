@@ -1,10 +1,11 @@
 
 
-<input type='text' name='search' class='search-asset-input'  [(ngModel)]='assetTyped' (focus)='isShowList=onFocus()' (blur)='isShowList=clear()'>
-			
-<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" >
+<input type='text' name='search' [placeholder]="placeHolder"  class='search-asset-input'  [(ngModel)]='assetTyped' 
+(focus)='isShowList=onFocus()' (blur)='isShowList=clear()' #input>
+
+<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" (window:keydown)="chooseAssetWithKeyboard($event,list)" #list>
         <li class="list-group-item search-result-item"  *ngFor="let asset of ( assets | assetFilter:assetTyped:isShowList )"  
-         (click)="isSelected=true"  [routerLink]="['/asset', asset.symbol]">
+         (click)="isSelected=true"  [routerLink]="['/asset', asset.symbol]" >
 		        
 			          <p class="list-group-item-text pull-left asset-name">{{ asset.nameToShow}}</p>
 			          <p class='pull-right asset-type'>{{asset.type}}</p>

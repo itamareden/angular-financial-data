@@ -1,0 +1,80 @@
+<div class="assets-list" *ngIf="isShowTable" >
+ 
+ 	<div class="table-header">Market Overview</div>
+ 	<div class="assets-table-menu">
+	 	<div class="switch-view-button" [class.switch-view-button-active]="isShowForexMajors" (click)="forexMajorsOn()">Forex Majors</div>			    
+		<div class="switch-view-button" [class.switch-view-button-active]="isShowForexExotic" (click)="forexExoticOn()">Forex Exotic</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="isShowCommodities" (click)="commoditiesOn()">Commodities</div>
+		<div class="switch-view-button" style="float:left" (click)="toggleExplanation()"><div class="question-mark-button" id="questionMarkButton">?</div></div>
+	</div>	
+	<div *ngIf="isShowExplanation" style="top:0px; position:relative">
+		<asset-performance-bar-explanation [isShowOpenPrice]="'true'" [openPriceLeft]="70" [isShowLastPrice]="'true'" 
+		[lastPriceLeft]="40" [positionInExplanationsArr]="0"></asset-performance-bar-explanation>
+	</div>
+ 
+	 <ul class="list-group" *ngIf="isShowForexMajors">
+	 
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( forexMajorsAssets ); let lastRow=last">
+			        
+				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change"
+				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+				          
+				          <div class="asset-performance-bar-wrapper"> 
+					          <asset-performance-bar  [sessionLow]="asset.low" [sessionHigh]="asset.high" [sessionLowReturn]="asset.lowReturn" [sessionHighReturn]="asset.highReturn" 
+					          [greenWidth]="asset.greenWidth" [redWidth]="asset.redWidth" [totalWidth]="'50%'" [openPriceLeft]="asset.openPriceLeft"></asset-performance-bar>
+					      </div>
+					    
+				          <div class="clearfix"></div>
+			          
+	         </li >
+	 </ul>
+	 
+	 
+	 <ul class="list-group" *ngIf="isShowForexExotic">
+	 
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( forexExoticAssets ); let lastRow=last">
+			        
+				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change"
+				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+				          
+				          <div class="asset-performance-bar-wrapper"> 
+					          <asset-performance-bar  [sessionLow]="asset.low" [sessionHigh]="asset.high" [sessionLowReturn]="asset.lowReturn" [sessionHighReturn]="asset.highReturn" 
+					          [greenWidth]="asset.greenWidth" [redWidth]="asset.redWidth" [totalWidth]="'50%'" [openPriceLeft]="asset.openPriceLeft"></asset-performance-bar>
+					      </div>
+					    
+				          <div class="clearfix"></div>
+			          
+	         </li >
+	 </ul>
+	 
+	 
+	 <ul class="list-group" *ngIf="isShowCommodities">
+	 
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( commoditiesAssets ); let lastRow=last">
+			        
+				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change"
+				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+				          
+				          <div class="asset-performance-bar-wrapper"> 
+					          <asset-performance-bar  [sessionLow]="asset.low" [sessionHigh]="asset.high" [sessionLowReturn]="asset.lowReturn" [sessionHighReturn]="asset.highReturn" 
+					          [greenWidth]="asset.greenWidth" [redWidth]="asset.redWidth" [totalWidth]="'50%'" [openPriceLeft]="asset.openPriceLeft"></asset-performance-bar>
+					      </div>
+					    
+				          <div class="clearfix"></div>
+			          
+	         </li >
+	 </ul>
+	 
+</div>

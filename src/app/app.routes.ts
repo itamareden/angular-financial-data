@@ -1,7 +1,10 @@
 import { Routes,RouterModule } from '@angular/router';
-import { SearchAssetComponent } from './search-asset/search-asset.component';
 import { AssetSummaryComponent } from './asset-summary/asset-summary.component';
+import { AssetsListComponent } from './assets-list/assets-list.component';
 import { MainPageComponent } from './main-page/main-page.component';
+import { GoldRatioComponent } from './gold-ratio/gold-ratio.component';
+import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
+import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
 
 
 
@@ -9,19 +12,35 @@ import { MainPageComponent } from './main-page/main-page.component';
 const routes: Routes = [
   
   {
-    path: 'Main',
+    path: '',
     component: MainPageComponent,
   },
   // map '/' to '/Main' as our default route
-  {
+ /* {
     path: '',
-    redirectTo: '/Main',
+    redirectTo: '/',
     pathMatch: 'full'
-  },
+  },*/
   {
     path: 'asset/:symbol',
     component: AssetSummaryComponent
-  }
+  },
+  {
+    path: 'assets',
+    component: AssetsListComponent
+  },
+  {
+    path: 'gold-ratio',
+    component: GoldRatioComponent
+  },
+  {
+    path: 'index-matrix',
+    component: IndexMatrixComponent
+  },
+    {
+    path: 'assets-portfolio',
+    component: AssetsPortfolioComponent
+  },
 ];
 
 

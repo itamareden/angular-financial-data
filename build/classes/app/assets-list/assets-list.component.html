@@ -1,0 +1,49 @@
+<div style="position:relative">
+	<page-header ></page-header>
+</div>
+<div class="all-lists-wrapper">
+	<div class="assets-list-wrapper">
+		<div class="stocks-wrapper">
+			<div class="asset-type" (click)="toggleStocksView()">Stocks</div>
+			<div *ngIf="isShowStocks">
+				<div class="asset-in-list" *ngFor="let asset of stocksList; let i=index" [routerLink]="['/asset', asset.symbol]">
+					<span>{{asset.nameToShow}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="currencies-wrapper">
+			<div class="asset-type" (click)="toggleCurrenciesView()">Currencies</div>
+			<div *ngIf="isShowCurrencies">
+				<div class="asset-in-list" *ngFor="let asset of currenciesList" [routerLink]="['/asset', asset.symbol]">
+					<span>{{asset.nameToShow}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="commodities-wrapper">
+			<div class="asset-type" (click)="toggleCommoditiesView()">Commodities</div>
+			<div *ngIf="isShowCommodities">
+				<div class="asset-in-list" *ngFor="let asset of commoditiesList" [routerLink]="['/asset', asset.symbol]">
+					<span>{{asset.nameToShow}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="futures-wrapper">
+			<div class="asset-type" (click)="toggleFuturesView()">Futures</div>
+			<div *ngIf="isShowFutures">
+				<div class="asset-in-list" *ngFor="let asset of futuresList" [routerLink]="['/asset', asset.symbol]">
+					<span>{{asset.nameToShow}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="etf-wrapper">
+			<div class="asset-type" (click)="toggleEtfView()">ETF</div>
+			<div *ngIf="isShowETF">
+				<div class="asset-in-list"  *ngFor="let asset of etfList" [routerLink]="['/asset', asset.symbol]">
+					<span>{{asset.nameToShow}}</span>
+				</div>
+			</div>
+		</div>
+		
+		<div style="clear:both; display:block;"></div>
+	</div>
+</div>

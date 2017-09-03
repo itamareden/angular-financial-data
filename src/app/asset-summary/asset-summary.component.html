@@ -1,8 +1,11 @@
+<page-header></page-header>
+
+
 <div class="container-fluid">
 
 	<div class="row">
 	
-		<div class="col-md-12" >
+		<div class="col-xs-12" >
 	
 			<search-asset class="search-asset"></search-asset>
 	
@@ -12,9 +15,11 @@
 	
 	<div class="row">
 	
-    	<div class="col-md-6" >
+    	<div class="col-xs-12" >
+    	
+    	<div class="asset-summary-table-wrapper">
 
-			<section *ngIf="isShowAssetData" class='asset-data-section'>
+			<section *ngIf="isShowAssetData">
 			
 				<p class="asset-name-headline" style="padding-left:15px">{{asset.nameToShow}}</p>
 			    <div class="pull-left asset-rate"> {{assetData.close}}</div>
@@ -27,22 +32,28 @@
 				<div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetTechnicals" (click)="assetTechnicalsOn()">Technicals</div>			    
 			    <div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetPerformance" (click)="assetPerformanceOn()">Performance</div>
 			    <div class="pull-right switch-view-button" [class.switch-view-button-active]="isShowAssetSummary" (click)="assetSummaryOn()">Summary</div>
+			    <div class="switch-view-button" style="float:left" *ngIf="isShowAssetPerformance" (click)="toggleExplanation()"><div class="question-mark-button" id="questionMarkButton">?</div></div>
 				<div class="clearfix"></div>
+				
+				
+				
+				
+				
+				
+				
 							
 				<section *ngIf="isShowAssetSummary" style="border-top:2px solid #42ddae;">
-				    
 				    
 				    <div class="pull-left asset-data-list">
 					    <div class='asset-data-div'>Previous Close <span class='pull-right'>{{assetData.previousClose}}</span></div>
 					    <div class='asset-data-div'>Open Price <span class='pull-right'> {{assetData.open}}</span></div>
-					    <div class='asset-data-div'>Day's Range <span class='pull-right'> {{assetData.low}} - {{assetData.high}}</span> </div>
-					    <div class='asset-data-div'>52 Week Range <span class='pull-right'> {{assetData.fiftyTwoWkLow}} - {{assetData.fiftyTwoWkHigh}} </span> </div>
+					    <div class='asset-data-div'>Day Range <span class='pull-right'> {{assetData.low}} - {{assetData.high}}</span> </div>
+					    <div class='asset-data-div'>Year Range <span class='pull-right'> {{assetData.fiftyTwoWkLow}} - {{assetData.fiftyTwoWkHigh}} </span> </div>
 					    <div class='asset-data-div'>12 Month Return <span  class='pull-right'>{{assetData.twelveMnthPct}}%</span></div><br>
 				    </div>
-				    
 				    <div  class="pull-left asset-data-list">
 					    <div class='asset-data-div'>Volume <span class='pull-right'>{{assetData.volume}} </span></div>
-					    <div class='asset-data-div'>Average Volume (1 Month) <span class='pull-right'>{{assetData.monthlyAverageVolume}} </span></div>
+					    <div class='asset-data-div'>Avg Volume<span class='pull-right'>{{assetData.monthlyAverageVolume}} </span></div>
 					    <div *ngIf="asset.type=='Stock'">
 						    <div class='asset-data-div'>Market Cap <span class='pull-right'>{{assetData.marketCap}}B </span></div>
 						    <div class='asset-data-div'>Dividend Yield YOY <span class='pull-right'>{{assetData.dividendYieldAnnual}}% </span></div>
@@ -54,42 +65,75 @@
 					    </div>
 				    </div>
 				    
-				    
-				    
-				   <!--  <div class='asset-data-div'>moving Average: {{getMovingAverage()}}</div><br>
-				    <div class='asset-data-div'>Session Range: {{getSessionLow()}} - {{getSessionHigh()}}</div><br> -->
 				</section> 
 			  
 			  
-			    <section *ngIf="isShowAssetPerformance" style="border-top:2px solid #42ddae;">
+			    <section *ngIf="isShowAssetPerformance" style="border-top:2px solid #42ddae; position:relative; padding-bottom:40px;">
 			    
-				    <div class="pull-left asset-data-list">
-					    <div class='asset-data-div'>1 Week Return <span class='pull-right'>{{oneWeekReturn.toFixed(2)}}%</span></div>
-					    <div class='asset-data-div'>1 Month Return <span class='pull-right' >{{oneMonthReturn.toFixed(2)}}%</span></div>
-					    <div class='asset-data-div'>3 Months Return <span class='pull-right' >{{threeMonthsReturn.toFixed(2)}}%</span> </div>
-					    <div class='asset-data-div'>6 Months Return <span class='pull-right'>{{sixMonthsReturn.toFixed(2)}}%</span></div>
-					    <div class='asset-data-div'>12 Month Return <span  class='pull-right'>{{assetData.twelveMnthPct}}%</span></div><br>
+				    <div *ngIf="isShowExplanation">
+						<asset-performance-bar-explanation [isShowLastPrice]="'true'" [lastPriceLeft]="40" [positionInExplanationsArr]="1"></asset-performance-bar-explanation>
+					</div>
+			    
+				    <div class="asset-return-wrapper">
+					    <div class="asset-return-div">1 Week Return <span class='pull-right' style="padding-right:0px;">{{oneWeekPerformance.return.toFixed(2)}}%</span></div>
+					    <div class="asset-performance-bar-wrapper">
+					    <asset-performance-bar [sessionLow]="oneWeekPerformance.low" [sessionHigh]="oneWeekPerformance.high" [sessionLowReturn]="oneWeekPerformance.lowReturn" 
+					    [sessionHighReturn]="oneWeekPerformance.highReturn" [greenWidth]="oneWeekPerformance.greenWidth" [redWidth]="oneWeekPerformance.redWidth"></asset-performance-bar>
+					    </div>
 				    </div>
+				    
+				    <div class="asset-return-wrapper">
+					    <div class="asset-return-div">1 Month Return <span class='pull-right'>{{oneMonthPerformance.return.toFixed(2)}}%</span></div>
+					    <div class="asset-performance-bar-wrapper">
+					    <asset-performance-bar [sessionLow]="oneMonthPerformance.low" [sessionHigh]="oneMonthPerformance.high" [sessionLowReturn]="oneMonthPerformance.lowReturn" 
+					    [sessionHighReturn]="oneMonthPerformance.highReturn" [greenWidth]="oneMonthPerformance.greenWidth" [redWidth]="oneMonthPerformance.redWidth"></asset-performance-bar>
+						</div>
+					</div>
+					<div class="asset-return-wrapper">
+					    <div class="asset-return-div">3 Months Return <span class='pull-right' style="padding-right:0px;">{{threeMonthPerformance.return.toFixed(2)}}%</span></div>
+					    <div class="asset-performance-bar-wrapper">
+					    <asset-performance-bar [sessionLow]="threeMonthPerformance.low" [sessionHigh]="threeMonthPerformance.high" [sessionLowReturn]="threeMonthPerformance.lowReturn" 
+					    [sessionHighReturn]="threeMonthPerformance.highReturn" [greenWidth]="threeMonthPerformance.greenWidth" [redWidth]="threeMonthPerformance.redWidth"></asset-performance-bar>    
+				    	</div>
+				    </div>
+				    <div class="asset-return-wrapper">
+					    <div class="asset-return-div">6 Months Return <span class='pull-right' style="padding-right:0px;">{{sixMonthPerformance.return.toFixed(2)}}%</span></div>
+					    <div class="asset-performance-bar-wrapper">
+					    <asset-performance-bar [sessionLow]="sixMonthPerformance.low" [sessionHigh]="sixMonthPerformance.high" [sessionLowReturn]="sixMonthPerformance.lowReturn" 
+					    [sessionHighReturn]="sixMonthPerformance.highReturn" [greenWidth]="sixMonthPerformance.greenWidth" [redWidth]="sixMonthPerformance.redWidth"></asset-performance-bar>    
+				    	</div>
+				    </div>
+				    <div class="asset-return-wrapper">
+					    <div class="asset-return-div">9 Months Return <span class='pull-right' style="padding-right:0px;">{{nineMonthPerformance.return.toFixed(2)}}%</span></div>
+					    <div class="asset-performance-bar-wrapper">
+					    <asset-performance-bar [sessionLow]="nineMonthPerformance.low" [sessionHigh]="nineMonthPerformance.high" [sessionLowReturn]="nineMonthPerformance.lowReturn" 
+					    [sessionHighReturn]="nineMonthPerformance.highReturn" [greenWidth]="nineMonthPerformance.greenWidth" [redWidth]="nineMonthPerformance.redWidth"></asset-performance-bar>
+						</div>
+					</div>    
+
 			    </section>
 			    
 			    
 			    <section *ngIf="isShowAssetTechnicals" style="border-top:2px solid #42ddae;">
 			    
 				    <div class="pull-left asset-data-list">
-					    <div class='asset-data-div'>50 Day Moving Average <span class='pull-right'>{{MA50}}</span></div>
-					    <div class='asset-data-div'>100 Day Moving Average <span class='pull-right'>{{MA100}}</span></div>
-					    <div class='asset-data-div'>200 Day Moving Average <span class='pull-right'>{{MA200}}</span> </div>
-					    <div class='asset-data-div'>Relative Strength Index <span class='pull-right'>{{RSI.toFixed(2)}}</span></div>
-					    <div class='asset-data-div'>Bolinger <span  class='pull-right'></span></div><br>
+					    <div class='asset-data-div'>MA 50 <span class='pull-right'>{{MA50}}</span></div>
+					    <div class='asset-data-div'>MA 100 <span class='pull-right'>{{MA100}}</span></div>
+					    <div class='asset-data-div'>MA 200 <span class='pull-right'>{{MA200}}</span> </div>
+					    <div class='asset-data-div'>RSI <span class='pull-right'>{{RSI.toFixed(2)}}</span></div>
+					    <div class='asset-data-div'>Trend <span class='pull-right'>{{overallTrend}}</span></div>
 				    </div>
+				    
 			    </section> 
 			  
 			  
 			    
 			  </section>
+			  
+		</div>	  
   		</div>
   
-  		<div class="col-md-6" ></div>
+  		<div class="col-md-4" ></div>
   
      </div>
   

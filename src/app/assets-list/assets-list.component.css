@@ -1,0 +1,162 @@
+
+
+.all-lists-wrapper{
+	padding:30px 0 80px 0;
+}
+
+
+.assets-list-wrapper{
+	max-width:950px; 
+	margin:0px auto; 
+}
+
+
+.stocks-wrapper{
+	float:left; 
+	margin-right:50px;
+}
+
+
+.currencies-wrapper{
+	float:left; 
+	margin-right:50px;
+}
+
+
+.commodities-wrapper{
+	float:left; 
+	margin-right:50px;
+}
+
+
+.futures-wrapper{
+	float:left; 
+	margin-right:50px;
+}
+
+
+.etf-wrapper{
+	float:left;
+}
+
+
+
+.asset-in-list{
+	width:150px;
+	padding: 5px 0 5px 10px;
+	border-bottom: 1px dotted #00cccc;
+	margin:10px 0;
+	color:black;
+	cursor:pointer;
+	display:block;
+	font-family: segoe;
+	font-size:17px;
+}
+
+.asset-in-list:hover{
+	background:#00cccc;
+	/* background:white; */	
+}
+
+.asset-type{
+	background:#0066cc;
+	color:white;
+	width:150px;
+	line-height:40px;
+	height:40px;
+	text-align:center;
+	font-size:18px;
+	font-family: khand;
+	cursor:pointer;
+	margin-top:32px;
+}
+
+
+
+@media only screen and (max-width: 1100px) {
+
+	.assets-list-wrapper{
+		width:750px;
+	}
+	
+	
+	.futures-wrapper{
+		margin-right:0;
+	}
+	
+	
+	
+}
+
+@media only screen and (max-width: 900px) {
+
+	.assets-list-wrapper{
+		width:550px;
+	}
+	
+	.commodities-wrapper{
+		margin-right:0;
+	}
+	
+	.futures-wrapper{
+		margin-right:0;
+	}
+	
+}
+
+
+@media only screen and (max-width: 660px) {
+
+	.assets-list-wrapper{
+		width:350px;
+	}
+	
+	.currencies-wrapper{
+		margin-right:0;
+	}
+	
+	.commodities-wrapper{
+		float:right;
+	}
+	
+	.futures-wrapper{
+		margin-right:50px;
+	}
+	
+	
+}
+
+
+@media only screen and (max-width: 370px) {
+
+	.assets-list-wrapper{
+		width:220px;
+	}
+	
+	.stocks-wrapper{
+		margin-right:0;
+	}
+	
+	.currencies-wrapper{
+		margin-right:0;
+	}
+	
+	.futures-wrapper{
+		margin-right:0;
+	}
+	
+	.asset-in-list{
+		width:220px;
+		/* font-size:16px; */
+	}
+	
+	.asset-type{
+		width:220px;
+	}
+	
+	
+}
+
+
+
+

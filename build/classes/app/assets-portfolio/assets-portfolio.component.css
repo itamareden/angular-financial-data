@@ -1,0 +1,49 @@
+.wrapper{
+	margin:auto; 
+	position:absolute; 
+	top:120px; 
+	bottom:0; 
+	left:0; 
+	right:0; 
+	width:100%;
+	text-align:center;
+	height:260px; 
+}
+
+
+.image{
+	width: 170px;
+    height: 170px;
+    margin:auto;
+	background-image: url("../../assets/portfolio.png");
+}
+
+
+.message{
+	font-size:50px;
+	margin-top:20px;
+	color: #006bb3;
+	font-family: "Eras"; 
+}
+
+
+
+@media only screen and (max-width: 400px) {
+
+	.wrapper{
+		height:230px;
+	}
+	
+	
+	.message{
+		font-size:40px;
+		margin-top:10px;
+	}
+	
+}
+
+
+
+
+
+

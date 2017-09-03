@@ -1,42 +1,57 @@
-<!-- <div class="image"></div> -->
+
+<page-header [isMainPage]="'true'"></page-header>
+
+<div class="background-image"></div>
+
+<div class="container-fluid">
 
 
-<div class="container-fluid"  >
-
-
+	
+	
 	<div class="row" >
 		
 	    <div class="col-xs-12 " >
 	
-	
-			<div class='serach-asset-input-decorator' >
-	
 				<search-asset class="serach-asset" ></search-asset>
 				
-			</div>
-			
 		</div>
+			
+	</div>
+	
+	
+	<div class="row" >
+		
+	    <div class="col-xs-12 " >
+	    
+			<div class="sentiment-barometers-wrapper">
+			
+				<sentiment-barometer class="sentiment-barometer-left" [elementId]="0" [scaleType]="'number'"  [header]="'Market Risk'"></sentiment-barometer>
+				<sentiment-barometer class="sentiment-barometer-right" [elementId]="1" [scaleType]="'word'" [header]="'Market Sentiment'"></sentiment-barometer>
+			
+			</div>	
+			
+		</div>	
 		
 	</div>
 	
 	
-	<div class="row" style="margin-top:50px;">
+	
+	<div class="row" style="margin-top:65px;">
 		
-	    <div class="col-xs-2 " ></div>
+	    <div class="col-xs-12 ">
 	    
-		
-	    <div class="col-xs-8 " style=" background: linear-gradient(#1ad1ff, white); " >
-	    
-	    	<h1 style="text-align:center;">Market Movers</h1>
-	    
-	    	
-	    	<top-assets-performance class="" [num]="5" style="width:100%;"></top-assets-performance>
+	    	<div class="the-wrapper">
+		    	<assets-table class="assets-table"></assets-table>
+		    	
+		    	<top-assets-performance class="top-assets-performance"  [num]="5" ></top-assets-performance>
+		    	<div class="clearfix"></div>
+		    	
+		    </div>
 	    	
 	    </div>
 	    
-	    <div class="col-xs-2 " ></div>
-	    
 	</div>
-
+	
+	
 </div>
 			

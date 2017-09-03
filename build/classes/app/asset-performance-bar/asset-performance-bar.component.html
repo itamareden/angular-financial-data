@@ -1,0 +1,23 @@
+<div >
+	<div class="data-wrapper">
+		<div class="bar-data-left">{{sessionLow}}</div>
+		<div class="bar-data-right">{{sessionHigh}}</div>
+		<div style="clear:both;"></div>
+	</div>
+	
+	<div class="bar-wrapper">
+		<div class="green-bar" [style.width]="greenWidth != null ? greenWidth+'%' : null"></div>
+		<div class="red-bar" [style.width]="redWidth != null ? redWidth+'%' : null"></div>
+		<div class="open-price-triangle" [style.left]="openPriceLeft != null ? openPriceLeft+'%' : null" 
+		[hidden]="openPriceLeft != null ? false : true"></div>
+		<div class="last-price-triangle" [style.left]="lastPriceLeft != null ? lastPriceLeft+'%' : null" 
+		[hidden]="lastPriceLeft != null ? false : true"></div>
+	</div>
+	
+	<div class="data-wrapper">
+		<div class="bar-data-left">{{sessionLowReturn}}</div>
+		<div class="bar-data-right">{{sessionHighReturn}}</div>
+		<div style="clear:both;"></div>
+	</div>
+	
+</div>

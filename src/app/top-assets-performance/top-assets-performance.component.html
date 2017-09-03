@@ -1,41 +1,55 @@
-         
- <ul class="list-group pull-left market-movers-list">
-         <li class="list-group-item"  *ngFor="let asset of ( bestPerformingAssets  );" >
-		        
-			          <div class="list-group-item-text pull-left" [routerLink]="['/asset', asset.symbol]" style="cursor:pointer; color:blue; margin-right:20px;">{{asset.name}}</div>
+ <div *ngIf="isShowComponent" class="total-wrapper">
+ 
+	 <div class="table-header">Stock Market Movers</div>
+	 	<div class="assets-table-menu">
+		 	<div class="switch-view-button" [class.switch-view-button-active]="isShowBestPerforming" (click)="bestPerformingOn()">Best</div>			    
+			<div class="switch-view-button" [class.switch-view-button-active]="isShowWorstPerforming" (click)="worstPerformingOn()">Worst</div>
+			<div class="switch-view-button" [class.switch-view-button-active]="isShowMostActive" (click)="mostActiveOn()">Most Active</div>
+		</div>
+	 
+	         
+	 <ul class="list-group " *ngIf="isShowBestPerforming">
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( bestPerformingAssets ); let lastRow=last" >
+			        
+				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change"
+				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+				          
+				          <div class="clearfix"></div>
 			          
-			          <div  class="list-group-item-text pull-right"
-			           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</div>
-			           
+	         </li >
+	 </ul>
+	       
+	<ul class="list-group " *ngIf="isShowWorstPerforming">
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( worstPerformingAssets ); let lastRow=last" >
+			        
+				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change"
+				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+				          
+				          <div class="clearfix"></div>
 			          
-			          <div class="clearfix"></div>
-		          
-         </li >
- </ul>
-       
- <ul class="list-group pull-left market-movers-list">
-         <li class="list-group-item"  *ngFor="let asset of ( worstPerformingAssets  );" >
-		        
-			          <div class="list-group-item-text pull-left" [routerLink]="['/asset', asset.symbol]" style="cursor:pointer; color:blue; margin-right:20px;">{{asset.name}}</div>
+	         </li >
+	 </ul>
+	         
+	 <ul class="list-group " *ngIf="isShowMostActive">
+	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( mostActiveAssets ); let lastRow=last" >
+			        
+				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
+				          
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          
+				          <p  class="list-group-item-text asset-net-change">${{asset.volume.toFixed(2)}}{{asset.volumeNotation}}</p>
+				          
+				          <div class="clearfix"></div>
 			          
-			          <div  class="list-group-item-text pull-right"
-			           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</div>
-			           
-			          
-			          <div class="clearfix"></div>
-		          
-         </li >
- </ul>
-         
- <ul class="list-group pull-left market-movers-list">
-         <li class="list-group-item"  *ngFor="let asset of ( mostTradedAssets  );" >
-		        
-			          <div class="list-group-item-text pull-left" [routerLink]="['/asset', asset.symbol]" style="cursor:pointer; color:blue; margin-right:20px;">{{asset.name}}</div>
-			          
-			          <div  class="list-group-item-text pull-right">{{asset.volume}}$</div>
-			           
-			          
-			          <div class="clearfix"></div>
-		          
-         </li > 
- </ul>
+	         </li >
+	 </ul>
+	 
+</div>
