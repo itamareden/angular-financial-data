@@ -5,8 +5,8 @@ export interface AssetData {
     open?:number;
     low?:number;
     high?:number;
-    close?:number;
-    closeAsNumber?:number;
+    lastPrice?:number;
+    lastPriceAsNumber?:number;
     netChange?:number;
     netChangePercent?:number;
     volume?:number;

@@ -2,8 +2,9 @@
 .main-div{
 	width:260px; 
 	height:200px; 
-	background-image: url("../../assets/white.jpg"); 
-	border:2px solid black; 
+	/* background-image: url("../../assets/white.jpg"); */ 
+	background:white;
+	border:1px solid black; 
 	border-radius:5px;	
 }
 

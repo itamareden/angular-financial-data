@@ -1,0 +1,48 @@
+
+
+<div class="main-wrapper">
+	<div class="table-header">Relative Performance</div>
+	<div style="margin:25px 0;">
+		<search-asset [placeHolder]="'First Asset'" [disableRouting]="true" class="search-asset" ></search-asset>
+		<div style="font-size:22px; margin:20px 0 0px 20px;">Relative to</div>
+		<search-asset [placeHolder]="'Second Asset'" [disableRouting]="true" class="search-asset" ></search-asset>
+		<button  class="calculate-button" [disabled]="isError"   (click)="calculateAndDisplay()">Calculate</button>
+	</div>
+	
+	<div *ngIf="isShowResults" style="margin:50px 0">
+		<div class="switch-view-button" style="margin-left:5px;" [class.switch-view-button-active]="durationFlagArr[0]" (click)="displayRelativePerformance('day')">Day</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="durationFlagArr[1]" (click)="displayRelativePerformance('week')">Week</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="durationFlagArr[2]" (click)="displayRelativePerformance('month')">Month</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="durationFlagArr[3]" (click)="displayRelativePerformance('threeMonth')">3 Months</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="durationFlagArr[4]" (click)="displayRelativePerformance('year')">Year</div>
+		<div style="clear:both"></div>
+		<div style="background:#42ddae; height:2px; margin:1px 5px;"></div>		
+		
+		
+		<div style="margin:25px auto;  font-size:18px;">
+			<div style=" margin-left:20px;">
+				<span class="asset-explanation-bar" style="background:#0099cc;"></span>
+				<span class="asset-explanation-name" [routerLink]="['/asset', firstAsset.assetDetails.symbol]">{{firstAsset.assetDetails.nameToShow}}</span>
+				<!-- <span class="" style="display:inline-block; margin-left:10px; font-size:15px;">{{firstAsset.lastPrice}}</span> --> 
+			</div>
+			<div style=" margin-left:20px; margin-top:10px; ">
+				<span class="asset-explanation-bar" style="background:#339966;"></span>
+				<span class="asset-explanation-name" [routerLink]="['/asset', secondAsset.assetDetails.symbol]">{{secondAsset.assetDetails.nameToShow}}</span>
+			</div>
+			<div style="clear:both"></div>
+		</div>
+		
+		
+		<div style="position:relative; width:260px; left:25px; height:250px; border-left:1px dotted black;">
+			<div style="width:270px; left:-17px; height:1px; border-top:1px dotted black;  position:absolute;" [style.top]="xAxisTop+'px'"></div>
+			<div class="asset-bar" style="background:linear-gradient(#66d9ff,#0099cc); left:40px" [style.top]="firstAsset.barTop+'px'" [style.height]="firstAsset.barHeight+'px'"></div>
+			<div class="asset-return" style="left:40px;" [style.top]="firstAsset.returnTop+'px'">{{(firstAsset.return).toFixed(2)}}%</div>
+			<div class="asset-bar" style="background:linear-gradient(#8cd9b3,#339966); left:150px" [style.top]="secondAsset.barTop+'px'" [style.height]="secondAsset.barHeight+'px'"></div>
+			<div class="asset-return" style="left:150px;" [style.top]="secondAsset.returnTop+'px'">{{(secondAsset.return).toFixed(2)}}%</div>
+			
+		</div>
+		<div style="clear:both"></div>
+		<div class="relative-performance">Relative Performance: {{relativePerformance.toFixed(2)}}%</div>
+	</div>
+</div>
+

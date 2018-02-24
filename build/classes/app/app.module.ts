@@ -22,9 +22,14 @@ import { AssetPerformanceBarComponent } from './asset-performance-bar/asset-perf
 import { AssetPerformanceBarExplanationComponent } from './asset-performance-bar-explanation/asset-performance-bar-explanation.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { WindowService } from './services/window.service';
+import { HistoricalReturnService } from './services/historical-return.service';
 import { GoldRatioComponent } from './gold-ratio/gold-ratio.component';
 import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
 import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
+import { RelativePerformanceComponent } from './relative-performance/relative-performance.component';
+import { StocksStatisticsComponent } from './stocks-statistics/stocks-statistics.component';
+import { MarketCapComponent } from './market-cap/market-cap.component';
+import { IlsPerformanceComponent } from './ils-performance/ils-performance.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +48,10 @@ import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.co
     GoldRatioComponent,
     IndexMatrixComponent,
     AssetsPortfolioComponent,
+    RelativePerformanceComponent,
+    StocksStatisticsComponent,
+    MarketCapComponent,
+    IlsPerformanceComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +59,7 @@ import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.co
       HttpModule,
       appRouterModule
   ],
-  providers: [AssetsService,AssetDataService,MarketSentimentService,WindowService],
+  providers: [AssetsService,AssetDataService,MarketSentimentService,WindowService,HistoricalReturnService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

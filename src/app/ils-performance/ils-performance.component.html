@@ -1,0 +1,46 @@
+
+<page-header></page-header> 
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12" >
+			<div class='wrapper' >
+				<div class='statistics-table-header bold-font'>ILS Performance</div>
+				<table class='performance-table'>
+					  <tr>
+					    <th>Currency</th>
+					    <th>Price</th>
+					    <th>Day Chg</th>
+					    <th>Year Chg</th>
+					  </tr>
+					  <tr *ngFor="let item of ( ilsPairs )">
+					    <td class='currency-name' [routerLink]="['/asset', item.symbol]">{{item.name}}</td>
+					    <td>{{item.lastPrice.toFixed(4)}}</td>
+					    <td [style.color]="item.dayReturn>0 ? 'green':'red'">{{item.dayReturn.toFixed(2)}}%</td>
+					    <td [style.color]="item.yearReturn>0 ? 'green':'red'">{{item.yearReturn.toFixed(2)}}%</td>
+					  </tr>
+				</table>
+				<table class='summary-table'>
+					  <tr>
+					    <th></th>
+					    <th>Average</th>
+					    <th>Up</th>
+					    <th>Down</th>
+					  </tr>
+					  <tr>
+					    <td class='bold-font'>Day</td>
+					    <td [style.color]="averageDayReturn>0 ? 'green':'red'">{{averageDayReturn.toFixed(2)}}%</td>
+					    <td>{{positiveDailyReturn.toFixed(1)}}%</td>
+					    <td>{{(100-positiveDailyReturn).toFixed(1)}}%</td>
+					  </tr>
+					  <tr>
+					    <td class='bold-font'>Year</td>
+					    <td [style.color]="averageYearReturn>0 ? 'green':'red'">{{averageYearReturn.toFixed(2)}}%</td>
+					    <td>{{positiveYearlyReturn.toFixed(1)}}%</td>
+					    <td>{{(100-positiveYearlyReturn).toFixed(1)}}%</td>
+					  </tr>
+				</table>
+				<div style='clear:both'></div>
+			</div>
+		</div>
+	</div>
+</div>

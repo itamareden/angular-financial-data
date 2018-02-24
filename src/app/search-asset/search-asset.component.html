@@ -1,17 +1,31 @@
 
-
-<input type='text' name='search' [placeholder]="placeHolder"  class='search-asset-input'  [(ngModel)]='assetTyped' 
-(focus)='isShowList=onFocus()' (blur)='isShowList=clear()' #input>
-
-<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" (window:keydown)="chooseAssetWithKeyboard($event,list)" #list>
-        <li class="list-group-item search-result-item"  *ngFor="let asset of ( assets | assetFilter:assetTyped:isShowList )"  
-         (click)="isSelected=true"  [routerLink]="['/asset', asset.symbol]" >
-		        
-			          <p class="list-group-item-text pull-left asset-name">{{ asset.nameToShow}}</p>
-			          <p class='pull-right asset-type'>{{asset.type}}</p>
-			          <div class="clearfix"></div>
-		          
-         </li > 
-</ul>
+<div *ngIf="!disableRouting">
+	<input type='text' name='search' [placeholder]="placeHolder"  class='search-asset-input'  [(ngModel)]='assetTyped' 
+	(focus)='onFocus()' (blur)="clearDelayed()" #input>
+	
+	<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" (window:keydown)="chooseAssetWithKeyboard($event,list)" #list>
+	        <li class="list-group-item search-result-item"  *ngFor="let asset of ( assets | assetFilter:assetTyped:isShowList:priorAssetTyped )"  
+	         (click)="selectAsset()"  [routerLink]="['/asset', asset.symbol]" >
 	         
+				          <p class="list-group-item-text pull-left asset-name">{{ asset.nameToShow}}</p>
+				          <p class='pull-right asset-type'>{{asset.type}}</p>
+				          <div class="clearfix"></div>
+			          
+	         </li > 
+	</ul>
+</div>
+<div *ngIf="disableRouting">
+	<input type='text' name='search' [placeholder]="placeHolder"  class='search-asset-input'  [(ngModel)]='assetTyped' 
+	(focus)='onFocus()' (blur)="clear()" #input>
+	<ul *ngIf="isShowList && assetTyped" class="list-group search-results-list" (window:keydown)="chooseAssetWithKeyboard($event,list)" #list>
+	        <li class="list-group-item search-result-item"  *ngFor="let asset of ( assets | assetFilter:assetTyped:isShowList:priorAssetTyped )"  
+	         (mousedown)="assetSelected(asset)" (click)="assetSelected(asset)" >
+	         
+	         <p class="list-group-item-text pull-left asset-name">{{ asset.nameToShow}}</p>
+				          <p class='pull-right asset-type'>{{asset.type}}</p>
+				          <div class="clearfix tom-petty"></div>
+			          
+	         </li > 
+	</ul>
+</div>    
       

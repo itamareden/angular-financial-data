@@ -5,6 +5,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { GoldRatioComponent } from './gold-ratio/gold-ratio.component';
 import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
 import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
+import { IlsPerformanceComponent } from './ils-performance/ils-performance.component';
 
 
 
@@ -38,8 +39,8 @@ const routes: Routes = [
     component: IndexMatrixComponent
   },
     {
-    path: 'assets-portfolio',
-    component: AssetsPortfolioComponent
+    path: 'ils-performance',
+    component: IlsPerformanceComponent
   },
 ];
 

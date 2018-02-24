@@ -1,0 +1,56 @@
+
+<page-header></page-header> 
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12" >
+			<div class='main-wrapper'>
+				<h1>Fed Funds Futures</h1>
+				<div  class="chart-wrapper" #chart>
+					<div *ngIf="isShowTable">
+						<div *ngFor="let internalAxis of ( chartPropertiesFedFunds.internalAxises );">
+							<div class="internal-axis" [style.top]="internalAxis.top+'px'"></div>
+							<div class='internal-axis-value' [style.top]="internalAxis.top-10+'px'">{{internalAxis.value.toFixed(2)}}</div>
+						</div>
+						<div class="x-axis" [style.top]="chartPropertiesFedFunds.xAxisTop+'px'"></div>
+						<div *ngFor="let asset of ( fedFundsArr ); let i=index;">	
+							<div class="asset-name" [style.left]="asset.nameLeft+'%'" [style.width]="asset.nameWidth+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+							<div style="position:absolute;  transform-origin: top left;" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+							[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'" [style.transform]="asset.safeTransform" ></div>
+							<div class='small-circle' [style.top]="asset.top-3+'px'" [style.left]="asset.left+'%'" (mouseenter)='toggleDataPopUp(i)' (mouseleave)='toggleDataPopUp(i)'>
+								<div *ngIf='indexOfDataPopUp==i' class='data-square-pop-up'>
+									<div><span style='float:left'>Price: </span><span style='float:right'>{{asset.lastPrice.toFixed(2)}}%</span><span style='clear:both'></span></div>
+									<div><span style='float:left'>Expiry: </span><span style='float:right'>{{asset.name}}</span><span style='clear:both'></span></div>
+								</div>
+							</div>
+							<!-- <div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.lastPrice.toFixed(3)}}%</div> -->
+						</div> 
+					</div>	
+				</div>
+				<h1>Eurodollar Futures</h1>
+				<div  class="chart-wrapper" #chart>
+					<div *ngIf="isShowTable">
+						<div class="x-axis" [style.top]="chartPropertiesEurodollar.xAxisTop+'px'"></div>
+						<div *ngFor="let asset of ( eurodollarArr );">	
+							<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+							<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+							[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'" ></div>
+							<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.lastPrice.toFixed(3)}}%</div>
+						</div> 
+					</div>	
+				</div>
+				<h1>Euribor Futures</h1>
+				<div  class="chart-wrapper" #chart>
+					<div *ngIf="isShowTable">
+						<div class="x-axis" [style.top]="chartPropertiesEuribor.xAxisTop+'px'"></div>
+						<div *ngFor="let asset of ( euriborArr );">	
+							<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+							<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+							[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'" ></div>
+							<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.lastPrice.toFixed(3)}}%</div>
+						</div> 
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

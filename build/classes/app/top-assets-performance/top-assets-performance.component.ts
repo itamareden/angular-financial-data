@@ -1,5 +1,6 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { Asset } from '../asset'
+import { AssetData } from '../asset-data'
 import { AssetsService } from '../services/assets.service';
 import { AssetDataService } from '../services/asset-data.service';
 import { AssetInMarketMoversTable } from '../asset-in-market-movers-table'
@@ -19,6 +20,7 @@ export class TopAssetsPerformanceComponent implements OnInit {
 
     @Input() num;
     assets: Asset[] = [];
+    static assetsData: AssetInMarketMoversTable[] = [];
     interval;
     observableAssetsDataForPerformance: Observable<AssetInMarketMoversTable[]>; 
     bestPerformingAssets:AssetInMarketMoversTable[];
@@ -44,7 +46,7 @@ export class TopAssetsPerformanceComponent implements OnInit {
         
         this.assets=assets;
         this.getAssetsDataForPerformance(this.assets)
-        this.interval=setInterval(()=>{this.getAssetsDataForPerformance(this.assets)},6000000);} );
+        });
     }
     
     
@@ -55,6 +57,8 @@ export class TopAssetsPerformanceComponent implements OnInit {
        
         this.observableAssetsDataForPerformance = this.assetDataService.getAssetsDataForPerformance(assets);
         this.observableAssetsDataForPerformance.subscribe(assetsData => {
+
+                TopAssetsPerformanceComponent.assetsData=assetsData;
             
                 this.bestPerformingAssets = assetsData.sort(comparePercentChangeHighToLow).slice(0,Number(this.num));
                 this.bestPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{

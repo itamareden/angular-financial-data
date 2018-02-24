@@ -1,4 +1,11 @@
 
+*{
+	box-sizing: border-box;
+}
+
+
+
+
 .header-button-div{
 	padding:9px 5px 8px 5px; 
 	display:inline; 
@@ -81,11 +88,20 @@
 	width: 100%;
     height: 700px;
     background-image: url("../../assets/manhattan.jpg");
+/*     background-image: url("../../assets/panda.jpg"); */
     background-size: cover;	
     position:absolute;
 }
 
-
+.search-asset{
+	font-size:21px;	
+	display:block; 
+	position:relative; 
+	margin:100px auto;
+	max-width:70%;
+	border-bottom: 2px solid black;
+	color:black;
+}
 
 
 .serach-asset-input-decorator{
@@ -114,6 +130,7 @@
 	width:650px;
 	display:block;
 	margin:0px auto;
+	margin-top:300px;	/* if I put the meters back on I need to delete the margin-top ________________________________________ */
 }
 
 
@@ -132,9 +149,26 @@
 
 
 .top-assets-performance{
-	margin:20px auto;
+	/* margin:10px auto;
 	float:right; 
+	width:320px; */
+	
+	margin:60px 15px; 
+	margin-bottom:0; 
+	float:left; 
 	width:320px;
+}
+
+.stock-statistics{
+	float:left;
+	/* width:650px; */
+}
+
+
+.relative-performance{
+	margin:60px 10px 30px 12px; 
+	margin-bottom:0; 
+	float:right;
 }
 
 .top-performance-wrapper{
@@ -146,33 +180,50 @@
 	opacity:0.95;
 }
 
+.market-cap{
+	width:500px;
+	/* display:block; */
+	float:left;
+	margin-left:10px;
+	margin-top:-240px;
+}
+
 
 .the-wrapper{
-	margin:40px auto; 
-	width:1050px; 
+	/* margin:40px auto; 
+	width:1050px; */ 
 	/* border:1px solid black; */
+	width:1200px;
+	margin:140px auto 20px auto;
 }
 
 
 .assets-table{
-	margin:20px auto;
+	/* margin:20px auto;
 	float:left; 
+	width:500px; */
+	
 	/* width:630px; */	/* use this if assets-table is different for pc and mobile */
+	
+	
+	margin:10px 10px; 
+	margin-bottom:0; 
+	float:left; 
 	width:500px;
 }
 
 
-.assets-table-wrapper{
-	width:875px; 
-	margin:0 auto; 
-	display:block;  
-	position:relative;
+
+@media only screen and (max-width: 1360px) {
+	
+	.the-wrapper{
+		/* width:100%; */
+}
 	
 }
 
 
-
-@media only screen and (max-width: 1160px) {
+@media only screen and (max-width: 1210px) {
 
 	.header-button-div{
 		margin-right:50px;
@@ -189,19 +240,49 @@
 	
 	.the-wrapper{
 	/* display:inline-block; */
-	width:100%;
+		width:100%;
 	}
 	
 	.assets-table{
 		float:none;
 		display:block;
 		width:100%;
+		margin-left:auto;
+		margin-right:auto;
+	}
+	
+	.stock-statistics{
+		float:none;
+		/* width:660px; */
+		display:block;
+		margin-top:30px;
+		margin-left:auto;
+		margin-right:auto;
+	}
+	
+	.market-cap{
+		width:500px;
+		display:block;
+		float:none;
+		margin-left:auto;
+		margin-right:auto;
+		margin-top:80px;
 	}
 	
 	.top-assets-performance{
 		float:none;
 		display:block;
-		margin-top:80px;
+		margin-top:30px;
+		margin-left:auto;
+		margin-right:auto;
+	}
+	
+	.relative-performance{
+		float:none;
+		display:block;
+		margin-top:30px;	
+		margin-left:auto;
+		margin-right:auto;
 	}
 
 }
@@ -220,6 +301,10 @@
 	
 	.bear-logo{
 		font-size:22px;
+	}
+	
+	.search-asset{
+		font-size:10px;
 	}
 
 }
@@ -308,8 +393,10 @@
 	display:block;
 	}
 	.sentiment-barometers-wrapper{
-	display:inline-block;
-	width:100%;
+		display:inline-block;
+		width:100%;
+		/* margin-top:-50px; */ /* if I put the meters back on I need to switch the margin-top to the one beneath. */
+		margin-top:400px;
 	}
 	
 	.sentiment-barometer-left{
@@ -320,6 +407,23 @@
 	.sentiment-barometer-right{
 		float:none;
 		display:block;
+	}
+	
+	.search-asset{
+		font-size:16px;
+		max-width:90%;
+	}
+	
+	.the-wrapper{
+		margin-top:0px;
+	}
+	
+	.market-cap{
+		width:300px;
+		display:block;
+		margin-left:auto;
+		margin-right:auto;
+		margin-top:40px;
 	}
 	
 }
@@ -340,6 +444,10 @@
 	
 	.top-assets-performance{
 		max-width:100%;
+	}
+	
+	.relative-performance{
+		max-width:100%;	
 	}
 
 }

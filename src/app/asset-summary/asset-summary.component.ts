@@ -1,17 +1,20 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location }                 from '@angular/common';
 import { Asset } from '../asset'
 import { AssetsService } from '../services/assets.service';
+import { ChartsService } from '../services/Charts.service';
 
 import { AssetData } from '../asset-data'
-import { Candlestick } from '../candlestick'
+import { Candlestick } from '../candlestick';
 import { AssetDataService } from '../services/asset-data.service';
+import { HistoricalReturnService } from '../services/historical-return.service';
 import { AssetPerformanceBarComponent } from '../asset-performance-bar/asset-performance-bar.component'
 import { AssetPerformance } from '../asset-performance'
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/switchMap'; 
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'asset-summary',
@@ -23,9 +26,24 @@ import 'rxjs/add/operator/switchMap';
 })
     
 export class AssetSummaryComponent implements OnInit {
-
-    static counter=0;
-    static tableCounter=0;
+        
+    @ViewChild('chart') chart:ElementRef;
+    
+    chartProperties={
+        type:'Line Chart',
+        totalBarsWidth:88,  // width of each bar in %
+        totalChartHeight:350,   // _________________________________ FOR NOW
+        totalChartWidth:650,     
+        topMargin:50,        // a small space from the top of the chart to the bars area..
+        bottomMargin:50,
+        xAxisTop:null,
+        DADP:2,              // digits after decimal point
+        roundTarget: 0.1,     // for example 1.485 => 1.4 or 1.5.  2.36 => 2.30 or 2.40, depends if we round up or down.
+        lowestIsZero:true,   // compel the lowest value to be zero.
+    }
+    hasHeight=false;
+    isShowTable=false;
+    indexOfDataPopUp=-1;
     
     asset: Asset;
     assetData: AssetData;
@@ -37,6 +55,11 @@ export class AssetSummaryComponent implements OnInit {
     isShowAssetSummary:boolean=true;
     isShowAssetPerformance:boolean;
     isShowAssetTechnicals:boolean;
+    isMinute;
+    isDay;
+    isWeek;
+    isMonth;
+    isRefreshPerformanceData=true;
     oneWeekPerformance:AssetPerformance={};
     oneMonthPerformance:AssetPerformance={};
     threeMonthPerformance:AssetPerformance={};
@@ -47,10 +70,12 @@ export class AssetSummaryComponent implements OnInit {
     MA200:string;
     RSI:number;
     overallTrend;
+    isShowHistoricData=false;
     isShowExplanation=false;
+    
 
-  constructor(private assetsService: AssetsService, private assetDataService: AssetDataService,
-              private route: ActivatedRoute, private location: Location) {}
+  constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private historicalReturnService:HistoricalReturnService,  
+              private route: ActivatedRoute, private location: Location, private charts: ChartsService, private sanitizer: DomSanitizer) {}
     
     
 
@@ -62,284 +87,152 @@ export class AssetSummaryComponent implements OnInit {
     .subscribe(asset => {this.asset = asset;
                          this.asset.digitsAfterDecimalPoint==null ? this.asset.digitsAfterDecimalPoint=2 : this.asset.digitsAfterDecimalPoint; // Configure how many digits to show after the decimal point
                          this.isShowAssetData=false;
-                         clearInterval(this.interval); 
+                         this.isShowHistoricData=false;
+                         this.isRefreshPerformanceData=true;
+                         this.resetTimeFrame();
+                         /*clearInterval(this.interval);*/ 
                          this.assetSummaryOn();
         
                          this.getAssetData(this.asset);
-                         this.interval=setInterval(()=>{this.getAssetData(this.asset)},2000000);
+                         /*this.interval=setInterval(()=>{this.getAssetData(this.asset)},2000000);*/
                         }
                );
       
       
-  }
+    }
+    
+//    ngAfterViewChecked() {
+//        if(this.chart && !this.hasHeight){
+//            this.hasHeight=true;
+//            this.chartProperties.totalChartHeight=350;
+//            this.chartProperties.totalChartWidth=650;
+////            this.createPerformanceChart();
+//            
+////            let windowWidth=this.windowService.getNativeWindow().innerWidth;
+////            windowWidth <= 400 ? this.alreadyCompensatedForMobile = true : this.alreadyCompensatedForDesktop = true;
+//        }
+//   }
     
     
     
     getAssetData(asset:Asset):void{
        
-        AssetSummaryComponent.counter++;    // for checking how much times this component was viewed...
         
         this.observableAssetData = this.assetDataService.getAssetData(asset);
         this.observableAssetData.subscribe(assetData => {this.assetData = assetData;
                                                          this.isShowAssetData=true;
-                                                         this.getAssetHistoricData(asset)}) ;       
+                                                         this.getAssetHistoricData(asset,'daily',95)}) ;       
         
         }
     
     
-    getAssetHistoricData(asset:Asset):void{
+    getAssetHistoricData(asset:Asset, timeFrame:string, maxRecords:number):void{
        
-        this.observableCandlestick = this.assetDataService.getAssetHistoricData(asset);
+        this.observableCandlestick = this.assetDataService.getAssetHistoricData(asset,timeFrame,maxRecords);
         this.observableCandlestick.subscribe(candlesticks => {
             
             this.candlestick = candlesticks;
+            console.log(this.candlestick)
+            this.charts.createLineChart(this.candlestick, this.chartProperties, 'close', true);
+            this.generateSafeTransform(this.candlestick);
+            this.isShowTable=true;
+            
+            
             this.MA50=this.calculateMovingAverage(50,this.candlestick);
-            this.MA100=this.calculateMovingAverage(100,this.candlestick);
-            this.MA200=this.calculateMovingAverage(200,this.candlestick);
+            this.MA100=this.calculateMovingAverage(80,this.candlestick);
+            this.MA200=this.calculateMovingAverage(80,this.candlestick);
             this.RSI=this.calculateRSI(14,this.candlestick);
-            this.overallTrend=this.calculateOverallTrend(this.MA50,this.MA100,this.MA200,this.assetData.closeAsNumber);
+            this.overallTrend=this.calculateOverallTrend(this.MA50,this.MA100,this.MA200,this.assetData.lastPriceAsNumber);
             
-            this.getAssetHistoricDataForWeeks(1,this.candlestick,this.assetData).then(candlesticks=>{   // one week.   
-                
-                this.oneWeekPerformance.return=this.calculateReturnForPeriod(candlesticks,this.assetData);
-                this.oneWeekPerformance.low=this.findPeriodLow(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.oneWeekPerformance.high=this.findPeriodHigh(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.oneWeekPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
-                this.oneWeekPerformance.redWidth=100-this.oneWeekPerformance.greenWidth;
-                this.oneWeekPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneWeekPerformance.low,candlesticks);
-                this.oneWeekPerformance.highReturn=this.calculatePeriodHighReturn(this.oneWeekPerformance.high,candlesticks);
-            });
-               
-            this.getAssetHistoricDataForMonths(1,this.candlestick,this.assetData).then(candlesticks=>{    // one month
-                
-                this.oneMonthPerformance.return=this.calculateReturnForPeriod(candlesticks,this.assetData);
-                this.oneMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.oneMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.oneMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
-                this.oneMonthPerformance.redWidth=100-this.oneMonthPerformance.greenWidth;
-                this.oneMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneMonthPerformance.low,candlesticks);
-                this.oneMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.oneMonthPerformance.high,candlesticks);
-                
+            if(this.isRefreshPerformanceData){
+            
+                this.historicalReturnService.getAssetHistoricDataForWeeks(1,this.candlestick).then(candlesticks=>{   // one week.   
+                    
+                    this.oneWeekPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.oneWeekPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneWeekPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneWeekPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
+                    this.oneWeekPerformance.redWidth=100-this.oneWeekPerformance.greenWidth;
+                    this.oneWeekPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneWeekPerformance.low,candlesticks);
+                    this.oneWeekPerformance.highReturn=this.calculatePeriodHighReturn(this.oneWeekPerformance.high,candlesticks);
                 });
-            
-            this.getAssetHistoricDataForMonths(3,this.candlestick,this.assetData).then(candlesticks=>{    // three months
-            
-                this.threeMonthPerformance.return=this.calculateReturnForPeriod(candlesticks,this.assetData);
-                this.threeMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.threeMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.threeMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
-                this.threeMonthPerformance.redWidth=100-this.threeMonthPerformance.greenWidth;
-                this.threeMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.threeMonthPerformance.low,candlesticks);
-                this.threeMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.threeMonthPerformance.high,candlesticks);
-                });
+                   
+                this.historicalReturnService.getAssetHistoricDataForMonths(1,this.candlestick).then(candlesticks=>{    // one month
+                    
+                    this.oneMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.oneMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
+                    this.oneMonthPerformance.redWidth=100-this.oneMonthPerformance.greenWidth;
+                    this.oneMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneMonthPerformance.low,candlesticks);
+                    this.oneMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.oneMonthPerformance.high,candlesticks);
+                    
+                    });
                 
-            this.getAssetHistoricDataForMonths(6,this.candlestick,this.assetData).then(candlesticks=>{    // six months
-            
-                this.sixMonthPerformance.return=this.calculateReturnForPeriod(candlesticks,this.assetData);
-                this.sixMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.sixMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.sixMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
-                this.sixMonthPerformance.redWidth=100-this.sixMonthPerformance.greenWidth;
-                this.sixMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.sixMonthPerformance.low,candlesticks);
-                this.sixMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.sixMonthPerformance.high,candlesticks);
-                });
-            
-            this.getAssetHistoricDataForMonths(9,this.candlestick,this.assetData).then(candlesticks=>{    // nine months
-            
-                this.nineMonthPerformance.return=this.calculateReturnForPeriod(candlesticks,this.assetData);
-                this.nineMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.nineMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                this.nineMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
-                this.nineMonthPerformance.redWidth=100-this.nineMonthPerformance.greenWidth;
-                this.nineMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.nineMonthPerformance.low,candlesticks);
-                this.nineMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.nineMonthPerformance.high,candlesticks);
-                });
-            
-            });                                                                     
-        
-        }
-    
-    
-    
-    
-    
-    getAssetHistoricDataForWeeks(numberOfWeeks:number, candlestickArr:Candlestick[], assetData:AssetData):Promise<Candlestick[]>{
-        
-        let date = new Date();
-        let currentMonth=date.getMonth();  // January is 0, February is 1...
-        let currentYear=date.getFullYear();
-        let baseDay;
-        let baseMonth;
-        let baseYear=currentYear;
-        let indexInArr:number;
-        
-        let daysInMonth=[31,28,31,30,31,30,31,31,30,31,30,31];
-        
+                this.historicalReturnService.getAssetHistoricDataForMonths(3,this.candlestick).then(candlesticks=>{    // three months
                 
-                baseDay=date.getDate()-7*numberOfWeeks;   // for a weekly check, the day of month should be equal to today minus 7
+                    this.threeMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.threeMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.threeMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.threeMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
+                    this.threeMonthPerformance.redWidth=100-this.threeMonthPerformance.greenWidth;
+                    this.threeMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.threeMonthPerformance.low,candlesticks);
+                    this.threeMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.threeMonthPerformance.high,candlesticks);
+                    });
+                    
+                this.historicalReturnService.getAssetHistoricDataForMonths(3,this.candlestick).then(candlesticks=>{    // six months
                 
-                if(baseDay>0){
-                        baseMonth=currentMonth+1;
-                }else{
-                        baseDay=date.getDate()+daysInMonth[(currentMonth-1+12)%12]-7*numberOfWeeks;   // we need the number of days in last month.. number inside [] represent index...
-                        baseMonth=currentMonth>0 ? currentMonth : 12; // need the number to represent a month and not index in array => January is 1
-                        baseYear=baseMonth==12 ? baseYear-1 : baseYear; // if baseMonth==12 then we're in the first days of January and a week before would be last year  
-                    }
-            
-                indexInArr=candlestickArr.length-numberOfWeeks*5;   // 5 trading days in a week, times the number of weeks...
+                    this.sixMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.sixMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.sixMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.sixMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
+                    this.sixMonthPerformance.redWidth=100-this.sixMonthPerformance.greenWidth;
+                    this.sixMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.sixMonthPerformance.low,candlesticks);
+                    this.sixMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.sixMonthPerformance.high,candlesticks);
+                    });
                 
-            
-        let indexToSliceArr=this.findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,indexInArr,candlestickArr);
-        let arrForPeriod=candlestickArr.slice(indexToSliceArr);
-        
-        return Promise.resolve(arrForPeriod);
-        
-        }
-    
-    
-    
-    
-    
-    getAssetHistoricDataForMonths(numberOfMonths:number, candlestickArr:Candlestick[], assetData:AssetData):Promise<Candlestick[]>{
-        
-        let date = new Date();
-        let currentMonth=date.getMonth();  // January is 0, February is 1...
-        let currentYear=date.getFullYear();
-        let baseDay;
-        let baseMonth=((currentMonth+1-numberOfMonths)+12)%12 > 0 ? ((currentMonth+1-numberOfMonths)+12)%12 : 12;
-        let baseYear;       
-        let indexInArr:number;
-        
-        if(currentMonth<=numberOfMonths){
-            baseYear=currentYear-1;
-        }else{
-            baseYear=currentYear;
+                this.historicalReturnService.getAssetHistoricDataForMonths(3,this.candlestick).then(candlesticks=>{    // nine months
+                
+                    this.nineMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.nineMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.nineMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.nineMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
+                    this.nineMonthPerformance.redWidth=100-this.nineMonthPerformance.greenWidth;
+                    this.nineMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.nineMonthPerformance.low,candlesticks);
+                    this.nineMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.nineMonthPerformance.high,candlesticks);
+                    });
+                
             }
             
-        baseDay=date.getDate();                                 // for a monthly check, the day of month should be equal to today
-        indexInArr=candlestickArr.length-numberOfMonths*21;   // 21 trading days in a month, times the number of months...
-                
-        let indexToSliceArr=this.findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,indexInArr,candlestickArr);
-        let arrForPeriod=candlestickArr.slice(indexToSliceArr);
-        
-        
-        return Promise.resolve(arrForPeriod);
-        
-        }
-    
-    
-    
-    findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,indexToStartSearchingFrom,candlestickArr):number{
-        
-        
-        let indexInArr=indexToStartSearchingFrom;
-        let alreadyWasBigger=false;
-        let alreadyWasSmaller=false;
-        let alreadyWasInRightMonth=false;
-        let alreadyWasInRightYear=false;
-        let foundStartingDate=false;
-        
-        
-        while(!foundStartingDate){
-        
-            let dayOfTheMonth=candlestickArr[indexInArr].tradingDay.substring(8,10);
-            let candleMonth=Number(candlestickArr[indexInArr].tradingDay.substring(5,7));
-            let candleYear=candlestickArr[indexInArr].tradingDay.substring(0,4);
-        
+            this.isShowHistoricData=true;
             
-            if(candleYear==baseYear){
+         });                                                                     
+        
+      }
+    
+    
+        
+    
+    
+    findPeriodLow(candlesticks:Candlestick[],assetData:AssetData, asset:Asset){
+        
+        let candlesticksArr=candlesticks.slice();   // clone the candlesticks array so that changes of candlesticksArr won't affect it
+        let basePrice=candlesticksArr[0].close;
+        let multiplier;
+        if(basePrice/assetData.lastPriceAsNumber<5){
+            multiplier=1;
+        }else if(basePrice/assetData.lastPriceAsNumber<50){
+              multiplier=10;
+         }else if(basePrice/assetData.lastPriceAsNumber<500){
+               multiplier=100;
+          }else if(basePrice/assetData.lastPriceAsNumber<5000){
+              multiplier=1000;
+           }else if(basePrice/assetData.lastPriceAsNumber<50000){
+               multiplier=10000;
+            }
             
-            
-                    if(candleMonth==baseMonth){
-                        
-                        alreadyWasInRightMonth=true;
-                        
-                        if(dayOfTheMonth==baseDay){     // found the right date. calculate the return.
-                                /*console.log("equal: "+candlestickArr[indexInArr].tradingDay);*/
-                                return indexInArr;
-                        }else if(dayOfTheMonth>baseDay){  // go back  a couple of days for the right date.
-                                    /*console.log("bigger: "+candlestickArr[indexInArr].tradingDay);*/
-                                
-                                    if(alreadyWasSmaller){
-                                                /*console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);*/
-                                                return indexInArr-1; 
-                                    }else{
-                                    
-                                                 indexInArr--;
-                                                 alreadyWasBigger=true;
-                                        }
-                            
-                            }else{
-                            
-                                    if(alreadyWasBigger){
-                                            /*console.log("equal: "+candlestickArr[indexInArr].tradingDay);*/
-                                            return indexInArr; 
-                                    }else{
-                                            /*console.log("smaller: "+candlestickArr[indexInArr].tradingDay);*/
-                                            indexInArr++;
-                                            alreadyWasSmaller=true;
-                                        }
-                            
-                             }
-                    
-                   
-                        
-                        }else if(candleMonth<baseMonth){
-                                
-                                if(alreadyWasInRightMonth){
-                                            /*console.log("equal: "+candlestickArr[indexInArr].tradingDay);*/
-                                            return indexInArr; 
-                                    }else{
-                                            /*console.log("month: go forward");*/
-                                            indexInArr++;
-                                    }
-                         }else{
-                        
-                                if(alreadyWasInRightMonth){
-                                            /*console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);*/
-                                            return indexInArr-1; 
-                                    }else{
-                                            /*console.log("month: keep going back");*/
-                                            indexInArr--;
-                                    }
-                        
-                        
-                            }
-                
-                }else {                                  // go back to the year before. example: we need 11/16 but we're at 01/17.
-                        
-                        if(alreadyWasInRightYear){
-                                /*console.log("equal: "+candlestickArr[indexInArr].tradingDay);*/
-                                return indexInArr; 
-                        }else{
-                    
-                                /*console.log("year: keep going back");*/
-                                indexInArr--;
-                            }
-                }
-            
-        }
         
-        
-        
-   }
-    
-    
-    
-    
-    calculateReturnForPeriod(candlestickArr:Candlestick[], assetData:AssetData){
-        /*console.log("close beginning: "+candlestickArr[0].tradingDay+" "+candlestickArr[0].close);*/
-        let returnForPeriod= 100*((assetData.closeAsNumber/candlestickArr[0].close)-1);
-        
-        return returnForPeriod;
-        
-        }
-        
-    
-    
-    findPeriodLow(candlesticks:Candlestick[],assetData:AssetData){
-        
-        let candlesticksArr=candlesticks.slice();   // clone the candlesticks array so that changes of candlesticksArr won't affect it 
+        asset.type=="Currency" || asset.type=="Commodity" ? candlesticksArr.map(candlesticks=>{candlesticks.low>130 ? candlesticks.low/=multiplier: candlesticks.low }) : null;
         candlesticksArr.sort(compareSessionLow);
         let periodLow = candlesticksArr[0].low;
         
@@ -356,9 +249,23 @@ export class AssetSummaryComponent implements OnInit {
         }
     
     
-    findPeriodHigh(candlesticks:Candlestick[],assetData:AssetData){
+    findPeriodHigh(candlesticks:Candlestick[],assetData:AssetData, asset:Asset){
         
         let candlesticksArr=candlesticks.slice();
+        let basePrice=candlesticksArr[0].close;
+        let multiplier;
+        if(basePrice/assetData.lastPriceAsNumber<5){
+            multiplier=1;
+        }else if(basePrice/assetData.lastPriceAsNumber<50){
+              multiplier=10;
+         }else if(basePrice/assetData.lastPriceAsNumber<500){
+               multiplier=100;
+          }else if(basePrice/assetData.lastPriceAsNumber<5000){
+              multiplier=1000;
+           }else if(basePrice/assetData.lastPriceAsNumber<50000){
+               multiplier=10000;
+            }
+        asset.type=="Currency" || asset.type=="Commodity" ? candlesticksArr.map(candlesticks=>{candlesticks.high>130 ? candlesticks.high/=multiplier: candlesticks.high }) : null;
         candlesticksArr.sort(compareSessionHigh);
         let periodHigh = candlesticksArr[0].high;
         
@@ -375,9 +282,23 @@ export class AssetSummaryComponent implements OnInit {
     
     calculatePeriodLowReturn(periodLow,candlestickArr:Candlestick[]){
 
-         periodLow=Number(periodLow.replace(/,/g,""));  // get rid of the: , for 1000s...
-         let periodLowReturn = 100*((periodLow/candlestickArr[0].close)-1);
-         let periodLowReturnAsString=periodLowReturn.toFixed(2)+"%";
+        let basePrice=candlestickArr[0].close; 
+        periodLow=Number(periodLow.replace(/,/g,""));  // get rid of the: , for 1000s...
+        let multiplier;
+        if(basePrice/periodLow<5){
+            multiplier=1;
+        }else if(basePrice/periodLow<50){
+              multiplier=10;                // TO FIX THE BULLSHIT OF BARCHART!!!!!!!!!!!!!!!!!!!!!!!!!
+         }else if(basePrice/periodLow<500){
+               multiplier=100;
+          }else if(basePrice/periodLow<5000){
+              multiplier=1000;
+           }else if(basePrice/periodLow<50000){
+               multiplier=10000;
+            }
+        this.asset.type=="Currency" || this.asset.type=="Commodity" ?  basePrice>130 ? basePrice/=multiplier : basePrice : null;
+        let periodLowReturn = 100*((periodLow/basePrice)-1);
+        let periodLowReturnAsString=periodLowReturn.toFixed(2)+"%";
          
         return  periodLowReturnAsString; 
             
@@ -385,8 +306,22 @@ export class AssetSummaryComponent implements OnInit {
         
     calculatePeriodHighReturn(periodHigh,candlestickArr:Candlestick[]){
         
+         let basePrice=candlestickArr[0].close; 
          periodHigh=Number(periodHigh.replace(/,/g,""));  // get rid of the: , for 1000s...   
-         let periodHighReturn = 100*((periodHigh/candlestickArr[0].close)-1);
+        let multiplier;
+        if(basePrice/periodHigh<5){
+            multiplier=1;
+        }else if(basePrice/periodHigh<50){
+              multiplier=10;                // TO FIX THE BULLSHIT OF BARCHART!!!!!!!!!!!!!!!!!!!!!!!!!
+         }else if(basePrice/periodHigh<500){
+               multiplier=100;
+          }else if(basePrice/periodHigh<5000){
+              multiplier=1000;
+           }else if(basePrice/periodHigh<50000){
+               multiplier=10000;
+            }
+         this.asset.type=="Currency" || this.asset.type=="Commodity" ?  basePrice>130 ? basePrice/=multiplier : basePrice : null;
+         let periodHighReturn = 100*((periodHigh/basePrice)-1);
          let periodHighReturnAsString=periodHighReturn.toFixed(2)+"%";
          
          return  periodHighReturnAsString; 
@@ -397,10 +332,10 @@ export class AssetSummaryComponent implements OnInit {
     
     calculateGreenWidth(candlesticks:Candlestick[],assetData:AssetData){
         
-        let periodLow=this.findPeriodLow(candlesticks,assetData);
-        let periodHigh=this.findPeriodHigh(candlesticks,assetData);
+        let periodLow=this.findPeriodLow(candlesticks,assetData,this.asset);
+        let periodHigh=this.findPeriodHigh(candlesticks,assetData,this.asset);
         let periodRange=periodHigh-periodLow;
-        let greenWidthAsNumber = 100*(assetData.closeAsNumber - periodLow)/periodRange;
+        let greenWidthAsNumber = 100*(assetData.lastPriceAsNumber - periodLow)/periodRange;
         let greenWidth = greenWidthAsNumber.toString()+"%";
         
         return greenWidthAsNumber;
@@ -409,11 +344,42 @@ export class AssetSummaryComponent implements OnInit {
     
     
     
+    switchTimeFrame(event){
+        
+        let timeFrame=event.target.innerHTML;
+        let maxRecords=300;
+    
+        timeFrame=='Minute' ? (this.isMinute=true, timeFrame='minutes') : this.isMinute=false;
+        timeFrame=='Day' ? (this.isDay=true, timeFrame='daily') : this.isDay=false;
+        timeFrame=='Week' ? (this.isWeek=true, timeFrame='weekly',maxRecords=200) : this.isWeek=false;
+        timeFrame=='Month' ? (this.isMonth=true, timeFrame='monthly', maxRecords=60) : this.isMonth=false;
+        
+        this.isRefreshPerformanceData=false;      // to skip all the performance calculations inside the getHistory method
+        
+        this.getAssetHistoricData(this.asset,timeFrame,maxRecords);
+    }
+    
+    
+    resetTimeFrame(){       // reset when user first visits the page or when he wants to see data of another asset..
+     
+        this.isDay=true;
+        this.isMinute=false;
+        this.isWeek=false;
+        this.isMonth=false;
+    }
+    
+    
+    
     calculateMovingAverage(duration:number, candlestickArr:Candlestick[]):string{
         
-        let sum:number=0;
+        console.log(candlestickArr.length); // log to the console the amount of data available
         
-        for(let i=200-duration ; i<200 ; i++){
+        if(duration==undefined || candlestickArr==undefined || duration>candlestickArr.length) return 'N/A';
+        
+        let sum:number=0;
+        let length=candlestickArr.length;
+        
+        for(let i=length-duration ; i<length ; i++){
             
             sum += candlestickArr[i].close;
                 
@@ -426,12 +392,16 @@ export class AssetSummaryComponent implements OnInit {
         }
     
     
-    calculateRSI(duration:number, candlestickArr:Candlestick[]):number{
+    
+    calculateRSI(duration:number, candlestickArr:Candlestick[]):any{
         
+        if(duration==undefined || candlestickArr==undefined || duration>candlestickArr.length) return 'N/A';
+        
+        let length=candlestickArr.length;
         let sessionGainSum:number=0;
         let sessionLossSum:number=0;
         
-        for(let i=200-duration ; i<200 ; i++){
+        for(let i=1 ; i<=duration ; i++){      // calculate first rsi.
             
             let sessionChange=candlestickArr[i].close-candlestickArr[i-1].close;
 
@@ -442,16 +412,37 @@ export class AssetSummaryComponent implements OnInit {
                 }
 
         }
+        
             
         let averageGain:number = sessionGainSum/duration;
         let averageLoss:number = sessionLossSum/duration;
         let RS:number = averageGain/-averageLoss;
-        let RSI:number = 100-(100/(1+RS));
+        let RSI:number = 100-(100/(1+RS));          // first RSI.
         
         
-        return RSI;
-        
+        for (let i = duration + 1; i < length; i++) {  // for smoothing
+            
+            let sessionChange = candlestickArr[i].close-candlestickArr[i-1].close;
+            
+            if (sessionChange > 0) {
+                averageGain = (averageGain*(duration-1) + sessionChange)/duration;
+                averageLoss = (averageLoss*(duration-1) + 0)/duration;
+                
+            } else {
+                averageGain = (averageGain*(duration-1) + 0)/duration;
+                averageLoss = (averageLoss*(duration-1) + sessionChange)/duration;
+            }
+            
+            RS = (averageGain / -averageLoss);
+            RSI = 100 - (100 / (1 + RS));
         }
+        
+        
+            return RSI;
+        
+     }
+    
+    
     
     
     
@@ -461,7 +452,6 @@ export class AssetSummaryComponent implements OnInit {
         let ma50=Number(ma50str.replace(/,/g,""));
         let ma100=Number(ma100str.replace(/,/g,""));
         let ma200=Number(ma200str.replace(/,/g,""));
-        /*console.log(ma50+" ; "+ma100+" : "+ma200);*/
         
         
         if(lastPrice>ma50 && lastPrice>ma100){
@@ -506,9 +496,6 @@ export class AssetSummaryComponent implements OnInit {
             this.isShowAssetSummary=false;
             this.isShowAssetTechnicals=false;
             this.isShowAssetPerformance=true;
-        
-            AssetSummaryComponent.tableCounter++;
-        
     }
     
     assetSummaryOn():void{
@@ -516,9 +503,6 @@ export class AssetSummaryComponent implements OnInit {
             this.isShowAssetPerformance=false;
             this.isShowAssetTechnicals=false;
             this.isShowAssetSummary=true;
-        
-            AssetSummaryComponent.tableCounter++;
-        
         }
     
         
@@ -527,22 +511,32 @@ export class AssetSummaryComponent implements OnInit {
             this.isShowAssetSummary=false;
             this.isShowAssetPerformance=false;
             this.isShowAssetTechnicals=true;
-        
-            AssetSummaryComponent.tableCounter++;
-        
         }
 
     
     
     getChangeColor() {
-    if(this.assetData.netChange>0) {
-      return "green";
-    } else if(this.assetData.netChange<0) {
-      return "red";
-    } else {
-      return "black";  
-    }    
-  }
+        if(this.assetData.netChange>0) {
+          return "green";
+        } else if(this.assetData.netChange<0) {
+          return "red";
+        } else {
+          return "black";  
+        }    
+    }
+    
+    
+    getRSIColor(){
+      
+        if(this.RSI>70){
+            return 'red';   
+        }else if(this.RSI<30){
+            return 'green';   
+        }else{
+            return 'black';   
+        }
+        
+    }
     
     
     getStyle(elementValue) {
@@ -627,6 +621,17 @@ export class AssetSummaryComponent implements OnInit {
       
    }
     
+    generateSafeTransform(arr:any[]){   // must use the DomSanitizer here otherwise [style.transform] won't work
+        for(let i=0; i<arr.length; i++){
+            arr[i].safeTransform=this.sanitizer.bypassSecurityTrustStyle('rotate('+arr[i].degrees+'deg)')
+            arr[i].safeTransformOppositie=this.sanitizer.bypassSecurityTrustStyle('rotate('+-arr[i].degrees+'deg)')
+        }
+    }
+    
+    
+    toggleDataPopUp(i:number){
+        this.indexOfDataPopUp>0 ? this.indexOfDataPopUp=-1 : this.indexOfDataPopUp=i;
+    }
     
 
 }

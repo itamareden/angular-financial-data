@@ -2,6 +2,135 @@
 	font-family:segoe;
 }
 
+
+
+
+
+
+
+
+
+
+.main-wrapper{
+	width:850px; 
+	border:1px solid #255887;
+	margin:100px auto;
+	border-radius:5px 5px 0 0;
+}
+
+.chart-wrapper{
+	position:relative; 
+	width:650px; 
+	height:350px; 
+	border-left:1px solid black;
+	margin:60px 0px 40px 50px;
+	cursor: crosshair;	
+}
+
+.line{
+	position:absolute;  
+	transform-origin: top left;
+	background: #168fe9;
+}
+
+.x-axis{
+	width:710px; 
+	left:-50px; 
+	height:1px; 
+	border-top:1px solid black;  
+	position:absolute;
+}
+
+.internal-axis{
+	width:660px; 
+	height:1px; 
+	border-top:1px dotted grey;  
+	position:absolute;
+}
+
+.internal-axis-value{
+	left:-35px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+}
+
+.horizontal-grid-line{
+	position:absolute;
+	width:660px;	/* should be equal to the width of the internal axises  */
+	border-bottom: 1px dashed black;
+}
+
+.vertical-grid-line{
+	position:absolute;
+	height:100%;
+	border-left: 1px dashed black;
+}
+
+.Y-axis-orientation{
+	width:50px;
+	left:-50px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+	background:green;
+	color:white;
+	text-align:center;
+}
+
+.small-circle{
+	position:absolute;
+	width:6px;
+	height:6px;
+	border-radius: 3px;
+	background: #66d9ff;
+	cursor:pointer;
+}
+
+.asset-name{
+	position:absolute;
+	top:-30px;
+	font-size:16px;
+	color:black;
+	text-align:center;
+	cursor:pointer;
+	font-weight:bold;
+}
+
+
+.data-square-pop-up{
+	position:absolute;
+	left:20px;
+	top:60px;
+	z-index:1;
+	font-weight:bold;
+	font-size:13px;
+	border: 1px solid black;
+	width:90px;
+	/* background: #ffbf80; */
+	background: #dce4f2;
+	padding: 3px 10px;
+}
+
+
+.asset-return{
+	position:absolute;
+	text-align:center;
+	font-size:14px;
+	color:black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .asset-name-headline{
 	font-size:40px; 
 	border-bottom:1px solid black;
@@ -58,7 +187,12 @@
 	display:block; 
 	position:relative; 
 	max-width:50%;
+	/* height:45px; */
 	margin:50px 0;
+	font-size:17px;
+	border-bottom: 2px solid #00aaff;
+	color:black;
+	
 }
 
 .switch-view-button{
@@ -190,6 +324,28 @@
 	top:90px; 
 	right:20px; 
 	z-index:3;
+}
+
+.timeframe-wrapper{
+	float:right; 
+	border-bottom:2px solid #42ddae; 
+	width:100%
+}
+
+.timeframe-button{
+	float:right; 
+	background:white;
+	border:0px solid white; 
+	color: #168fe9; 
+	cursor:pointer;
+	padding:3px 5px;
+	margin:10px 8px;
+}
+
+.timeframe-button-active{
+	background:#168fe9;
+	color:white;
+	border-radius:5px;
 }
 
 

@@ -1,0 +1,24 @@
+
+<div *ngIf="isShowComponent" class="main-wrapper">
+	<div class="table-header">Stock Indices</div>
+	<div *ngIf="isShowTable" class="chart-wrapper">
+		<div class="x-axis" [style.top]="xAxisTop+'px'"></div>
+		<div *ngFor="let asset of ( assetsForPerformance );">	
+			<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+			<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+			[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'" ></div>
+			<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.netPercChng.toFixed(2)}}%</div>
+		</div> 	
+	</div>
+	
+	<div *ngIf="isShowStatistics" class="statistics-wrapper"> 
+		<div class="statistic" style="margin-left:0;"><span style="color:green">Up: </span>{{advancers.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic"><span style="color:red">Down: </span>{{decliners.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic">Unchanged: {{unchanged.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic">Average: {{averagePercChng.toFixed(2)}}%<span class="delimiter">|</span></div>
+		<div class="statistic">Breadth: <span style="font-weight:bold;">{{breadth}}</span></div>
+		<div style="clear:both"></div>
+	</div>
+</div>
+
+

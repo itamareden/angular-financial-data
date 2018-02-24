@@ -1,0 +1,13 @@
+<page-header></page-header>
+
+<div style='width:200px; margin:100px auto;'>
+	<div style='margin-top:20px;' *ngFor="let item of ( ilsPairs )">
+		<div style='float:left; margin-right:20px;'>{{item.name}}</div>
+		<div style='float:left;'>{{item.lastPrice.toFixed(2)}}</div>
+		<div style='float:left;' [style.color]="item.netChangePercent>0 ? 'green':'red'">{{item.dayReturn.toFixed(2)}}%</div>
+		<div style='float:left;' [style.color]="item.netChangePercent>0 ? 'green':'red'">{{item.yearReturn.toFixed(2)}}%</div>
+		<div style='clear:both'></div>
+	</div>
+	<div>{{averageDayReturn.toFixed(2)}}</div>
+	<div>{{averageYearReturn.toFixed(2)}}</div>
+</div>

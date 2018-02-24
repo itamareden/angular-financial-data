@@ -58,7 +58,12 @@
 	display:block; 
 	position:relative; 
 	max-width:50%;
+	/* height:45px; */
 	margin:50px 0;
+	font-size:17px;
+	border-bottom: 2px solid #00aaff;
+	color:black;
+	
 }
 
 .switch-view-button{
@@ -190,6 +195,28 @@
 	top:90px; 
 	right:20px; 
 	z-index:3;
+}
+
+.timeframe-wrapper{
+	float:right; 
+	border-bottom:2px solid #42ddae; 
+	width:100%
+}
+
+.timeframe-button{
+	float:right; 
+	background:white;
+	border:0px solid white; 
+	color: #168fe9; 
+	cursor:pointer;
+	padding:3px 5px;
+	margin:10px 8px;
+}
+
+.timeframe-button-active{
+	background:#168fe9;
+	color:white;
+	border-radius:5px;
 }
 
 

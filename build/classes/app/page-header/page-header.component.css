@@ -1,10 +1,8 @@
-
-
-
 .page-header-wrapper{
 	line-height:80px; 
 	height:80px; 
 	border-bottom:3px solid #00e6e6;
+	opacity:0.95;
 }
 
 
@@ -207,7 +205,3 @@
 	}
 	
 }
-	
-	
-	
-

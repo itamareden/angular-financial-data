@@ -22,7 +22,7 @@
 			<section *ngIf="isShowAssetData">
 			
 				<p class="asset-name-headline" style="padding-left:15px">{{asset.nameToShow}}</p>
-			    <div class="pull-left asset-rate"> {{assetData.close}}</div>
+			    <div class="pull-left asset-rate"> {{assetData.lastPrice}}</div>
 			    <div class="pull-left">
 				    <div class="pull-left asset-daily-change" style="padding-top:8px;" [style.color]="getChangeColor()">{{getAssetChangeSign()}}{{assetData.netChangePercent.toFixed(2)}}%</div>
 				    <div class="pull-right asset-daily-change" style="padding-top:8px;" [style.color]="getChangeColor()" ><span style="font-size:24px;vertical-align:top;">(</span>{{getAssetChangeSign()}}{{assetData.netChange}}<span style="font-size:24px;vertical-align:top;">)</span></div>
@@ -69,7 +69,7 @@
 			  
 			  
 			    <section *ngIf="isShowAssetPerformance" style="border-top:2px solid #42ddae; position:relative; padding-bottom:40px;">
-			    
+			    <div *ngIf="isShowHistoricData">
 				    <div *ngIf="isShowExplanation">
 						<asset-performance-bar-explanation [isShowLastPrice]="'true'" [lastPriceLeft]="40" [positionInExplanationsArr]="1"></asset-performance-bar-explanation>
 					</div>
@@ -110,17 +110,23 @@
 					    [sessionHighReturn]="nineMonthPerformance.highReturn" [greenWidth]="nineMonthPerformance.greenWidth" [redWidth]="nineMonthPerformance.redWidth"></asset-performance-bar>
 						</div>
 					</div>    
-
+				</div>
 			    </section>
 			    
 			    
 			    <section *ngIf="isShowAssetTechnicals" style="border-top:2px solid #42ddae;">
-			    
+			    	<div class='timeframe-wrapper'>
+				    	<div class='timeframe-button' [class.timeframe-button-active]="isMonth" (click)="switchTimeFrame($event)">Month</div>
+				    	<div class='timeframe-button' [class.timeframe-button-active]="isWeek" (click)="switchTimeFrame($event)">Week</div>
+				    	<div class='timeframe-button' [class.timeframe-button-active]="isDay" (click)="switchTimeFrame($event)">Day</div>
+				    	<div class='timeframe-button' [class.timeframe-button-active]="isMinute" (click)="switchTimeFrame($event)">Minute</div>
+			    	</div>
+			    	<div style='clear:both'></div>
 				    <div class="pull-left asset-data-list">
 					    <div class='asset-data-div'>MA 50 <span class='pull-right'>{{MA50}}</span></div>
 					    <div class='asset-data-div'>MA 100 <span class='pull-right'>{{MA100}}</span></div>
 					    <div class='asset-data-div'>MA 200 <span class='pull-right'>{{MA200}}</span> </div>
-					    <div class='asset-data-div'>RSI <span class='pull-right'>{{RSI.toFixed(2)}}</span></div>
+					    <div class='asset-data-div'>RSI <span class='pull-right' [style.color]='getRSIColor()'>{{RSI.toFixed(2)}}</span></div>
 					    <div class='asset-data-div'>Trend <span class='pull-right'>{{overallTrend}}</span></div>
 				    </div>
 				    
@@ -136,6 +142,13 @@
   		<div class="col-md-4" ></div>
   
      </div>
+     
+     <div class="row">
+	
+		<div class="col-xs-12" style="margin-bottom:100px;"></div>
+		
+	</div>	
+     
   
 </div>
   

@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 })
 export class AssetsTableComponent implements OnInit {
         
-    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^XAUUSD,^XAGUSD,HGQ17,CLU17,QAV17";
+    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^NZDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^USDHUF,^XAUUSD,^XAGUSD,HGH18,CLG18,QAG18,ZWH18";
     observableAssetsTable: Observable<AssetInAssetsTable[]>;
     allAssets:AssetInAssetsTable[];
     forexMajorsAssets:AssetInAssetsTable[];
@@ -42,7 +42,7 @@ export class AssetsTableComponent implements OnInit {
     
     getAssetsTableData(symbolsInURL:string): void {
     
-        this.observableAssetsTable = this.assetDataService.getAssetsDataForTable(symbolsInURL);
+        this.observableAssetsTable = this.assetDataService.getMultipleAssetsData(symbolsInURL);
         this.observableAssetsTable.subscribe(assetsData => {
             
             this.allAssets = assetsData;
@@ -52,9 +52,9 @@ export class AssetsTableComponent implements OnInit {
                 
                 if(asset.digitsAfterDecimalPoint!=null){
                     item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
-                 }else{
+                }else{
                         item.digitsAfterDecimalPoint=2;
-                       }
+                }
                 
                 item.lowReturn=(100*(item.low-item.previousClose)/item.previousClose).toFixed(2)+'%';
                 item.highReturn=(100*(item.high-item.previousClose)/item.previousClose).toFixed(2)+'%';
@@ -69,9 +69,9 @@ export class AssetsTableComponent implements OnInit {
             
             });
             
-            this.forexMajorsAssets=this.allAssets.slice(0,5);
-            this.forexExoticAssets=this.allAssets.slice(5,10);
-            this.commoditiesAssets=this.allAssets.slice(10,15);
+            this.forexMajorsAssets=this.allAssets.slice(0,6);
+            this.forexExoticAssets=this.allAssets.slice(6,12);
+            this.commoditiesAssets=this.allAssets.slice(12,18);
             
             this.isShowTable=true;
             

@@ -37,6 +37,7 @@ li {
 .row-in-table{
 	border-left:1px solid #255887; 
 	border-right:1px solid #255887;	
+	border-bottom:1px solid #255887;
 }
 
 .last-row{

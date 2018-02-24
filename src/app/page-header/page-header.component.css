@@ -1,54 +1,62 @@
-
-
-
 .page-header-wrapper{
 	line-height:80px; 
 	height:80px; 
 	border-bottom:3px solid #00e6e6;
+	opacity:0.95;
+	position:relative;
+	z-index:1229;
+	font-family: segoe;
 }
 
-
-.header-buttons-wrapper{
+.all-topics-wrapper{
 	margin:auto; 
 	position:absolute; 
 	top:0; 
 	bottom:0; 
 	left:0; 
 	right:0; 
-	width:750px; 
+	width:500px; 
+	height:80px;
 }
 
-.header-button-div{
-	display:inline; 
-	margin-right:140px;
-	cursor:pointer;
+.topic-wrapper{
+	position: relative; 
+	width:120px; 
+	height:80px;
 }
 
-.header-button-span{
-	border-radius:3px; 
-	padding:4px 6px; 
-	font-size:20px;
-	font-family: segoe;
+.header-topic{
+	font-weight:bold;  
+	padding-left:20px; 
+	font-size:22px;
 }
 
-.for-home-page{
+.list-wrapper{
+	width:200px; 
 	color: black;
-}
-
-.for-home-page:hover{
-	background: black;
-	color: white;
-	transition:1s all;
-}
-
-.for-regular-page{
-	color: white;
-}
-
-.for-regular-page:hover{
+	position:relative; 
+	top:1px;
+	font-weight: bold;
+	z-index:100;
 	background: white;
-	color: black;
-	transition:1s all;
+	cursor:pointer;
+	border: 1px solid black;
+	border-bottom: 0px solid black;
+}
+
+.item{
+	line-height:40px;
+	border-bottom: 1px solid black;
+	text-align: left;
+	padding-left:20px;
+	display:block;
+	cursor:pointer;
+	font-size:16px;
+}
+
+.item:hover{
+	background: #585859;
+	color:white;
 }
 
 
@@ -81,10 +89,6 @@
 	top:25px;
 }
 
-.drop-down{
-	
-}
-
 
 .menu-wrapper{
 	display:none;
@@ -113,88 +117,10 @@
 
 
 
-@media only screen and (max-width: 1160px) {
-
-	.header-button-div{
-		margin-right:100px;
-	}
-	
-	.header-buttons-wrapper{
-		width:630px;
-	}
-	
-	.bear-logo{
-		font-size:23px;
-	}
-
-}
-
-
-
-@media only screen and (max-width: 1030px) {
-
-	.header-button-div{
-		margin-right:80px;
-	}
-	
-	.header-buttons-wrapper{
-		width:570px;
-	}
-	
-	.bear-logo{
-		font-size:22px;
-	}
-
-}
-
-
-
-
-@media only screen and (max-width: 950px) {
-
-	
-	/* .header-button-div{
-		margin-right:30px;
-		padding:0; 
-		border-radius:0; 
-		border:0;
-		font-size:12px;
-	} */
-	
-	.header-button-div{
-		margin-right:60px;
-	}
-	
-	.header-buttons-wrapper{
-		width:510px;
-	}
-	
-
-}
-
-
-
-@media only screen and (max-width: 840px) {
-
-	.header-button-div{
-		margin-right:53px;
-	}
-	
-	.header-button-span{
-		font-size:17px;
-	}
-	
-	.header-buttons-wrapper{
-		width:450px;
-	}
-	
-}
-
-
 
 @media only screen and (max-width: 780px) {
 
-	.header-buttons-wrapper{
+	.all-topics-wrapper{	 /* important... */
 		display:none;
 	}
 	
@@ -207,7 +133,3 @@
 	}
 	
 }
-	
-	
-	
-

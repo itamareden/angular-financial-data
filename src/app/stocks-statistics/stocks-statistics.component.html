@@ -1,0 +1,38 @@
+
+<div *ngIf="isShowComponent" class="main-wrapper">
+	<div class="table-header">Stock Indices</div>
+	<div (click)='toggleSettings()' class='settings-icon'><menu-bar style="font-size:3px"></menu-bar></div>
+	<div *ngIf='isSettings' class='settings-wrapper'>
+		<div class='settings-div'>
+			<div  class='check-box' (click)="toggleChartData()">
+				<div class='v-mark'>
+					<v-mark *ngIf='isShowYearlyChngV'></v-mark>
+				</div>
+			</div>
+			<div class='check-box-note'>Show Yearly change</div>
+			<div style='clear:both'></div>
+		</div>
+	</div>
+	<div  class="chart-wrapper" #chart>
+		<div *ngIf="isShowTable">
+			<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'"></div>
+			<div *ngFor="let asset of ( assetsForPerformance );">	
+				<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+				<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+				[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'" ></div>
+				<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.dataToShow.toFixed(2)}}%</div>
+			</div> 
+		</div>	
+	</div>
+	
+	<div *ngIf="isShowStatistics" class="statistics-wrapper"> 
+		<div class="statistic" style="margin-left:0;"><span style="color:green">Up: </span>{{advancers.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic"><span style="color:red">Down: </span>{{decliners.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic">Unchanged: {{unchanged.toFixed(1)}}%<span class="delimiter">|</span></div>
+		<div class="statistic average">Average: {{averagePercChng.toFixed(2)}}%<span class="delimiter">|</span></div>
+		<div class="statistic">Breadth: <span style="font-weight:bold;">{{breadth}}</span></div>
+		<div style="clear:both"></div>
+	</div>
+</div>
+
+

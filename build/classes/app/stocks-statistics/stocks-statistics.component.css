@@ -1,0 +1,166 @@
+
+*{
+	font-family:segoe;
+}
+
+
+.main-wrapper{
+	/* float:left; */ 
+	width:650px; 
+	border:1px solid #255887;
+	margin-top:10px;
+	margin-left:15px;
+	border-radius:5px 5px 0 0;
+}
+
+
+.table-header{
+	text-align:center; 
+	color:white; 
+	font-weight:bold; 
+	font-size:24px; 
+	background:linear-gradient(to right,#255887,#2389c4);  
+	border:1px solid #255887;
+	border-radius:5px 5px 0 0;
+	height:50px;
+	line-height:50px;
+	vertical-align:text-center;
+}
+
+
+.chart-wrapper{
+	position:relative; 
+	width:500px; 
+	height:450px; 
+	border-left:1px dotted black;
+	margin:40px auto 0 auto;	
+}
+
+.x-axis{
+	width:520px; 
+	left:-17px; 
+	height:1px; 
+	border-top:1px dotted black;  
+	position:absolute;
+}
+
+
+.asset-name{
+	position:absolute;
+	top:-30px;
+	font-size:16px;
+	color:black;
+	text-align:center;
+	cursor:pointer;
+}
+
+
+.asset-return{
+	position:absolute;
+	text-align:center;
+	font-size:14px;
+	color:black;
+}
+
+.statistics-wrapper{
+	width:600px;
+	margin:30px auto 10px auto;
+	/* border:1px solid black; */
+}
+
+.statistic{
+	float:left;
+	font-size:17px;
+	margin-left:15px;
+}
+
+.delimiter{
+	margin-left:15px;
+}
+
+
+
+
+@media only screen and (max-width: 700px) {
+	
+	.main-wrapper{
+		width:500px; 
+		margin:30px auto;
+		display:block;
+    }
+	
+	.chart-wrapper{
+		width:400px;
+	}
+	
+	.x-axis{
+		width:425px;
+		left:-20px;
+	}
+	
+	.asset-name{
+		font-size:14px; 
+	}
+	
+	.asset-return{
+		font-size:13px; 
+	}
+	
+	.statistics-wrapper{
+		width:380px;
+		display:block; 
+	}
+	
+	.statistic{
+		font-size:15px;
+		margin-left:10px;
+	}
+	
+	.delimiter{
+		margin-left:10px;
+	}
+	
+}
+
+
+
+@media only screen and (max-width: 400px) {
+	
+	.main-wrapper{
+		width:305px; 
+		margin:30px auto;
+		display:block;
+    }
+	
+	.chart-wrapper{
+		width:280px;
+	}
+	
+	.x-axis{
+		width:290px;
+		left:-10px;
+	}
+	
+	.asset-name{
+		font-size:12px; 
+	}
+	
+	.asset-return{
+		font-size:12px; 
+	}
+	
+	.statistics-wrapper{
+		width:250px;
+		display:block; 
+	}
+	
+	.statistic{
+		font-size:14px;
+		margin-left:8px;
+	}
+	
+	.delimiter{
+		margin-left:8px;
+	}
+	
+}

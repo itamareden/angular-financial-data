@@ -1,5 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:black;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:black;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:black;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:black;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+   color:black;
+}
+
 @font-face {
     font-family: "segoe";
     src: url(./assets/segoe.ttf) format("truetype");

@@ -1,0 +1,102 @@
+
+<div class='total-wrapper' *ngIf="isShowData" >
+
+	<div class="table-header">Stocks Valuations</div>
+	<div (click)='toggleSettings()' class='settings-icon'><i class="fa fa-align-justify" style="font-size:22px"></i></div>
+	<div *ngIf='isSettings' class='settings-wrapper'>
+		<div class='settings-div'>
+			<div  class='check-box' (click)="showPositionChange()">
+				<span *ngIf='isShowPositionChngV' class="glyphicon glyphicon-ok v-mark"></span>
+			</div>
+			<div class='check-box-note'>Show position change</div>
+			<div style='clear:both'></div>
+		</div>
+		<div *ngIf='isShowPositionChngV' class='settings-div'> <!-- show this check box only if the box above is checked -->
+			<div  class='check-box' (click)="toggleSortByPositionChng()">
+				<span *ngIf='isShowSortByPositionChngV' class="glyphicon glyphicon-ok v-mark"></span>
+			</div>
+			<div class='check-box-note'>Sort by yearly position change</div>
+			<div style='clear:both'></div>
+		</div>
+		<div class='settings-div'>
+			<div  class='check-box' (click)="toggleSortByPercentChng()">
+				<span *ngIf='isShowSortByPercentChngV' class="glyphicon glyphicon-ok v-mark"></span>
+			</div>
+			<div class='check-box-note'>Sort by yearly percent change</div>
+			<div style='clear:both'></div>
+		</div>
+	</div>
+	
+	
+	<ul class="list-group list-wrapper">
+		<li  *ngFor="let stock of ( stocksData ); let i=index;" [style.display]="i>=5 && isShowAllList==false ? 'none' : 'block'">
+			<span class='serial-number'>{{i+1}}.</span>
+			<span [routerLink]="['/asset', stock.symbol]" [style.width]="stockNameWidth+'px'" class="stock-name-span">{{stock.name}}</span>
+			<span *ngIf='isShowPositionChngV && clickedPositionItems.indexOf(i)==-1' class='position-change-span' [style.width]="positionChngWidth+'px'" (click)='toggleStockPositionView(i)'>{{stock.dailyPositionChng}}</span>
+			<span *ngIf='isShowPositionChngV && clickedPositionItems.indexOf(i)>-1' class='position-change-span' [style.width]="positionChngWidth+'px'" (click)='toggleStockPositionView(i)'>{{stock.yearlyPositionChng}}</span>
+			<span class="stock-data" *ngIf='clickedDataItems.indexOf(i)==-1 && clickedDataItems.indexOf(200+i)==-1' (click)='toggleStockDataView(i)'>{{stock.marketCap.toFixed(2)}}</span>
+			<span class="stock-data" *ngIf='clickedDataItems.indexOf(i)>-1' (click)='toggleStockDataView(i)'>{{stock.netChangePercent.toFixed(2)}}%</span>
+			<span class="stock-data" *ngIf='clickedDataItems.indexOf(200+i)>-1' (click)='toggleStockDataView(i)'>{{stock.twelveMnthPct.toFixed(1)}}%</span>
+			
+			<div class="clearfix"></div>
+		</li >
+	</ul>
+	<p class='explanation-note'>*  Numbers represent market cap in billion $</p>
+	<p class='explanation-note' style='margin-top:0;'>* Click on data to switch to daily/yearly performance</p>
+	<div class='statistics-button'  (click)='toggleStatistics()'>Statistics</div>
+	<div *ngIf='isStatistics' class='statistics-div'>
+		<div class='statistics-table-header bold-font'>Market Cap</div>
+		<table class='first-table'>
+			  <tr>
+			    <th></th>
+			    <th>Value</th>
+			    <th>Daily Chg</th>
+			    <th>Yearly Chg</th>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Total</td>
+			    <td>{{totalMarketCap.toFixed(2)}}T</td>
+			    <td>{{dailyMarketCapChng.toFixed(2)}}%</td>
+			    <td>{{yearlyMarketCapChng.toFixed(2)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Top 5%</td>
+			    <td>{{top5MarketCap[0].toFixed(1)}}%</td>
+			    <td>{{top5MarketCap[1].toFixed(1)}}</td>
+			    <td>{{top5MarketCap[2].toFixed(1)}}</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Top 10%</td>
+			    <td>{{top10MarketCap[0].toFixed(1)}}%</td>
+			    <td>{{top10MarketCap[1].toFixed(1)}}</td>
+			    <td>{{top10MarketCap[2].toFixed(1)}}</td>
+			  </tr>
+		</table>
+		<div class='statistics-table-header bold-font'>Performance</div>
+		<table class='second-table'>
+			  <tr>
+			    <th></th>
+			    <th>up</th>
+			    <th>Down</th>
+			    <th>Unchanged</th>
+			    <th>Average</th>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Daily</td>
+			    <td>{{dailyPerformanceStat[0].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStat[1].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStat[2].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStat[3].toFixed(2)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Yearly</td>
+			    <td>{{yearlyPerformanceStat[0].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStat[1].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStat[2].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStat[3].toFixed(2)}}%</td>
+			  </tr>
+		</table>
+	</div>
+	<div (click)='expandCollapseList()' class='expand-collapse-button'>{{expandOrCollapse}}</div>
+
+</div>
