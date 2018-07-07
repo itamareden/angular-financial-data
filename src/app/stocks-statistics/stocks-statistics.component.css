@@ -61,45 +61,22 @@
 	font-weight:bold;
 }
 
+.high-low-on-hover{		/*	for showing high and low in chart. for now it's off! delete when developing better function...  */
+	position:absolute;
+}
 
-.chart-wrapper{
-	position:relative; 
+.bar-chart{
 	width:500px; 
-	height:450px; 
-	border-left:1px dotted black;
-	margin:40px auto 0 auto;	
-}
-
-.x-axis{
-	width:540px; 
-	left:-37px; 
-	height:1px; 
-	border-top:1px dotted black;  
-	position:absolute;
+	height:450px;
+	margin-left:auto;
+	margin-right:auto;
 }
 
 
-.asset-name{
-	position:absolute;
-	top:-30px;
-	font-size:16px;
-	color:black;
-	text-align:center;
-	cursor:pointer;
-}
-
-
-.asset-return{
-	position:absolute;
-	text-align:center;
-	font-size:14px;
-	color:black;
-}
 
 .statistics-wrapper{
 	width:600px;
 	margin:30px auto 10px auto;
-	/* border:1px solid black; */
 }
 
 .statistic{
@@ -122,22 +99,11 @@
 		margin:30px auto;
 		display:block;
     }
-	
-	.chart-wrapper{
-		width:400px;
-	}
-	
-	.x-axis{
-		width:425px;
-		left:-20px;
-	}
-	
-	.asset-name{
-		font-size:14px; 
-	}
-	
-	.asset-return{
-		font-size:13px; 
+    
+    .bar-chart{
+		width:400px; 
+		margin-left:0;
+		margin-right:0;
 	}
 	
 	.statistics-wrapper{
@@ -161,28 +127,16 @@
 @media only screen and (max-width: 400px) {
 	
 	.main-wrapper{
-		width:325px; 
+		width:300px; 
 		margin:30px auto;
 		display:block;
     }
-	
-	.chart-wrapper{
-		width:290px;
+    
+    .bar-chart{
+		max-width:270px;
 		height:300px;
 		margin-left:20px;
-	}
-	
-	.x-axis{
-		width:310px;
-		left:-15px;
-	}
-	
-	.asset-name{
-		font-size:12px; 
-	}
-	
-	.asset-return{
-		font-size:12px; 
+		margin-right:0;
 	}
 	
 	.statistics-wrapper{

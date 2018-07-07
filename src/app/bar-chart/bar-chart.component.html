@@ -1,0 +1,22 @@
+<div  class="chart-wrapper" #chart>
+	<div *ngIf="!chartProperties.normalized">
+		<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'" [style.left]="chartProperties.xAxisLeft+'px'" [style.width]="chartProperties.xAxisWidth+'px'"></div>
+		<div *ngFor="let asset of ( chartData ); let i=index;">	
+			<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+			<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
+			[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'"></div>
+			<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.dataToShow.toFixed(chartProperties.DADP)}}%</div>
+		</div> 
+	</div>	
+	<div *ngIf="chartProperties.normalized">
+		<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'" [style.left]="chartProperties.xAxisLeft+'px'" [style.width]="chartProperties.xAxisWidth+'px'"></div>
+		<div *ngFor="let asset of ( chartData ); let i=index;">	
+			<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
+			<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'">
+				<div class='negative-bar' [style.height]="100-asset.dataToShow+'%'"></div>
+  				<div class='positive-bar' [style.height]="asset.dataToShow+'%'"></div>
+			</div>
+			<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.dataToShow.toFixed(1)}}%</div>
+		</div>
+	</div>
+</div>

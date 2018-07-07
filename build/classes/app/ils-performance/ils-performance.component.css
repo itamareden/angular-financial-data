@@ -1,0 +1,141 @@
+*{
+	font-family:segoe;
+}
+
+table {
+    border-collapse: collapse;
+    width: 760px;
+    font-size:17px;
+    float: left;
+}
+
+td, th {
+    border-bottom: 1px solid #1a8cff;
+    text-align: center;
+    padding: 8px 20px;
+    margin: 0 15px;
+    width:14.28%;	/*	makes it simetric  */
+}
+
+th {
+	border-bottom: 2px solid #1a8cff;
+	border-top: 2px solid #1a8cff;
+}
+
+tr:last-child{
+	border-bottom: 2px solid #1a8cff;
+}
+
+tr:nth-child(even) {
+    background-color: #b3ecff;
+    /* background-color: #e0e0d1; */
+}
+
+.wrapper{
+	width:1320px; 
+	margin:70px auto 90px auto;
+}
+
+.bar-chart{
+	width:450px; 
+	height:320px;
+	float:right;
+}
+
+.currency-name{
+	font-weight:bold;
+	cursor: pointer;
+}
+
+
+@media only screen and (max-width: 1380px) {
+	
+	table {
+	    width: 700px;
+	}
+	
+	.wrapper{
+		width:1150px; 
+	}
+
+	.bar-chart{
+		width:350px; 
+		height:300px;
+	}
+}
+
+@media only screen and (max-width: 780px) {
+	
+
+	table {
+	    font-size:16px;
+	    width: 400px;
+	    margin-left: 15px;
+	}
+
+	td, th {
+	    padding: 5px;
+	}
+	
+	.wrapper{
+		width:345px; 
+	}
+
+	.bar-chart{
+		width:280px; 
+		height:250px;
+		margin-left:0;
+		margin-right:0;
+		float: left;
+	}
+
+}
+
+@media only screen and (max-width: 400px) {
+	
+	.buttons-wrapper{
+		width: 280px;
+		border-top: 2px solid #1a8cff;
+		margin: 60px auto 0px auto;
+		padding: 5px 0;
+	}
+	
+	.switch-view-button{
+		margin:0 4px 5px 4px;
+		font-width:bold;
+		color:#168fe9;
+		cursor:pointer;
+		padding:2px 5px;
+		float: left;
+	}
+
+	.switch-view-button-active{
+		background:#168fe9;
+		color:white;
+		border-radius:5px;
+	}
+	
+	table {
+	    font-size:14px;
+	    width: 280px;
+	    margin: 0px auto 60px auto;
+	    float: none;
+	}
+
+	td, th {
+	    padding-left: 0px;
+	    padding-right: 0px;
+	    padding: 7px 0;
+	    width: 33.33%;
+	}
+	
+	.bar-chart{
+		width:280px; 
+		height:250px;
+		margin: 60px auto 40px auto;
+		float: none;
+	}
+	
+}
+
+

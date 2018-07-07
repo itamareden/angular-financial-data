@@ -1,8 +1,11 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { AssetsService } from '../services/assets.service';
+import { AssetDataService } from '../services/asset-data.service';
 import { TopAssetsPerformanceComponent } from '../top-assets-performance/top-assets-performance.component';
 import { WindowService } from '../services/window.service';
 import { UtilsService } from '../services/utils.service';
+
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'market-cap',
@@ -11,7 +14,7 @@ import { UtilsService } from '../services/utils.service';
 })
 export class MarketCapComponent implements OnInit {
         
-    
+    observable: Observable<any[]>;
     isSettings=false;
     isShowPositionChngV=false;
     isShowSortByPositionChngV=false;
@@ -40,18 +43,31 @@ export class MarketCapComponent implements OnInit {
     top10MarketCap=[];
     dailyPerformanceStat=[];
     yearlyPerformanceStat=[];
+    dailyPerformanceStatSC=[69.5,29.5,0.5,1.3];
+    yearlyPerformanceStatSC=[54.3,45.7,0,1.04];
     recordHighData=[];
     recordLowData=[];
+    recordHighDataSC=[];
+    recordLowDataSC=[];
     twoPercFromRecordHighData=[];
     twoPercFromRecordLowData=[];
     fivePercFromRecordHighData=[];
     fivePercFromRecordLowData=[];
     tenPercFromRecordHighData=[];
     tenPercFromRecordLowData=[];
+    twoPercFromRecordHighDataSC=[];
+    twoPercFromRecordLowDataSC=[];
+    fivePercFromRecordHighDataSC=[];
+    fivePercFromRecordLowDataSC=[];
+    tenPercFromRecordHighDataSC=[];
+    tenPercFromRecordLowDataSC=[];
     isShowQualifiedStocksNames=[false, false, false, false];
+    isShowSCStat=false;
+    smallCapAssets = [];
     
     
-  constructor(private assetsService: AssetsService, private windowService: WindowService, private utils: UtilsService) { }
+  constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private windowService: WindowService, 
+              private utils: UtilsService) { }
 
   ngOnInit() {
 
@@ -70,12 +86,12 @@ export class MarketCapComponent implements OnInit {
        let index=0;
        let classScope=this; 
        let interval=setInterval(function(){
-          if(TopAssetsPerformanceComponent.assetsData.length>0){
+          if(TopAssetsPerformanceComponent.assetsData.length>75){
               clearInterval(interval);
               console.log(TopAssetsPerformanceComponent.assetsData.length); // to inform how many stocks we got back in the response
               
               classScope.stocksData=TopAssetsPerformanceComponent.assetsData;
-              classScope.stocksData.sort(classScope.utils.compareAssetsBasedOnProp('marketCap'));
+              classScope.stocksData.sort(classScope.utils.compare('marketCap'));
               classScope.stocksData.map(item=>{classScope.assetsService.getAsset(item.symbol).then(asset=>{
                     
                     item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
@@ -89,8 +105,8 @@ export class MarketCapComponent implements OnInit {
               classScope.calculateMarketCapStat();
               classScope.top5MarketCap=classScope.calculateTopMarketCapStat(5);
               classScope.top10MarketCap=classScope.calculateTopMarketCapStat(10);
-              classScope.dailyPerformanceStat=classScope.calculatePerformanceStat('daily');
-              classScope.yearlyPerformanceStat=classScope.calculatePerformanceStat('yearly');
+              classScope.dailyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'daily');
+              classScope.yearlyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'yearly');
               classScope.calculateAllDesiredRatios();   // calculate all the 52 week high and low ratios
               
               
@@ -129,7 +145,7 @@ export class MarketCapComponent implements OnInit {
         let MarketCapPrevSum=0;
         let MarketCapLastYearSum=0;
         let stocksArr=this.stocksData.slice();
-        stocksArr.sort(this.utils.compareAssetsBasedOnProp('marketCap'));
+        stocksArr.sort(this.utils.compare('marketCap'));
         
         for(let i=0; i<stocksArr.length; i++){
             if(i<topNumber){
@@ -139,7 +155,7 @@ export class MarketCapComponent implements OnInit {
         }
         let ratio=100*MarketCapSum/totalMarketCap;
         
-        stocksArr.sort(this.utils.compareAssetsBasedOnProp('prevMarketCap'));
+        stocksArr.sort(this.utils.compare('prevMarketCap'));
         totalMarketCap=0;
         for(let i=0; i<stocksArr.length; i++){
             if(i<topNumber){
@@ -150,7 +166,7 @@ export class MarketCapComponent implements OnInit {
         let prevRatio=100*MarketCapPrevSum/totalMarketCap;
         let dailyRatioChng= Math.abs(ratio-prevRatio) < 0.1 ? 0 : ratio-prevRatio;
         
-        stocksArr.sort(this.utils.compareAssetsBasedOnProp('lastYearMarketCap'));
+        stocksArr.sort(this.utils.compare('lastYearMarketCap'));
         totalMarketCap=0;
         for(let i=0; i<stocksArr.length; i++){
             if(i<topNumber){
@@ -166,35 +182,45 @@ export class MarketCapComponent implements OnInit {
     }
     
     
-    calculatePerformanceStat(period){
+    calculatePerformanceStat(stocksDataArr, period){
         
         let prop = (period=='daily' ? 'netChangePercent' : (period=='yearly' ? 'twelveMnthPct' : null));
-        
-        let periodChngCounter=0; 
-        let arrLength= this.stocksData.length;  
+        let stocksArr = stocksDataArr.slice();  // we clone it because we sort it inside  calculateMedianChg
+        let medianChg = this.calculateMedianChg(stocksArr, prop);
+        let arrLength= stocksDataArr.length;  
         let positiveChngCounter=0;
         let negativeChngCounter=0;
             
         for(let i=0; i<arrLength; i++){
-            periodChngCounter+=this.stocksData[i][prop];    // for calculating average
-            
-            if(this.stocksData[i][prop]>0){ // for performance dispersion
+            if(stocksDataArr[i][prop]>0){ // for performance dispersion
                 positiveChngCounter++; 
-            }else if(this.stocksData[i][prop]<0){
+            }
+            else if(stocksDataArr[i][prop]<0){
                 negativeChngCounter++;
             }
             
         }
-        
-        let averageChng=periodChngCounter/arrLength;
         let positiveRatio=100*positiveChngCounter/arrLength; 
         let negativeRatio=100*negativeChngCounter/arrLength;
         let unchangedRatio=100*(arrLength-positiveChngCounter-negativeChngCounter)/arrLength;
         
-        return [positiveRatio, negativeRatio, unchangedRatio, averageChng];
+        return [positiveRatio, negativeRatio, unchangedRatio, medianChg];
         
     }
     
+    calculateMedianChg(stocksArr,prop){
+        stocksArr.sort(this.utils.compare(prop));   // sort based on performance
+        if(stocksArr.length%2==1){  // odd
+            let medianIndex = (stocksArr.length - 1)/2 +1;
+            return stocksArr[medianIndex][prop];
+        }
+        else{   // even
+            let firstMedianIndex = stocksArr.length/2;
+            let secondMedianIndex = stocksArr.length/2 +1;
+            let medianPerformance = (stocksArr[firstMedianIndex][prop] + stocksArr[secondMedianIndex][prop])/2
+            return medianPerformance;
+        }
+    }
     
     
     calculatePositionChng(period){
@@ -202,13 +228,13 @@ export class MarketCapComponent implements OnInit {
         let change;
         
         if(period=='last day'){
-            this.stocksData.sort(this.utils.compareAssetsBasedOnProp('prevMarketCap'));
+            this.stocksData.sort(this.utils.compare('prevMarketCap'));
             for(let i=0; i<this.stocksData.length; i++){
                 change=i-this.stocksData[i].position;
                 this.stocksData[i].dailyPositionChng = (change > 0 ? '+'+change : change);
             }
         }else if(period=='last year'){
-            this.stocksData.sort(this.utils.compareAssetsBasedOnProp('lastYearMarketCap'));
+            this.stocksData.sort(this.utils.compare('lastYearMarketCap'));
             for(let i=0; i<this.stocksData.length; i++){
                 change=i-this.stocksData[i].position;
                 this.stocksData[i].yearlyPositionChng = (change > 0 ? '+'+change : change);
@@ -217,9 +243,9 @@ export class MarketCapComponent implements OnInit {
         
         
         if(this.isSortByChng){  // check if prior to marking V to see position change, the visitor marked V to sort by yearly change
-            this.stocksData.sort(this.utils.compareAssetsBasedOnProp('twelveMnthPct')); // if so, sort again based on yearly change
+            this.stocksData.sort(this.utils.compare('twelveMnthPct')); // if so, sort again based on yearly change
         }else{
-            this.stocksData.sort(this.utils.compareAssetsBasedOnProp('marketCap')); // else, sort again based on today's market cap
+            this.stocksData.sort(this.utils.compare('marketCap')); // else, sort again based on today's market cap
         }
         
     }
@@ -284,7 +310,7 @@ export class MarketCapComponent implements OnInit {
                 }
             }
 
-            this.stocksData.sort(this.utils.compareAssetsBasedOnProp('yearlyPositionChng'));
+            this.stocksData.sort(this.utils.compare('yearlyPositionChng'));
             
             for(let i=0; i<this.stocksData.length; i++){
                 if(this.stocksData[i].yearlyPositionChng>0){
@@ -316,12 +342,12 @@ export class MarketCapComponent implements OnInit {
         
         if(this.stocksData){
             if(criteria=='market cap'){
-                this.stocksData.sort(this.utils.compareAssetsBasedOnProp('marketCap')) ;
+                this.stocksData.sort(this.utils.compare('marketCap')) ;
                 this.switchDataViewForAllStocks('market cap');
             }else if(criteria=='yearly position change'){
                 this.sortByYearlyPositionChng();
             }else if(criteria=='twelveMnthPct'){
-                this.stocksData.sort(this.utils.compareAssetsBasedOnProp('twelveMnthPct'));
+                this.stocksData.sort(this.utils.compare('twelveMnthPct'));
                 this.switchDataViewForAllStocks('yearly change')
             }
         }
@@ -409,7 +435,7 @@ export class MarketCapComponent implements OnInit {
                 
         if(recordIdentifier == 'high'){
             for(let i=0; i<stocksArr.length; i++){
-                if(stocksArr[i].dailyHigh >= (1-distanceFromRecord)*stocksArr[i].yearRecordHigh){
+                if(stocksArr[i].high >= (1-distanceFromRecord)*stocksArr[i].yearRecordHigh){
                     qualifiedCounter++;
                     qualifiedNames.push(stocksArr[i].symbol); // the symbol of the stock..
                 }
@@ -417,7 +443,7 @@ export class MarketCapComponent implements OnInit {
         }else{
             for(let i=0; i<stocksArr.length; i++){
                 // because before market open the daily high and low of stocks are being reset, we should add the extra condition...
-                if(stocksArr[i].dailyLow!=0 && stocksArr[i].dailyLow <= (1+distanceFromRecord)*stocksArr[i].yearRecordLow){
+                if(stocksArr[i].low!=0 && stocksArr[i].low <= (1+distanceFromRecord)*stocksArr[i].yearRecordLow){
                     qualifiedCounter++;
                     qualifiedNames.push(stocksArr[i].symbol);
                 }
@@ -453,6 +479,49 @@ export class MarketCapComponent implements OnInit {
             
         }
            
+    }
+    
+    calculateSCStatistics(){
+        this.getSmallcapAssets("Stock");
+        this.utils.doOnlyWhen(function(){
+                this.calculateStatForAssets(this.smallCapAssets);
+            }.bind(this), function(){
+                return !!(this.smallCapAssets.length > 75 && !this.isShowSCStat)}.bind(this),
+            30, 800, function(){console.log('got data for less than 75 assets')});
+            
+    }
+    
+    
+    getSmallcapAssets(assetType:string): void {
+        this.assetsService.getAllInvisibleAssetsByType(assetType).then(assets => {
+            this.utils.divideXHRCalls(assets,25,this.getChunkData.bind(this));
+        });
+    }
+    
+    
+    calculateStatForAssets(assetsData){
+            this.dailyPerformanceStatSC=this.calculatePerformanceStat(assetsData,'daily');
+            this.yearlyPerformanceStatSC=this.calculatePerformanceStat(assetsData,'yearly');
+            this.recordHighDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'high', 0);
+            this.recordLowDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'low', 0);
+            this.twoPercFromRecordHighDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'high', 0.02);  
+            this.twoPercFromRecordLowDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'low', 0.02);
+            this.fivePercFromRecordHighDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'high', 0.05);
+            this.fivePercFromRecordLowDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'low', 0.05);
+            this.tenPercFromRecordHighDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'high', 0.1);
+            this.tenPercFromRecordLowDataSC=this.calculateRatioOfStocksPerformanceRelativeToYearlyRecord(assetsData, 'low', 0.1);
+            this.isShowSCStat=true; 
+    }
+    
+    
+    getChunkData(assets){
+        if(this.isShowSCStat) return;   // means we've already calculated, so no need to do it again.
+        this.observable = this.assetDataService.getMultipleAssetsData(assets,'market-cap',['previousVolume','sharesOutstanding','twelveMnthPct','fiftyTwoWkHigh','fiftyTwoWkLow']);
+        this.observable.subscribe(assetsData => {
+            for(let i=0; i<assetsData.length; i++){
+                this.smallCapAssets.push(assetsData[i]);
+            }
+        })
     }
     
     

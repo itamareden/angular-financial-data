@@ -2,6 +2,129 @@
 	font-family:segoe;
 }
 
+.main-wrapper{
+	width:850px; 
+	border:1px solid #255887;
+	margin:100px auto;
+	border-radius:5px 5px 0 0;
+}
+
+.chart-wrapper{
+	position:relative; 
+	width:550px;
+	height:350px; 
+	border-left:1px solid black;
+	margin:60px 0px 40px 50px;
+	cursor: crosshair;	
+}
+
+.line{
+	position:absolute;  
+	transform-origin: top left;
+	background: #168fe9;
+}
+
+.x-axis{
+	width:610px; 
+	left:-50px; 
+	height:1px; 
+	border-top:1px solid black;  
+	position:absolute;
+}
+
+.internal-axis{
+	width:560px; 
+	height:1px; 
+	border-top:1px dotted grey;  
+	position:absolute;
+}
+
+.internal-axis-value{
+	width:50px;
+	left:-50px;
+	text-align: right;
+	padding-right:5px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+}
+
+.horizontal-grid-line{
+	position:absolute;
+	width:560px;	/* should be equal to the width of the internal axises  */
+	border-bottom: 1px dashed black;
+}
+
+.vertical-grid-line{
+	position:absolute;
+	height:100%;
+	border-left: 1px dashed black;
+}
+
+.Y-axis-orientation{
+	width:50px;
+	left:-50px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+	background:green;
+	color:white;
+	text-align:center;
+}
+
+.small-circle{
+	position:absolute;
+	width:6px;
+	height:6px;
+	border-radius: 3px;
+	background: #66d9ff;
+	cursor:pointer;
+}
+
+.asset-name{
+	position:absolute;
+	top:-30px;
+	font-size:16px;
+	color:black;
+	text-align:center;
+	cursor:pointer;
+	font-weight:bold;
+}
+
+
+.data-square-pop-up{
+	position:absolute;
+	left:20px;
+	top:60px;
+	z-index:1;
+	font-weight:bold;
+	font-size:13px;
+	border: 1px solid black;
+	width:90px;
+	/* background: #ffbf80; */
+	background: #dce4f2;
+	padding: 3px 10px;
+}
+
+
+.asset-return{
+	position:absolute;
+	text-align:center;
+	font-size:14px;
+	color:black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .asset-name-headline{
 	font-size:40px; 
 	border-bottom:1px solid black;
@@ -32,7 +155,7 @@
 
 
 .asset-summary-table-wrapper{
-	width:50%;
+	width:100%;
 }
 
 
@@ -58,11 +181,11 @@
 	display:block; 
 	position:relative; 
 	max-width:50%;
-	/* height:45px; */
 	margin:50px 0;
 	font-size:17px;
 	border-bottom: 2px solid #00aaff;
 	color:black;
+	z-index:-1;
 	
 }
 

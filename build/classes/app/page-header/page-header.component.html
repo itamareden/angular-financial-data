@@ -1,23 +1,32 @@
-<div class="page-header-wrapper" [style.background]="isMainPage!=null ? 'white' : 'black'">
-	
+<div class="page-header-wrapper" [style.background]="isMainPage!=null ? 'white' : '#044191'">
 	<div class="bear-logo" *ngIf="isMainPage!=null ? true : false" >BearsBoom</div>
 	<div class="glyphicon glyphicon-home home-logo" [routerLink]="['/']" *ngIf="isMainPage==null ? true : false"></div>
-	<div class="header-buttons-wrapper">
-		<div class="header-button-div"><span class="header-button-span" [ngClass]="isMainPage!=null ? 'for-home-page' : 'for-regular-page'" [routerLink]="['/assets']">Assets</span></div>
-		<div class="header-button-div"><span class="header-button-span" [ngClass]="isMainPage!=null ? 'for-home-page' : 'for-regular-page'" [routerLink]="['/ils-performance']">ILS</span></div>
-		<div class="header-button-div"><span class="header-button-span" [ngClass]="isMainPage!=null ? 'for-home-page' : 'for-regular-page'" [routerLink]="['/index-matrix']">Index Matrix</span></div>
-		<div class="header-button-div" style="margin-right:0"><span class="header-button-span" [ngClass]="isMainPage!=null ? 'for-home-page' : 'for-regular-page'" [routerLink]="['/gold-ratio']">Gold Ratio</span></div>
+	<div class="all-topics-wrapper">
+		<div class='topic-wrapper' (mouseenter)='toggleMenu()' (mouseleave)='toggleMenu()'>
+			<div class='header-topic' [style.color]="isMainPage!=null ? 'black' : 'white'">Data Center
+				<open-triangle class='open-triangle' [outerTriangleColor]="isMainPage!=null ? 'black' : 'white'" 
+				[innerTriangleColor]="isMainPage!=null ? 'white' : '#044191'"></open-triangle>			
+			</div>
+			<div class="list-wrapper" *ngIf='isShowMenu'>
+				<div class="item" [routerLink]="['/assets']">Assets</div>
+				<div class="item" [routerLink]="['/gold-ratio']">Gold Ratio</div>
+				<div class="item" [routerLink]="['/ils-performance']">ILS Pairs</div>
+				<div class="item" [routerLink]="['/interest-rates']">Interest Rates</div>
+			</div>
+		</div>
+		<div class='topic-wrapper' style='margin-left:100px;'>
+			<div class='header-topic' style='line-height:80px;' [style.color]="isMainPage!=null ? 'black' : 'white'">
+				<div class='charts' [routerLink]="['/market-headlines']">Market News</div>
+			</div>
+		</div>
 	</div>
 	<div class="glyphicon glyphicon-align-justify menu-icon" (click)="toggleMenu()" [style.color]="isMainPage!=null ? 'black' : 'white'"></div>
-	
 </div>
-
 <div *ngIf="isShowMenu" class="menu-wrapper">
 	<ul class="list-group drop-down"  (click)="toggleMenu()">
 	      <li class="list-group-item header-in-list" style="padding-right:120px; border-top:white" [routerLink]="['/assets']">Assets</li>
-	      <li class="list-group-item header-in-list" [routerLink]="['/ils-performance']">ILS</li>
-	      <li class="list-group-item header-in-list" [routerLink]="['/index-matrix']">Index Matrix</li>
 	      <li class="list-group-item header-in-list" [routerLink]="['/gold-ratio']">Gold Ratio</li>
-	      
+	      <li class="list-group-item header-in-list" [routerLink]="['/ils-performance']">ILS</li>
+	      <li class="list-group-item header-in-list" [routerLink]="['/interest-rates']">Interest Rates</li>
     </ul>
 </div>

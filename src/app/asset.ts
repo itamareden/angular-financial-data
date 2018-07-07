@@ -6,5 +6,6 @@ export interface Asset {
     nameToShow:string;
     type:string;
     digitsAfterDecimalPoint?:number;
+    hide?:boolean;
     
 }

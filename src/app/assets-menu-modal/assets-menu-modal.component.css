@@ -1,0 +1,160 @@
+*{
+	font-family: segoe;
+}
+
+button,input:focus {
+	outline:0;
+}
+
+ul{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+li{
+	padding:6px 20px;
+	border-bottom: 1px dotted lightgrey;
+}
+
+.left{
+	float: left;
+}
+
+.right{
+	float: right;
+}
+
+.full-screen{
+	background-color: rgba(25, 25, 25, 0.86);
+	position:fixed; 
+	top:0; 
+	left:0; 
+	margin:auto;
+	z-index: 10;
+}
+
+.main-wrapper{
+	width:700px;
+	height: 600px; 
+	border:1px solid #217db7;
+	border-radius: 3px; 
+	background: white;
+	position: absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	margin: auto;
+}
+
+.x-icon-wrapper{
+	font-size: 12px; 
+	float:right;
+	margin: 3px 3px 0 0;
+	cursor: pointer;
+}
+
+.window-header{
+	width: 250px;
+	text-align: center;
+	font-size: 18px;
+	color: #1b82e2;
+	margin-bottom:5px;
+}
+
+.window{
+	width:250px;
+	height:415px;
+	margin: 10px 25px;  
+}
+
+.filter{
+	font-size:17px;
+	margin: 0 0 5px 0;
+}
+
+.filter-input{
+	display:inline-block; 
+	position:relative; 
+	width:250px; 
+	margin:0 auto;
+	border: none;
+    border-bottom: 2px solid #4ee095;
+    color:black;
+    padding-left:5px;
+    font-size:17px;
+	margin: 0 0 10px 0;
+}
+
+.assets-list{
+	height:308px; 
+	border:1px solid darkblue;
+	border-radius: 3px; 
+	overflow:auto;
+	width:100%;
+	
+}
+
+.asset-name{
+	font-size: 15px;
+}
+
+.asset-type{
+	font-size: 13px;
+	color: #077796;
+}
+
+.buttons-container{
+	width: 98px;
+	height: 315px;
+	float: left;
+	margin-top: 100px;
+}
+
+.add-assets-button{
+	width: 84px;
+	height: 35px;
+	margin-top: 120px;
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 1px solid #2997bc;
+	border-radius: 3px;
+	background: #2997bc;
+}
+
+.remove-assets-button{
+	width: 84px;
+	height: 35px;
+	margin-top: 55px;
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 1px solid #33af67;
+	border-radius: 3px;
+	background: #33af67;
+}
+
+.selected-asset{
+	background: lightblue;	
+}
+
+.continue-button{
+	background:#29d1a1; 
+	width:130px; 
+	margin:20px auto 10px auto; 
+	border-radius:5px;
+	display:block;
+	border:1px solid #29d1a1; 
+	color:white; 
+	padding:3px 0; 
+	cursor:pointer; 
+	text-align:center; 
+	font-size:22px;
+}
+
+button:disabled{
+	background: #80ffbf;
+	border: 1px solid #80ffbf;
+	cursor:default;
+}
+

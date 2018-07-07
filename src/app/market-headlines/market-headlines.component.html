@@ -1,0 +1,48 @@
+<page-header></page-header> 
+<div class="articles-section">
+	<div class='buttons-wrapper'>
+		<div class="switch-view-button" [class.switch-view-button-active]="isZerohedge" (click)="switchProvider($event)">Zerohedge</div>
+		<div class="switch-view-button" [class.switch-view-button-active]="isBloomberg" (click)="switchProvider($event)">Bloomberg</div>
+		<div style='clear:both'></div>
+	</div>
+	<div *ngIf='isZerohedge'>
+		<h4 class='disclaimer'>* This articles are provided by <strong>Zerohedge</strong></h4>
+		<ul *ngFor="let article of zerohedgeArticles">
+			<li class='article'>
+				<a class="link" href={{article.aHref}}>
+					<h3>{{article.headline}}</h3>
+				</a>
+				<div class="teaser-wrapper">
+					<div class="teaser-image">
+						<img src={{article.teaserImgSrc}}>
+					</div>
+					<div class="teaser">
+						<p>{{article.teaser}}</p>
+					</div>
+					<div style="clear:both"></div>
+				</div>
+				<div>
+					<div style="float:right">{{article.publishDate}}</div>
+					<div style="clear:both"></div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div *ngIf='isBloomberg'>
+		<h4 class='disclaimer'>* This articles are provided by <strong>Bloomberg</strong></h4>
+		<div  *ngFor="let topic of bloombergTopicsArr; let i=index">
+			<h3 class='bloomberg-topic-name'>{{bloombergTopicNames[i]}}</h3>
+			<ul *ngFor="let article of topic">
+				<li class='article'>
+					<a class="link" href={{article.aHref}}>
+						<h3>{{article.headline}}</h3>
+					</a>
+					<div>
+						<div style="float:right">{{article.publishDate}}</div>
+						<div style="clear:both"></div>
+					</div>
+				</li>
+			</ul>	
+		</div>
+	</div>
+</div>

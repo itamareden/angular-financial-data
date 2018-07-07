@@ -2,21 +2,19 @@
 	font-family:segoe;
 }
 
-
-
 table {
-    font-family:segoe;
     border-collapse: collapse;
-    width: 420px;
+    width: 760px;
     font-size:17px;
+    float: left;
 }
-
 
 td, th {
     border-bottom: 1px solid #1a8cff;
-    text-align: left;
+    text-align: center;
     padding: 8px 20px;
     margin: 0 15px;
+    width:14.28%;	/*	makes it simetric  */
 }
 
 th {
@@ -29,72 +27,50 @@ tr:last-child{
 }
 
 tr:nth-child(even) {
-    /* background-color: #b3ecff; */
-    background-color: #e0e0d1;
-}
-
-.bold-font{
-	font-weight:bold;
-}
-
-.statistics-table-header{
-	color:black; 
-	margin-bottom:30px;
-	margin-top:50px;
-	text-decoration:underline;
-	font-size:20px;
+    background-color: #b3ecff;
+    /* background-color: #e0e0d1; */
 }
 
 .wrapper{
-	width:900px; 
+	width:1320px; 
 	margin:70px auto 90px auto;
 }
 
-
-.performance-table{
-	float: left;
+.bar-chart{
+	width:450px; 
+	height:320px;
+	float:right;
 }
-
-.summary-table{
-	float: right;
-}
-
 
 .currency-name{
 	font-weight:bold;
 	cursor: pointer;
 }
 
-.currency-price{
-	font-size: 18px;
-	margin-right:20px;
-	float:left;
-	width: 60px;
-}
 
-.daily-return{
-	font-size: 18px;
-	margin-right:20px;
-	float:left;
-	width: 60px;
-}
-
-.yearly-return{
-	font-size: 18px;
-	float:left;
-	width: 60px;
-}
-
-
-
-
-
-@media only screen and (max-width: 780px) {
-
+@media only screen and (max-width: 1380px) {
 	
 	table {
+	    width: 700px;
+	}
+	
+	.wrapper{
+		width:1150px; 
+	}
+
+	.bar-chart{
+		width:350px; 
+		height:300px;
+	}
+}
+
+@media only screen and (max-width: 780px) {
+	
+
+	table {
 	    font-size:16px;
-	    width: 300px;
+	    width: 400px;
+	    margin-left: 15px;
 	}
 
 	td, th {
@@ -104,23 +80,61 @@ tr:nth-child(even) {
 	.wrapper{
 		width:345px; 
 	}
-	
-	.statistics-table-header{
-		margin-left: 15px;
-	}
-	
-	.performance-table{
-		margin-left: 15px;
+
+	.bar-chart{
+		width:280px; 
+		height:250px;
+		margin-left:0;
+		margin-right:0;
+		float: left;
 	}
 
-	.summary-table{
-		float: left;
-		margin-left: 15px;
-		margin-top:60px;
-		margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 400px) {
+	
+	.buttons-wrapper{
+		width: 280px;
+		border-top: 2px solid #1a8cff;
+		margin: 60px auto 0px auto;
+		padding: 5px 0;
 	}
 	
+	.switch-view-button{
+		margin:0 4px 5px 4px;
+		font-width:bold;
+		color:#168fe9;
+		cursor:pointer;
+		padding:2px 5px;
+		float: left;
+	}
+
+	.switch-view-button-active{
+		background:#168fe9;
+		color:white;
+		border-radius:5px;
+	}
 	
+	table {
+	    font-size:14px;
+	    width: 280px;
+	    margin: 0px auto 60px auto;
+	    float: none;
+	}
+
+	td, th {
+	    padding-left: 0px;
+	    padding-right: 0px;
+	    padding: 7px 0;
+	    width: 33.33%;
+	}
+	
+	.bar-chart{
+		width:280px; 
+		height:250px;
+		margin: 60px auto 40px auto;
+		float: none;
+	}
 	
 }
 

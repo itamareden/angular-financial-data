@@ -50,6 +50,7 @@
 	<p class='explanation-note'>*  Numbers represent market cap in billion $</p>
 	<p class='explanation-note' style='margin-top:0;'>* Click on data to switch to daily/yearly performance</p>
 	<div class='statistics-button'  (click)='toggleStatistics()'>Statistics</div>
+	<div *ngIf='isStatistics' class='small-cap-statistics-button' [style.cursor]="!isShowSCStat ? 'pointer' : 'default'" (click)='calculateSCStatistics()'>Small-Cap Statistics</div>
 	<div *ngIf='isStatistics' class='statistics-div'>
 		<div class='statistics-table-header bold-font'>Market Cap</div>
 		<table class='first-table'>
@@ -84,7 +85,7 @@
 			    <th></th>
 			    <th>up</th>
 			    <th>Down</th>
-			    <th>Unchanged</th>
+			    <th>Unchg</th>
 			    <th>Average</th>
 			  </tr>
 			  <tr>
@@ -101,7 +102,23 @@
 			    <td>{{yearlyPerformanceStat[2].toFixed(1)}}%</td>
 			    <td>{{yearlyPerformanceStat[3].toFixed(2)}}%</td>
 			  </tr>
-		</table>
+	   </table>
+	   <table *ngIf='isShowSCStat' class='second-table-SC'>		<!--  for Russell 2000 statistics -->
+			  <tr>
+			    <td class='bold-font'>Daily</td>
+			    <td>{{dailyPerformanceStatSC[0].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[1].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[2].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[3].toFixed(2)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Yearly</td>
+			    <td>{{yearlyPerformanceStatSC[0].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[1].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[2].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[3].toFixed(2)}}%</td>
+			  </tr>
+	   </table>
 		<div class='statistics-table-header bold-font'>Records</div>
 		<table class='third-table'>
 			  <tr>
@@ -160,6 +177,28 @@
 						<div *ngFor='let name of tenPercFromRecordLowData[1]' class='qualified-stock-name'>{{name}}</div>
 					</div>
 			    </td>
+			  </tr>  
+		</table>
+		<table *ngIf='isShowSCStat' class='third-table-SC'>
+			  <tr>
+			    <td class='bold-font'>At Record</td>
+			    <td>{{recordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{recordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>2% from Record</td>
+			    <td>{{twoPercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{twoPercFromRecordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>5% from Record</td>
+			    <td>{{fivePercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{fivePercFromRecordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>10% from Record</td>
+			    <td>{{tenPercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{tenPercFromRecordLowDataSC[0].toFixed(1)}}%</td>
 			  </tr>  
 		</table>
 	</div>

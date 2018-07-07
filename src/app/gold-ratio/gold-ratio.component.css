@@ -1,29 +1,27 @@
+*{
+	font-family:segoe;
+}
+
+
 .wrapper{
-	margin:auto; 
-	position:absolute; 
-	top:120px; 
-	bottom:0; 
-	left:0; 
-	right:0; 
-	width:100%;
-	text-align:center;
-	height:275px; 
+	width:400px; 
+	margin: 100px auto; 
 }
 
-
-.image{
-	width: 269px;
-    height: 187px;
-    margin:auto;
-	background-image: url("../../assets/gold.jpg");
+.last-price{
+	font-size:22px; 
+	font-weight:bold; 
+	width:180px;  
+	margin:100px auto;
 }
 
-
-.message{
-	font-size:50px;
-	margin-top:20px;
-	color: #006bb3;
-	font-family: "Eras";
+.bar-chart{
+	width:400px; 
+	height:300px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:40px;
+	margin-bottom:40px;
 }
 
 
@@ -32,18 +30,20 @@
 @media only screen and (max-width: 400px) {
 
 	.wrapper{
-		height:200px;
+		width:320px; 
+		margin-left:-10px;		/* it fixes it somehow..  */
 	}
 	
-	.image{
-		background-image: url("../../assets/gold-small.jpg");
-		width: 195px;
-	    height: 135px;
+	.last-price{
+		font-size:19px; 
+		font-weight:initial; 
 	}
 	
-	.message{
-		font-size:40px;
-		margin-top:10px;
+	.bar-chart{
+		width:280px; 
+		height:250px;
+		margin-left:0;
+		margin-right:0;
 	}
 	
 }

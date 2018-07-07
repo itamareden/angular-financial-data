@@ -1,18 +1,20 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location }                 from '@angular/common';
 import { Asset } from '../asset'
 import { AssetsService } from '../services/assets.service';
+import { ChartsService } from '../services/Charts.service';
+import { UtilsService } from '../services/utils.service';
 
 import { AssetData } from '../asset-data'
 import { Candlestick } from '../candlestick';
 import { AssetDataService } from '../services/asset-data.service';
 import { HistoricalReturnService } from '../services/historical-return.service';
 import { AssetPerformanceBarComponent } from '../asset-performance-bar/asset-performance-bar.component'
-import { AssetPerformance } from '../asset-performance'
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/switchMap'; 
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'asset-summary',
@@ -24,7 +26,26 @@ import 'rxjs/add/operator/switchMap';
 })
     
 export class AssetSummaryComponent implements OnInit {
-
+        
+    @ViewChild('chart') chart:ElementRef;
+    
+    chartProperties={
+        type:'Line Chart',
+        totalBarsWidth:88,  // width of each bar in %
+        totalChartHeight:350,   // _________________________________ FOR NOW
+        totalChartWidth:550,     
+        topMargin:50,        // a small space from the top of the chart to the bars area..
+        bottomMargin:50,
+        xAxisTop:null,
+        DADP:2,              // digits after decimal point
+        roundTarget: 0.1,     // for example 1.485 => 1.4 or 1.5.  2.36 => 2.30 or 2.40, depends if we round up or down.
+        lowestIsZero:false,   // compel the lowest value to be zero.
+        svg: true,
+        polylinePoints: '',
+    }
+    hasHeight=false;
+    isShowTable=false;
+    indexOfDataPopUp=-1;
     
     asset: Asset;
     assetData: AssetData;
@@ -53,10 +74,12 @@ export class AssetSummaryComponent implements OnInit {
     overallTrend;
     isShowHistoricData=false;
     isShowExplanation=false;
+    
 
   constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private historicalReturnService:HistoricalReturnService,  
-              private route: ActivatedRoute, private location: Location) {}
-    
+              private route: ActivatedRoute, private location: Location, public charts: ChartsService, private sanitizer: DomSanitizer,
+              private utils:UtilsService ) {}
+    // charts has to be public because I use it in the template which is apparently outside the class..?
     
 
     
@@ -64,22 +87,34 @@ export class AssetSummaryComponent implements OnInit {
      
      this.route.paramMap        
     .switchMap((params: ParamMap) => this.assetsService.getAsset(params.get('symbol')))
-    .subscribe(asset => {this.asset = asset;
+    .subscribe(asset => {this.isShowTable=false; // for now! for the chart.. it wasn't here before...
+                         this.asset = asset;
                          this.asset.digitsAfterDecimalPoint==null ? this.asset.digitsAfterDecimalPoint=2 : this.asset.digitsAfterDecimalPoint; // Configure how many digits to show after the decimal point
+                         this.chartProperties.DADP=this.asset.digitsAfterDecimalPoint;
                          this.isShowAssetData=false;
                          this.isShowHistoricData=false;
                          this.isRefreshPerformanceData=true;
                          this.resetTimeFrame();
-                         /*clearInterval(this.interval);*/ 
                          this.assetSummaryOn();
         
                          this.getAssetData(this.asset);
-                         /*this.interval=setInterval(()=>{this.getAssetData(this.asset)},2000000);*/
                         }
                );
       
       
-  }
+    }
+    
+//    ngAfterViewChecked() {
+//        if(this.chart && !this.hasHeight){
+//            this.hasHeight=true;
+//            this.chartProperties.totalChartHeight=350;
+//            this.chartProperties.totalChartWidth=650;
+////            this.createPerformanceChart();
+//            
+////            let windowWidth=this.windowService.getNativeWindow().innerWidth;
+////            windowWidth <= 400 ? this.alreadyCompensatedForMobile = true : this.alreadyCompensatedForDesktop = true;
+//        }
+//   }
     
     
     
@@ -89,17 +124,23 @@ export class AssetSummaryComponent implements OnInit {
         this.observableAssetData = this.assetDataService.getAssetData(asset);
         this.observableAssetData.subscribe(assetData => {this.assetData = assetData;
                                                          this.isShowAssetData=true;
-                                                         this.getAssetHistoricData(asset,'daily',300)}) ;       
+                                                         this.getAssetHistoricData(asset,'daily',500)}) ;       
         
         }
     
     
     getAssetHistoricData(asset:Asset, timeFrame:string, maxRecords:number):void{
-       
         this.observableCandlestick = this.assetDataService.getAssetHistoricData(asset,timeFrame,maxRecords);
         this.observableCandlestick.subscribe(candlesticks => {
-            
+            this.mapHistoricData(candlesticks);            
+        })
+      }
+    
+    mapHistoricData(candlesticks){
             this.candlestick = candlesticks;
+            this.charts.createLineChart(this.candlestick, this.chartProperties, 'close', true);
+            this.generateSafeTransform(this.candlestick);
+            this.isShowTable=true;
             this.MA50=this.calculateMovingAverage(50,this.candlestick);
             this.MA100=this.calculateMovingAverage(100,this.candlestick);
             this.MA200=this.calculateMovingAverage(200,this.candlestick);
@@ -110,7 +151,7 @@ export class AssetSummaryComponent implements OnInit {
             
                 this.historicalReturnService.getAssetHistoricDataForWeeks(1,this.candlestick).then(candlesticks=>{   // one week.   
                     
-                    this.oneWeekPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.oneWeekPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
                     this.oneWeekPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneWeekPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneWeekPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
@@ -121,7 +162,7 @@ export class AssetSummaryComponent implements OnInit {
                    
                 this.historicalReturnService.getAssetHistoricDataForMonths(1,this.candlestick).then(candlesticks=>{    // one month
                     
-                    this.oneMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.oneMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
                     this.oneMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
@@ -133,7 +174,7 @@ export class AssetSummaryComponent implements OnInit {
                 
                 this.historicalReturnService.getAssetHistoricDataForMonths(3,this.candlestick).then(candlesticks=>{    // three months
                 
-                    this.threeMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.threeMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
                     this.threeMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.threeMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.threeMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
@@ -142,9 +183,9 @@ export class AssetSummaryComponent implements OnInit {
                     this.threeMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.threeMonthPerformance.high,candlesticks);
                     });
                     
-                this.historicalReturnService.getAssetHistoricDataForMonths(6,this.candlestick).then(candlesticks=>{    // six months
+                this.historicalReturnService.getAssetHistoricDataForMonths(4,this.candlestick).then(candlesticks=>{    // six months
                 
-                    this.sixMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.sixMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
                     this.sixMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.sixMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.sixMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
@@ -153,9 +194,9 @@ export class AssetSummaryComponent implements OnInit {
                     this.sixMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.sixMonthPerformance.high,candlesticks);
                     });
                 
-                this.historicalReturnService.getAssetHistoricDataForMonths(9,this.candlestick).then(candlesticks=>{    // nine months
+                this.historicalReturnService.getAssetHistoricDataForMonths(5,this.candlestick).then(candlesticks=>{    // nine months
                 
-                    this.nineMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData,this.asset);
+                    this.nineMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
                     this.nineMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.nineMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.nineMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
@@ -163,16 +204,9 @@ export class AssetSummaryComponent implements OnInit {
                     this.nineMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.nineMonthPerformance.low,candlesticks);
                     this.nineMonthPerformance.highReturn=this.calculatePeriodHighReturn(this.nineMonthPerformance.high,candlesticks);
                     });
-                
             }
-            
             this.isShowHistoricData=true;
-            
-         });                                                                     
-        
-      }
-    
-    
+    }
         
     
     
@@ -195,7 +229,7 @@ export class AssetSummaryComponent implements OnInit {
             
         
         asset.type=="Currency" || asset.type=="Commodity" ? candlesticksArr.map(candlesticks=>{candlesticks.low>130 ? candlesticks.low/=multiplier: candlesticks.low }) : null;
-        candlesticksArr.sort(compareSessionLow);
+        candlesticksArr.sort(this.utils.compare('low', true));
         let periodLow = candlesticksArr[0].low;
         
         /* check if the today's low is lower then historical low. we need this check because candlesticks holds data up until today
@@ -228,7 +262,7 @@ export class AssetSummaryComponent implements OnInit {
                multiplier=10000;
             }
         asset.type=="Currency" || asset.type=="Commodity" ? candlesticksArr.map(candlesticks=>{candlesticks.high>130 ? candlesticks.high/=multiplier: candlesticks.high }) : null;
-        candlesticksArr.sort(compareSessionHigh);
+        candlesticksArr.sort(this.utils.compare('high'));
         let periodHigh = candlesticksArr[0].high;
         
         if(Number(assetData.high.toString().replace(/,/g,""))>periodHigh){    // check if the today's high is higher then historical low. we need this check because candlesticks holds data up until today and assetData holds data of today
@@ -410,72 +444,47 @@ export class AssetSummaryComponent implements OnInit {
     
     calculateOverallTrend(ma50str:string,ma100str:string,ma200str:string,lastPrice:number){
         
-        
         let ma50=Number(ma50str.replace(/,/g,""));
         let ma100=Number(ma100str.replace(/,/g,""));
         let ma200=Number(ma200str.replace(/,/g,""));
         
-        
         if(lastPrice>ma50 && lastPrice>ma100){
-            
-                if( ma50/ma100>1.02 && ma100/ma200>1.02){
-                    
-                        return "Super Bullish";    
-                    
-                    }else{
-                    
-                        return "Bullish";
-                    
-                    }
-        
-        }else if(lastPrice<ma50 && lastPrice<ma100){
-            
-                if( ma50/ma100<0.98 && ma100/ma200<0.98){
-                    
-                        return "Super Bearish";    
-                    
-                    }else{
-                    
-                        return "Bearish";
-                    
-                    }
-            
-            
-         }else{
-            
-                        return "Sideways"
-            
+            if( ma50/ma100>1.02 && ma100/ma200>1.02){
+                    return "Super Bullish";    
             }
+            else{
+                    return "Bullish";
+            }
+        }else if(lastPrice<ma50 && lastPrice<ma100){
+            if( ma50/ma100<0.98 && ma100/ma200<0.98){
+                    return "Super Bearish";    
+            }
+            else{
+                    return "Bearish";
+            }
+         }
+         else{
+                    return "Sideways"
+         }
+    }
         
-        
-        }
-        
-    
-    
-    
     assetPerformanceOn():void{
-        
-            this.isShowAssetSummary=false;
-            this.isShowAssetTechnicals=false;
-            this.isShowAssetPerformance=true;
+        this.isShowAssetSummary=false;
+        this.isShowAssetTechnicals=false;
+        this.isShowAssetPerformance=true;
     }
     
     assetSummaryOn():void{
-        
-            this.isShowAssetPerformance=false;
-            this.isShowAssetTechnicals=false;
-            this.isShowAssetSummary=true;
-        }
-    
+        this.isShowAssetPerformance=false;
+        this.isShowAssetTechnicals=false;
+        this.isShowAssetSummary=true;
+    }
         
     assetTechnicalsOn():void{
-        
-            this.isShowAssetSummary=false;
-            this.isShowAssetPerformance=false;
-            this.isShowAssetTechnicals=true;
-        }
-
-    
+        this.isShowAssetSummary=false;
+        this.isShowAssetPerformance=false;
+        this.isShowAssetTechnicals=true;
+    }
     
     getChangeColor() {
         if(this.assetData.netChange>0) {
@@ -583,28 +592,34 @@ export class AssetSummaryComponent implements OnInit {
       
    }
     
+    generateSafeTransform(arr:any[]){   // must use the DomSanitizer here otherwise [style.transform] won't work
+        for(let i=0; i<arr.length; i++){
+            arr[i].safeTransform=this.sanitizer.bypassSecurityTrustStyle('rotate('+arr[i].degrees+'deg)')
+            arr[i].safeTransformOppositie=this.sanitizer.bypassSecurityTrustStyle('rotate('+-arr[i].degrees+'deg)')
+        }
+    }
     
-
+    
+    toggleDataPopUp(i:number){
+        this.indexOfDataPopUp>0 ? this.indexOfDataPopUp=-1 : this.indexOfDataPopUp=i;
+    }
+    
+    
 }
 
 
-function compareSessionLow(a,b) {
-      if (a.low > b.low)
-        return 1;
-      if (a.low < b.low)
-        return -1;
-        return 0;
-    }
-
-
-function compareSessionHigh(a,b) {
-        if (a.high < b.high)
-            return 1;
-        if (a.high > b.high)
-            return -1;
-         return 0;
+export interface AssetPerformance {
     
-    }
+    return?;
+    low?;
+    high?;
+    lowReturn?:string;
+    highReturn?:string;
+    greenWidth?;
+    redWidth?;
+    
+    
+}
 
 
 

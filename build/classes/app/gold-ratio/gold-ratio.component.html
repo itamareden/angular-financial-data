@@ -1,6 +1,14 @@
 <page-header></page-header>
 
-<div class="wrapper">
-<div class="image"></div>
-<div class="message">Coming Soon!</div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class='wrapper'>
+				<div class='last-price'>Last Price: {{goldRatio.lastPrice.toFixed(2)}}</div>
+				<div class='bar-chart'>
+					<bar-chart *ngIf='isShowChart' [chartData]="goldRatioArr" [chartProperties]="chartProperties"></bar-chart>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

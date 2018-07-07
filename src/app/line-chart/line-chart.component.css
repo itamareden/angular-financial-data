@@ -1,0 +1,72 @@
+.chart-wrapper{
+	position:relative; 
+	width:100%; 
+	height:100%; 
+	border-left:1px solid black;
+	margin:60px auto 40px auto;	
+}
+
+.x-axis{
+	height:1px; 
+	border-top:1px solid black;  
+	position:absolute;
+}
+
+.internal-axis{
+	height:1px; 
+	border-top:1px dotted grey;  
+	position:absolute;
+}
+
+.internal-axis-value{
+	left:-35px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+}
+
+.asset-name{
+	position:absolute;
+	top:-30px;
+	font-size:16px;
+	color:black;
+	text-align:center;
+	cursor:pointer;
+	font-weight:bold;
+}
+
+.svg-polyline{
+	fill:none;
+	stroke:#168fe9;
+	stroke-width:2;
+}
+
+.svg-circle{
+	stroke:black;
+	stroke-width:3;
+	fill:black;
+}
+
+.horizontal-grid-line{
+	position:absolute;
+	width:100%;	/* should be equal to the width of the internal axises  */
+	border-bottom: 1px dashed black;
+}
+
+.vertical-grid-line{
+	position:absolute;
+	top:0px;
+	height:100%;
+	border-left: 1px dashed black;
+}
+
+.Y-axis-orientation{
+	width:50px;
+	left:-50px;
+	position:absolute;
+	font-weight:bold;
+	font-family: arial;
+	background:green;
+	color:white;
+	text-align:center;
+}

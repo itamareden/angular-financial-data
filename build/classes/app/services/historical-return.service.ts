@@ -9,6 +9,7 @@ export class HistoricalReturnService {
   constructor() { }
     
     
+    
     getAssetHistoricDataForWeeks(numberOfWeeks:number, candlestickArr:Candlestick[]):Promise<Candlestick[]>{
         
         let date = new Date();
@@ -69,15 +70,23 @@ export class HistoricalReturnService {
         let indexToSliceArr=this.findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,indexInArr,candlestickArr);
         let arrForPeriod=candlestickArr.slice(indexToSliceArr);
         
+        return Promise.resolve(arrForPeriod);
+    }
+    
+    
+    getAssetHistoricDataForSpecificDate(date,candlestickArr:Candlestick[]):Promise<Candlestick[]>{
+        let baseDay = date.substring(8,10);
+        let baseMonth = date.substring(5,7);
+        let baseYear = date.substring(0,4);
+        let indexToSliceArr=this.findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,0,candlestickArr);
+        
+        let arrForPeriod=candlestickArr.slice(indexToSliceArr);
         
         return Promise.resolve(arrForPeriod);
-        
-        }
-    
+    }
     
     
     findTheRightDateIndexInArr(baseDay,baseMonth,baseYear,indexToStartSearchingFrom,candlestickArr):number{
-        
         
         let indexInArr=indexToStartSearchingFrom;
         let alreadyWasBigger=false;
@@ -86,7 +95,6 @@ export class HistoricalReturnService {
         let alreadyWasInRightYear=false;
         let foundStartingDate=false;
         
-        
         while(!foundStartingDate){
         
             let dayOfTheMonth=candlestickArr[indexInArr].tradingDay.substring(8,10);
@@ -94,136 +102,122 @@ export class HistoricalReturnService {
             let candleYear=candlestickArr[indexInArr].tradingDay.substring(0,4);
             
             //console.log(dayOfTheMonth+","+candleMonth+","+candleYear);
-            
             if(candleYear==baseYear){
-            
                     alreadyWasInRightYear=true;
-                
                     if(candleMonth==baseMonth){
-                        
                         alreadyWasInRightMonth=true;
-                        
                         if(dayOfTheMonth==baseDay){     // found the right date. calculate the return.
+                            //console.log("equal: "+candlestickArr[indexInArr].tradingDay);
+                            return indexInArr;
+                        }
+                        else if(dayOfTheMonth>baseDay){  // go back  a couple of days for the right date.
+                                //console.log("bigger: "+candlestickArr[indexInArr].tradingDay);
+                                if(alreadyWasSmaller){
+                                    //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
+                                    return indexInArr-1; 
+                                }
+                                else{
+                                    indexInArr--;
+                                    alreadyWasBigger=true;
+                                }
+                         }
+                         else{
+                             if(alreadyWasBigger){
                                 //console.log("equal: "+candlestickArr[indexInArr].tradingDay);
-                                return indexInArr;
-                        }else if(dayOfTheMonth>baseDay){  // go back  a couple of days for the right date.
-                                    //console.log("bigger: "+candlestickArr[indexInArr].tradingDay);
-                                
-                                    if(alreadyWasSmaller){
-                                                //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
-                                                return indexInArr-1; 
-                                    }else{
-                                    
-                                                 indexInArr--;
-                                                 alreadyWasBigger=true;
-                                        }
-                            
-                            }else{
-                            
-                                    if(alreadyWasBigger){
-                                            //console.log("equal: "+candlestickArr[indexInArr].tradingDay);
-                                            return indexInArr; 
-                                    }else{
-                                            //console.log("smaller: "+candlestickArr[indexInArr].tradingDay);
-                                            indexInArr++;
-                                            alreadyWasSmaller=true;
-                                        }
-                            
+                                return indexInArr; 
                              }
-                    
-                   
-                        
-                        }else if(candleMonth<baseMonth){
-                                
-                                if(alreadyWasInRightMonth){
-                                            //console.log("equal: "+candlestickArr[indexInArr].tradingDay);
-                                            return indexInArr; 
-                                    }else{
-                                            //console.log("month: go forward");
-                                            indexInArr++;
-                                    }
-                         }else{
-                        
-                                if(alreadyWasInRightMonth){
-                                            //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
-                                            return indexInArr-1; 
-                                    }else{
-                                            //console.log("month: keep going back");
-                                            indexInArr--;
-                                    }
-                        
-                        
-                            }
-                
-                }else {                                  // go back to the year before. example: we need 11/16 but we're at 01/17.
-                        
-                        if(alreadyWasInRightYear){
-                                //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
-                                return indexInArr-1; 
-                        }else{
-                                alreadyWasBigger=true;  // because if we're here than we're bigger and have to go back. remember 1.1.2018
-                                //console.log("year: keep going back");
-                                indexInArr--;
-                            }
+                             else{
+                                //console.log("smaller: "+candlestickArr[indexInArr].tradingDay);
+                                indexInArr++;
+                                alreadyWasSmaller=true;
+                             }
+                         }
+                    }else if(candleMonth<baseMonth){
+                        if(alreadyWasInRightMonth){
+                            //console.log("equal: "+candlestickArr[indexInArr].tradingDay);
+                            return indexInArr; 
+                        }
+                        else{
+                            //console.log("month: go forward");
+                            indexInArr++;
+                        }
+                    }else{
+                        if(alreadyWasInRightMonth){
+                            //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
+                            return indexInArr-1; 
+                        }
+                        else{
+                            //console.log("month: keep going back");
+                            indexInArr--;
+                        }
+                    }
+            }else {            // go back to the year before. example: we need 11/16 but we're at 01/17.
+                if(alreadyWasInRightYear){
+                        //console.log("equal: "+candlestickArr[indexInArr-1].tradingDay);
+                        return indexInArr-1; 
                 }
-            
+                else if(candleYear>baseYear){
+                    alreadyWasBigger=true;  
+                    //console.log("year: keep going back");
+                    indexInArr--;
+                }
+                else{
+                    alreadyWasSmaller=true;
+                    //console.log("year: keep going forward");
+                    indexInArr++;
+                }
+            }
         }
-        
-        
-        
    }
     
     
-    
-    
-    calculateReturnForPeriod(candlestickArr:Candlestick[], assetData:AssetData,asset:Asset){
-        /*console.log("close beginning: "+candlestickArr[0].tradingDay+" "+candlestickArr[0].close);*/
-        let basePrice=candlestickArr[0].close;
-        let multiplier;
-        if(basePrice/assetData.lastPriceAsNumber<5){
-            multiplier=1;
-        }else if(basePrice/assetData.lastPriceAsNumber<50){
-              multiplier=10;
-         }else if(basePrice/assetData.lastPriceAsNumber<500){
-               multiplier=100;
-          }else if(basePrice/assetData.lastPriceAsNumber<5000){
-              multiplier=1000;
-           }else if(basePrice/assetData.lastPriceAsNumber<50000){
-               multiplier=10000;
-            }
-            
-        
-        asset.type=="Currency" || asset.type=="Commodity" ?  basePrice>130 ? basePrice/=multiplier : basePrice : null;
-        let returnForPeriod= 100*((assetData.lastPriceAsNumber/basePrice)-1);
-        
+    calculateReturnForPeriod(candlestickArr:Candlestick[], price:number, propName?:string, basePrice?:number){
+        if(propName == undefined) propName='close';
+        if(basePrice == undefined) basePrice=candlestickArr[0][propName]; 
+        let returnForPeriod= 100*((price/basePrice)-1);
         return returnForPeriod;
-        
-        }
+    }
     
-    calculateReturnForPeriod2(candlestickArr:Candlestick[], lastPrice:number,asset:Asset){
-        /*console.log("close beginning: "+candlestickArr[0].tradingDay+" "+candlestickArr[0].close);
-        console.log("last:  "+lastPrice);*/
-        
-        let basePrice=candlestickArr[0].close;
-        let multiplier;
-        if(basePrice/lastPrice<5){
-            multiplier=1;
-        }else if(basePrice/lastPrice<50){
-              multiplier=10;
-         }else if(basePrice/lastPrice<500){
-               multiplier=100;
-          }else if(basePrice/lastPrice<5000){
-              multiplier=1000;
-           }else if(basePrice/lastPrice<50000){
-               multiplier=10000;
-            }
-            
-        
-        asset.type=="Currency" || asset.type=="Commodity"  ?  basePrice>130 ? basePrice/=multiplier : basePrice : null;
-        let returnForPeriod= 100*((lastPrice/basePrice)-1);
-        
-        return returnForPeriod;
-        
+    
+    calculateLowestPriceForPeriod(candlestickArr:Candlestick[]):number{
+        let lowestPrice = 1000000;
+        for(let i=0; i<candlestickArr.length; i++){
+            if(candlestickArr[i]['low'] < lowestPrice) lowestPrice = candlestickArr[i]['low'];
         }
+        return lowestPrice;
+    }
+    
+    
+    calculateHighestPriceForPeriod(candlestickArr:Candlestick[]):number{
+        let highestPrice = 0;
+        for(let i=0; i<candlestickArr.length; i++){
+            if(candlestickArr[i]['high'] > highestPrice) highestPrice = candlestickArr[i]['high'];
+        }
+        return highestPrice;
+    }
+    
+//    calculateReturnForPeriod2(candlestickArr:Candlestick[], lastPrice:number,asset:Asset){
+//        
+//        let basePrice=candlestickArr[0].close;
+//        let multiplier;
+//        if(basePrice/lastPrice<5){
+//            multiplier=1;
+//        }else if(basePrice/lastPrice<50){
+//              multiplier=10;
+//         }else if(basePrice/lastPrice<500){
+//               multiplier=100;
+//          }else if(basePrice/lastPrice<5000){
+//              multiplier=1000;
+//           }else if(basePrice/lastPrice<50000){
+//               multiplier=10000;
+//            }
+//            
+//        
+//        asset.type=="Currency" || asset.type=="Commodity"  ?  basePrice>130 ? basePrice/=multiplier : basePrice : null;
+//        let returnForPeriod= 100*((lastPrice/basePrice)-1);
+//        
+//        return returnForPeriod;
+//        
+//        }
 
 }

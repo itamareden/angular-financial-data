@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetDataService } from '../services/asset-data.service';
-import { AssetInRelativePerformance } from '../asset-in-relative-performance'
 import { TopAssetsPerformanceComponent } from '../top-assets-performance/top-assets-performance.component';
-import { WindowService } from '../services/window.service';
-import { ChartsService } from '../services/Charts.service';
 import { UtilsService } from '../services/utils.service';
 
 import { Observable } from 'rxjs';
@@ -38,9 +35,9 @@ export class StocksStatisticsComponent implements OnInit {
         xAxisTop:null,
     }
     
-    observable: Observable<AssetInRelativePerformance[]>;
+    observable: Observable<any>;
     assetsData=[];
-    propArr=['dayReturn','yearReturn'];
+    propArr=['dayReturn','yearReturn','lowInPerc','highInPerc'];
     dataProp='';
     advancers : number = 0;
     decliners : number = 0;
@@ -48,50 +45,37 @@ export class StocksStatisticsComponent implements OnInit {
     averagePercChng : number = 0;
     breadth="";
     isShowStatistics=false;
-    isShowTable=false; 
     isShowComponent=false;
     obtainedAssetsData=false;
-    hasHeight=false;
     alreadyCompensatedForMobile=false;
     alreadyCompensatedForDesktop=false;
     isSettings=false;
     isShowYearlyChngV=false;
+    showOnHover=''; // delete me when there is a better form of showing high and low in the bar chart...
+    isShowOnHover=false; // same here!
+    hoverIndex=-1 // same here!
+    
+    chartDuration = '';
 
-  constructor( private assetDataService: AssetDataService, private windowService: WindowService, private charts: ChartsService,
-            private utils: UtilsService) { }
+  constructor( private assetDataService: AssetDataService, private utils: UtilsService) { }
 
   ngOnInit() {
       this.createStatistics();
+      this.createPerformanceChart();
   }
-    
-  ngAfterViewChecked() {
-        if(this.chart && !this.hasHeight){
-            this.hasHeight=true;
-            this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
-            this.chartProperties.totalChartWidth=this.chart.nativeElement.offsetWidth;
-            this.createPerformanceChart();
-            
-            let windowWidth=this.windowService.getNativeWindow().innerWidth;
-            windowWidth <= 400 ? this.alreadyCompensatedForMobile = true : this.alreadyCompensatedForDesktop = true;
-        }
-   }
     
     
     createPerformanceChart(){
-        
         this.assetsData=this.getAssetsData(this.propArr);
-        
         let classScope=this; 
         let interval=setInterval(function(){
               if(classScope.obtainedAssetsData){
                   clearInterval(interval);
                   classScope.updateDataToShow('dayReturn', classScope.propArr, classScope.assetsData, classScope.assetsForPerformance);
-                  classScope.charts.createBarChart(classScope.assetsForPerformance, classScope.chartProperties, 'dataToShow');
                   classScope.dataProp='dayReturn'
-                  classScope.isShowTable=true;
+                  classScope.chartDuration = "day"; // makes <bar-chart> come to life and starts its process
               }
-             },200);
-        
+             },500);
     }
     
     
@@ -110,13 +94,12 @@ export class StocksStatisticsComponent implements OnInit {
         
         symbolsURL+=faangSymbols;
         
-        this.observable = this.assetDataService.getMultipleAssetsData2(symbolsURL);
+        this.observable = this.assetDataService.getMultipleAssetsData(symbolsURL,'stock-statistics',['twelveMnthPct']);
         this.observable.subscribe(assetsData => {
             
                 let onlyFaang=assetsData.splice(assetsData.length-5,5); // get only FAANG net percent change.
                 let faangDataArr=[];
-                
-                
+
                 for(let i=0; i<propLength; i++){
                     let faangData=0;
                     let prop=properties[i];
@@ -128,10 +111,7 @@ export class StocksStatisticsComponent implements OnInit {
                     faangDataArr.push(faangData);
                 }
                 dataToReturn[indexOfFAANG]=faangDataArr; 
-                
-                
                 let j=0;
-                
                 let assetData;
                     
                 for(let i=0; i<assetsData.length; i++){
@@ -148,10 +128,8 @@ export class StocksStatisticsComponent implements OnInit {
                 }
                 
                 this.obtainedAssetsData=true;
-                
             });
             return dataToReturn;
-        
     }
     
     
@@ -169,30 +147,26 @@ export class StocksStatisticsComponent implements OnInit {
     }
     
     
-    changeChartDataBasedOnProp(propName:string){
-        this.updateDataToShow(propName, this.propArr, this.assetsData, this.assetsForPerformance);
-        this.charts.createBarChart(this.assetsForPerformance, this.chartProperties, 'dataToShow');
-    }
-    
     toggleChartData(){
            if(this.dataProp=='dayReturn'){
-               this.changeChartDataBasedOnProp('yearReturn');
+               this.updateDataToShow('yearReturn', this.propArr, this.assetsData, this.assetsForPerformance);
+               this.chartDuration = "year";
                this.dataProp='yearReturn';
                this.isShowYearlyChngV=true;
            }else{
-               this.changeChartDataBasedOnProp('dayReturn');
+               this.updateDataToShow('dayReturn', this.propArr, this.assetsData, this.assetsForPerformance);
+               this.chartDuration = "day";
                this.dataProp='dayReturn';
                this.isShowYearlyChngV=false;
            }
     }
     
     
-    
-     createStatistics(){
+    createStatistics(){
        
        let classScope=this; 
        let interval=setInterval(function(){
-          if(TopAssetsPerformanceComponent.assetsData.length>0){
+          if(TopAssetsPerformanceComponent.assetsData.length>75){
               clearInterval(interval);
               classScope.calculateStatistics();
           }
@@ -201,58 +175,51 @@ export class StocksStatisticsComponent implements OnInit {
     }
     
     
-    
     calculateStatistics(){
-        
         let stocksArr=TopAssetsPerformanceComponent.assetsData.slice();
-        stocksArr.sort(this.utils.compareAssetsBasedOnProp('dayReturn')); 
-        let trimmedArrForAvgCalculation=stocksArr.slice(4,stocksArr.length-4);
-        
+        stocksArr.sort(this.utils.compare('dayReturn')); 
+        console.log('length of average data is: '+stocksArr.length);
         for(let i=0; i<stocksArr.length; i++){
-            
-            if(i<trimmedArrForAvgCalculation.length){   // because stocksArr length is greater..
-                this.averagePercChng+=trimmedArrForAvgCalculation[i].netChangePercent;  // for average we use trimmed..
-            }
-            
-            if(stocksArr[i].netChangePercent>0){    // for advancers we use all stocks
+            this.averagePercChng+=stocksArr[i].netChangePercent;  
+            if(stocksArr[i].netChangePercent>0){   
                 this.advancers++;
-             }else if(stocksArr[i].netChangePercent<0){
+            }
+            else if(stocksArr[i].netChangePercent<0){
                  this.decliners++;
-              }else{
+            }
+            else{
                   this.unchanged++;
-               }
+            }
         }
+        this.advancers=100*this.advancers/stocksArr.length;
+        this.decliners=100*this.decliners/stocksArr.length;
+        this.unchanged=100*this.unchanged/stocksArr.length;
+        this.averagePercChng/=stocksArr.length;
         
-            this.advancers=100*this.advancers/stocksArr.length;
-            this.decliners=100*this.decliners/stocksArr.length;
-            this.unchanged=100*this.unchanged/stocksArr.length;
-            this.averagePercChng/=trimmedArrForAvgCalculation.length;
-        
-            let classScope=this; 
-            let interval=setInterval(function(){
-                // proceed only after the last item in the array has dataToShow 
-                  if(classScope.assetsForPerformance[classScope.assetsForPerformance.length-1].dataToShow!=null){
-                      clearInterval(interval);
-                      classScope.calculateBreadth();
-                  }
-                 },200); 
-        
-            this.isShowStatistics=true;
-            this.isShowComponent=true;
+        let classScope=this; 
+        let interval=setInterval(function(){
+            // proceed only after the last item in the array has dataToShow 
+              if(classScope.assetsForPerformance[classScope.assetsForPerformance.length-1].dataToShow!=null){
+                  clearInterval(interval);
+                  classScope.calculateBreadth();
+              }
+             },200); 
+    
+        this.isShowStatistics=true;
+        this.isShowComponent=true;
         
     }
     
     calculateBreadth(){
-        
         if(this.assetsForPerformance[0].dataToShow<0 && this.assetsForPerformance[0].dataToShow<this.averagePercChng && this.advancers>this.decliners){
                 this.breadth="Positive";
-        }else if(this.assetsForPerformance[0].dataToShow>0 && this.assetsForPerformance[0].dataToShow>this.averagePercChng && this.advancers<this.decliners){
+        }
+        else if(this.assetsForPerformance[0].dataToShow>0 && this.assetsForPerformance[0].dataToShow>this.averagePercChng && this.advancers<this.decliners){
                  this.breadth="Negative";
-         }else{
+        }
+        else{
                 this.breadth="Neutral";
-          }
-        
-        
+        }
     }
     
     
@@ -264,30 +231,23 @@ export class StocksStatisticsComponent implements OnInit {
         }   
     }
     
+    showHighAndLow(index){  // delete when better function exists in bar-chart...
+        let lowIndex = this.propArr.indexOf('lowInPerc');
+        let highIndex = this.propArr.indexOf('highInPerc');
+        let assetLowInPerc = this.assetsData[index][lowIndex];
+        let assetHighInPerc = this.assetsData[index][highIndex];
+        this.showOnHover = `${assetLowInPerc.toFixed(2)}%
+                            ${assetHighInPerc.toFixed(2)}%`;
+        this.isShowOnHover = true;
+        this.hoverIndex = index;
+    }
     
-    @HostListener('window:resize', ['$event'])
-    onResize(event) {
-       
-        let windowWidth = event.target.innerWidth;
-        
-        if(windowWidth <= 400){
-            if(!this.alreadyCompensatedForMobile){
-                this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
-                this.charts.createBarChart(this.assetsForPerformance, this.chartProperties, 'dataToShow');
-                this.alreadyCompensatedForMobile=true;
-                this.alreadyCompensatedForDesktop=false;
-            }
-        }else if(!this.alreadyCompensatedForDesktop){
-            this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
-            this.charts.createBarChart(this.assetsForPerformance, this.chartProperties, 'dataToShow');
-            this.alreadyCompensatedForDesktop=true;
-            this.alreadyCompensatedForMobile=false;
-        }
+    stopShowing(){
+        this.isShowOnHover=false; 
+        this.hoverIndex = -1;  
     }
     
     
 
 }
-
-
 

@@ -22,7 +22,9 @@ import { AssetPerformanceBarComponent } from './asset-performance-bar/asset-perf
 import { AssetPerformanceBarExplanationComponent } from './asset-performance-bar-explanation/asset-performance-bar-explanation.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { WindowService } from './services/window.service';
+import { ChartsService } from './services/Charts.service';
 import { HistoricalReturnService } from './services/historical-return.service';
+import { UtilsService } from './services/utils.service';
 import { GoldRatioComponent } from './gold-ratio/gold-ratio.component';
 import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
 import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
@@ -30,6 +32,18 @@ import { RelativePerformanceComponent } from './relative-performance/relative-pe
 import { StocksStatisticsComponent } from './stocks-statistics/stocks-statistics.component';
 import { MarketCapComponent } from './market-cap/market-cap.component';
 import { IlsPerformanceComponent } from './ils-performance/ils-performance.component';
+import { InterestRatesComponent } from './interest-rates/interest-rates.component';
+import { MenuBarComponent } from './icons/menu-bar/menu-bar.component';
+import { VMarkComponent } from './icons/v-mark/v-mark.component';
+import { OpenTriangleComponent } from './icons/open-triangle/open-triangle.component';
+import { BarChartComponent } from './bar-chart/bar-chart.component';
+import { LineChartComponent } from './line-chart/line-chart.component';
+import { RelativePerformance2Component } from './relative-performance-2/relative-performance-2.component';
+import { AssetsMenuModalComponent } from './assets-menu-modal/assets-menu-modal.component';
+import { ArrowIconComponent } from './icons/arrow-icon/arrow-icon.component';
+import { AssetsListFilterPipe } from './pipes/assets-list-filter.pipe';
+import { XIconComponent } from './icons/x-icon/x-icon.component';
+import { MarketHeadlinesComponent } from './market-headlines/market-headlines.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +66,18 @@ import { IlsPerformanceComponent } from './ils-performance/ils-performance.compo
     StocksStatisticsComponent,
     MarketCapComponent,
     IlsPerformanceComponent,
+    InterestRatesComponent,
+    MenuBarComponent,
+    VMarkComponent,
+    OpenTriangleComponent,
+    BarChartComponent,
+    LineChartComponent,
+    RelativePerformance2Component,
+    AssetsMenuModalComponent,
+    ArrowIconComponent,
+    AssetsListFilterPipe,
+    XIconComponent,
+    MarketHeadlinesComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +85,7 @@ import { IlsPerformanceComponent } from './ils-performance/ils-performance.compo
       HttpModule,
       appRouterModule
   ],
-  providers: [AssetsService,AssetDataService,MarketSentimentService,WindowService,HistoricalReturnService],
+  providers: [AssetsService,AssetDataService,MarketSentimentService,WindowService,HistoricalReturnService,ChartsService,UtilsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,13 +1,65 @@
-<page-header></page-header>
-
-<div style='width:200px; margin:100px auto;'>
-	<div style='margin-top:20px;' *ngFor="let item of ( ilsPairs )">
-		<div style='float:left; margin-right:20px;'>{{item.name}}</div>
-		<div style='float:left;'>{{item.lastPrice.toFixed(2)}}</div>
-		<div style='float:left;' [style.color]="item.netChangePercent>0 ? 'green':'red'">{{item.dayReturn.toFixed(2)}}%</div>
-		<div style='float:left;' [style.color]="item.netChangePercent>0 ? 'green':'red'">{{item.yearReturn.toFixed(2)}}%</div>
-		<div style='clear:both'></div>
+<page-header></page-header> 
+<div class="container-fluid">
+	<div class="row">
+		<div class="hidden-xs hidden-sm col-md-12">
+			<div class='wrapper' >
+				<table>
+					  <tr>
+					    <th>Currency</th>
+					    <th>Price</th>
+					    <th>Day</th>
+					    <th>Week</th>
+					    <th>Month</th>
+					    <th>3 Months</th>
+					    <th>Year</th>
+					  </tr>
+					  <tr *ngFor="let item of ( ilsPairs )">
+					    <td class='currency-name' [routerLink]="['/asset', item.symbol]">{{item.name}}</td>
+					    <td>{{item.lastPrice.toFixed(4)}}</td>
+					    <td [style.color]="item.dayReturn>0 ? 'green':'red'">{{item.dayReturn.toFixed(2)}}%</td>
+					    <td [style.color]="item.weekReturn>0 ? 'green' : item.weekReturn<0 ? 'red' : 'black'">
+					    {{item.weekReturn != undefined ? item.weekReturn.toFixed(2)+'%' : '-'}}</td>
+					    <td [style.color]="item.monthReturn>0 ? 'green' : item.monthReturn<0 ? 'red' : 'black'">
+					    {{item.monthReturn != undefined ? item.monthReturn.toFixed(2)+'%' : '-'}}</td>
+					    <td [style.color]="item.threeMonthReturn>0 ? 'green' : item.threeMonthReturn<0 ? 'red' : 'black'">
+					    {{item.threeMonthReturn != undefined ? item.threeMonthReturn.toFixed(2)+'%' : '-'}}</td>
+					    <td [style.color]="item.yearReturn>0 ? 'green':'red'">{{item.yearReturn.toFixed(2)}}%</td>
+					  </tr>
+				</table>
+				<div class='bar-chart'>
+					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartProperties]="regularChartProperties"></bar-chart>
+				</div>
+				<div class='bar-chart' style='margin-top:100px'>
+					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartProperties]="normalizedChartProperties"></bar-chart>
+				</div>
+				<div style='clear:both'></div>
+			</div>
+		</div>
+		<div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+			<div class='buttons-wrapper'>
+				<div *ngFor='let duration of (durationsArr)'>
+					<div class="switch-view-button" [class.switch-view-button-active]="activeDuration == duration" (click)="changeDuration($event)">{{duration}}</div>			    
+			    </div>
+		    </div>
+			<table>
+				<tr>
+				    <th>Currency</th>
+				    <th>Price</th>
+				    <th>{{activeDuration}}</th>
+			  	</tr>
+			  	<tr *ngFor="let item of ( ilsPairs )">
+				    <td class='currency-name' [routerLink]="['/asset', item.symbol]">{{item.name}}</td>
+				    <td>{{item.lastPrice.toFixed(4)}}</td>
+				    <td [style.color]="item[activeDurationReturn]>0 ? 'green' : item[activeDurationReturn]<0 ? 'red' : 'black'">
+					    {{item[activeDurationReturn] != undefined ? item[activeDurationReturn].toFixed(2)+'%' : '-'}}</td>
+				</tr>
+			</table>
+			<div class='bar-chart'>
+					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartProperties]="regularChartProperties"></bar-chart>
+			</div>
+			<div class='bar-chart'>
+					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartProperties]="normalizedChartProperties"></bar-chart>
+			</div>
+		</div>
 	</div>
-	<div>{{averageDayReturn.toFixed(2)}}</div>
-	<div>{{averageYearReturn.toFixed(2)}}</div>
 </div>

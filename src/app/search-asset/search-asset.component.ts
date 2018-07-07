@@ -45,7 +45,9 @@ export class SearchAssetComponent implements OnInit {
     
     getAllAssets(): void {
     this.assetsService.getAllAssets().then(assets => {
-             this.assets = assets;
+             this.assets = assets.filter(item=>{
+                 if(!item.hide) return item;
+             });
             // for the condition inside clear method.. to see if assetTyped value (whether fully typed or chosen) is an asset name 
              assets.map(asset=>{let assetName=asset.nameToShow; this.assetsNames.push(assetName);})
         });

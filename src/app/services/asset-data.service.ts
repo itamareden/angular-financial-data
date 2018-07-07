@@ -2,9 +2,6 @@ import { Injectable } from '@angular/core';
 import { AssetData } from '../asset-data';
 import { Asset } from '../asset';
 import { Candlestick } from '../Candlestick';
-import { AssetInMarketMoversTable } from '../asset-in-market-movers-table'
-import { AssetInAssetsTable } from '../asset-in-assets-table'
-import { AssetInRelativePerformance } from '../asset-in-relative-performance'
 
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -64,53 +61,89 @@ export class AssetDataService {
     
     
     
-    getAssetHistoricData(asset:Asset, timeFrame:string, maxRecords:number): Observable<Candlestick[]> {
+    getAssetHistoricData(asset:any, timeFrame?:string, maxRecords?:number): Observable<Candlestick[]> {
         
-         if(maxRecords==undefined)  maxRecords=200;
-         return this.http.get(this.urlForHistoricAssetData+'&symbol='+asset.symbol+'&type='+timeFrame+'&startDate=20060101&maxRecords='+maxRecords)
-            .map(mapAssetHistoricData);
-      }
-    
-    
-    getAssetsDataForPerformance(assets:Asset[]): Observable<AssetInMarketMoversTable[]> {
         
-       let symbols="";  // if we won't initialize with "" the first asset won't be shown because it's symbol would have "undefined" prefix
-        
-        for( let i=0 ; i<assets.length ; i++ ){ 
-             
-            symbols += assets[i].symbol;
-             if(i<assets.length-1){
-                symbols+=",";
-                }
+        let assetSymbol='';
+        if(maxRecords == undefined)  maxRecords = 200;
+        if(timeFrame == undefined) timeFrame = 'daily';
+        if(typeof asset == 'object' && asset.symbol){
+            assetSymbol = asset.symbol;
+        }
+        else if(typeof asset == 'string'){
+            assetSymbol = asset;
         } 
-        
-        return this.http.get(this.urlForPresentAssetData+'&symbols='+symbols+'&fields=previousClose%2cpreviousVolume%2csharesOutstanding%2ctwelveMnthPct%2cfiftyTwoWkHigh%2cfiftyTwoWkLow')
-            .map(mapAssetsDataForPerformance);
-        
-        
-     }
-    
-    
-    getMultipleAssetsData(symbolsInURL:string): Observable<any[]> {
-        
-       let symbols=symbolsInURL;
-        
-        return this.http.get(this.urlForPresentAssetData+'&symbols='+symbols+'&fields=previousClose')
-            .map(mapMultipleAssetsData);
-        
-     }
-    
-    getMultipleAssetsData2(symbolsInURL:string): Observable<AssetInRelativePerformance[]> {
-        
-       let symbols=symbolsInURL;
-        
-        return this.http.get(this.urlForPresentAssetData+'&symbols='+symbols+'&fields=previousClose%2ctwelveMnthPct')
-            .map(mapMultipleAssetsData2);
-        
-     }
+        else{
+            console.log('asset should be of type Asset or string');
+            return;
+        }
+        return this.http.get(this.urlForHistoricAssetData+'&symbol='+assetSymbol+'&type='+timeFrame+'&startDate=20060101&maxRecords='+maxRecords)
+           .map(mapAssetHistoricData);
+    } 
     
     
     
+    getMultipleAssetsData(assetsSymbols:any, componentName?:string, extraFields?:[string]): Observable<any> {
+        
+        let symbols='';  // must initialize...
+        let fields='';
+        
+        if(typeof assetsSymbols == 'object' && assetsSymbols instanceof Array){
+            for( let i=0 ; i<assetsSymbols.length ; i++ ){ 
+            // check if the array consists of string or objects.
+                typeof assetsSymbols[i] == 'object' ? symbols += assetsSymbols[i].symbol : symbols += assetsSymbols[i];
+                if(i<assetsSymbols.length-1){
+                   symbols+=",";
+                }
+            } 
+        }
+        else if(typeof assetsSymbols == 'string'){
+            symbols = assetsSymbols;
+        }
+        else{
+            console.log('cannot get assets data. assetsSymbols should be of type string or array.');
+            return;   
+        }
+        
+        if(extraFields && extraFields.length>0){
+            for( let i=0 ; i<extraFields.length ; i++ ){ 
+                fields += extraFields[i];
+                if(i<extraFields.length-1){
+                   fields+="%2c";
+                }
+            }
+        }
+        
+        return this.http.get(this.urlForPresentAssetData+'&symbols='+symbols+'&fields=previousClose%2c'+fields)
+            .map(Response => {return Response.json()['results']})   // results is an array of objects from barchart..
+            .map(function(assetsArr){return mapMultipleAssetsData(assetsArr,componentName)});
+            
+    }
+    
+    
+    
+    getHistoricalDataForMultipleAssets(assetsSymbols:[string],timeFrame?:string, maxRecords?:number):Promise<any>{
+        
+        let arrayToReturn=[];
+        for(let i=0; i<assetsSymbols.length; i++){
+            let observable:Observable<any[]>;
+            observable = this.getAssetHistoricData(assetsSymbols[i],timeFrame,maxRecords); 
+            observable.subscribe(candlesticks => arrayToReturn[i]=candlesticks);           
+        }
+
+        let promise = new Promise(function(resolve) {
+             let interval = window.setInterval(function() {
+                 if(arrayToReturn.length == assetsSymbols.length){
+                                    clearInterval(interval);
+                                    setTimeout(function(){
+                                        resolve(arrayToReturn);
+                                    },500);
+                 }
+             },500);
+        });
+        
+        return promise;
+    }
     
 
 }
@@ -154,7 +187,7 @@ function mapAssetData(res: Response): any {
 
 
 
-function mapAssetHistoricData(res: Response): Candlestick[] {
+function mapAssetHistoricData(res: Response): any[] {
    
     let result = res.json().results;
     
@@ -164,7 +197,7 @@ function mapAssetHistoricData(res: Response): Candlestick[] {
 }
 
 
-function  toCandlestick(result:any): Candlestick{
+function  toCandlestick(result:any): any{
     
   let candleStick = <any>({
 
@@ -182,82 +215,55 @@ function  toCandlestick(result:any): Candlestick{
 
 
 
-function mapAssetsDataForPerformance(res: Response): AssetInMarketMoversTable[] {
-   
-    let result = res.json().results;
-    
-    let assetsDataForPerformance = result.map(asset=> {
-        
-        let assetDataForPerformance = <any> ({
-                                            symbol:asset.symbol,
-                                            lastPrice: asset.lastPrice,
-                                            netChangePercent: (100*(asset.lastPrice-asset.previousClose)/asset.previousClose),
-                                            volume: Math.round(asset.volume*asset.lastPrice),
-        /* for the market-cap component*/   twelveMnthPct: asset.twelveMnthPct,
-        /* for the market-cap component*/   marketCap: asset.sharesOutstanding ? asset.sharesOutstanding*asset.lastPrice/1000000 : null,
-        /* for the market-cap component*/   prevMarketCap: asset.sharesOutstanding ? asset.sharesOutstanding*asset.previousClose/1000000 : null,
-        /* for the market-cap component*/   lastYearMarketCap: (asset.lastPrice/(1+asset.twelveMnthPct/100))*asset.sharesOutstanding/1000000,
-        /* for the market-cap component*/   dailyHigh: asset.high,
-        /* for the market-cap component*/   dailyLow: asset.low,
-        /* for the market-cap component*/   yearRecordHigh: asset.fiftyTwoWkHigh,
-        /* for the market-cap component*/   yearRecordLow: asset.fiftyTwoWkLow,
-        
-                                            })
-                                    
-                                            return  assetDataForPerformance;
-          
-                                            });
-    return assetsDataForPerformance;
-}
 
-
-function mapMultipleAssetsData(res: Response): any[] {
-   
-    let result = res.json().results;
-    
-    let assetData = result.map(asset=> {
-        
+function mapMultipleAssetsData(assetsArr,componentName){
+    let assetsData = assetsArr.map(asset=> {
         let assetData = <any> ({
-                                            symbol:asset.symbol,
-                                            netChangePercent: (100*(asset.lastPrice-asset.previousClose)/asset.previousClose),
-                                            lastPrice: asset.lastPrice,
-                                            low: asset.low,
-                                            high: asset.high,
-                                            previousClose: asset.previousClose,
-                                            open: asset.open,
-                                            })
-                                    
-                                            return  assetData;
-          
-                                            });
-    
-    return assetData;
-    
-}
-
-function mapMultipleAssetsData2(res: Response): AssetInRelativePerformance[] {
-   
-    let result = res.json().results;
-    
-    let assetData = result.map(asset=> {
+                symbol:asset.symbol,
+                lastPrice: asset.lastPrice,
+                low: asset.low,
+                high: asset.high,
+                open: asset.open,
+                previousClose: asset.previousClose,
+                netChangePercent: (100*(asset.lastPrice-asset.previousClose)/asset.previousClose),
+            })
         
-        let assetData = <any> ({
-                                            symbol:asset.symbol,
-                                            previousClose: asset.previousClose,
-                                            dayReturn: (100*(asset.lastPrice-asset.previousClose)/asset.previousClose),
-                                            lastPrice: asset.lastPrice,
-                                            yearReturn: asset.twelveMnthPct,
-                                            low: asset.low,
-                                            high: asset.high,
-                                            })
-                                    
-                                            return  assetData;
-          
-                                            });
+        if(componentName=='top-assets-performance' || componentName == 'market-cap'){
+            // check if the first item in the array has the property. if so then all of the other items also have it...
+           assetsArr[0]['volume'] ? assetData.volume = Math.round(asset.volume*asset.lastPrice) : null; 
+           assetsArr[0]['fiftyTwoWkHigh'] ?  assetData.yearRecordHigh = asset.fiftyTwoWkHigh : null;
+           assetsArr[0]['fiftyTwoWkLow'] ? assetData.yearRecordLow = asset.fiftyTwoWkLow : null;
+           assetsArr[0]['sharesOutstanding'] && assetsArr[0]['twelveMnthPct'] ?  
+                        (assetData.twelveMnthPct = asset.twelveMnthPct,
+                         assetData.marketCap = asset.sharesOutstanding*asset.lastPrice/1000000,
+                         assetData.prevMarketCap = asset.sharesOutstanding*asset.previousClose/1000000,
+                         assetData.lastYearMarketCap = (asset.lastPrice/(1+asset.twelveMnthPct/100))*asset.sharesOutstanding/1000000
+                        ) : null;
+            
+        }
+        else if(componentName == 'gold-ratio'){
+           assetsArr[0]['twelveMnthPct'] ? assetData.yearReturn=asset.twelveMnthPct : null;
+        }
+        else if(componentName == 'ils-performance'){
+           assetData.dayReturn=assetData.netChangePercent;
+           assetsArr[0]['twelveMnthPct'] ? assetData.yearReturn=asset.twelveMnthPct : null;
+        }
+        else if(componentName == 'relative-performance'){
+           assetData.dayReturn=assetData.netChangePercent;
+           assetsArr[0]['twelveMnthPct'] ? assetData.yearReturn=asset.twelveMnthPct : null;
+           assetsArr[0]['fiftyTwoWkHigh'] ?  assetData.fiftyTwoWkHigh = asset.fiftyTwoWkHigh : null;
+           assetsArr[0]['fiftyTwoWkLow'] ? assetData.fiftyTwoWkLow = asset.fiftyTwoWkLow : null; 
+        }
+        else if(componentName == 'stock-statistics'){
+           assetData.dayReturn=assetData.netChangePercent;
+           assetData.lowInPerc = (100*(asset.low-asset.previousClose)/asset.previousClose);
+           assetData.highInPerc = (100*(asset.high-asset.previousClose)/asset.previousClose);
+           assetsArr[0]['twelveMnthPct'] ? assetData.yearReturn=asset.twelveMnthPct : null;
+        }
+        
+        return  assetData;
+        });
     
-    return assetData;
-    
+     return assetsData;
 }
-
-
 

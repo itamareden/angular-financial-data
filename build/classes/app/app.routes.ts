@@ -6,6 +6,8 @@ import { GoldRatioComponent } from './gold-ratio/gold-ratio.component';
 import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
 import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
 import { IlsPerformanceComponent } from './ils-performance/ils-performance.component';
+import { InterestRatesComponent } from './interest-rates/interest-rates.component';
+import { MarketHeadlinesComponent } from './market-headlines/market-headlines.component';
 
 
 
@@ -35,12 +37,16 @@ const routes: Routes = [
     component: GoldRatioComponent
   },
   {
-    path: 'index-matrix',
-    component: IndexMatrixComponent
+    path: 'interest-rates',
+    component: InterestRatesComponent
   },
     {
     path: 'ils-performance',
     component: IlsPerformanceComponent
+  },
+    {
+    path: 'market-headlines',
+    component: MarketHeadlinesComponent
   },
 ];
 

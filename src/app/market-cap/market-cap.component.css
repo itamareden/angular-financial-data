@@ -11,16 +11,28 @@ td, th {
     border-bottom: 1px solid #1a8cff;
     text-align: left;
     padding: 8px;
-    /* width:70px; */
 }
 
-.first-table td, th{
-	/* width:70px; */	
+table.first-table td, table.first-table th{
+	width:25%;
 }
 
-.second-table td, th{
-	width:0px;	
+table.second-table td, table.second-table th{
+	 width:20%; 	
 }
+
+table.second-table-SC td , table.second-table-SC th{
+	 width:20%; 
+}
+
+table.third-table td:first-child{
+	 width:50%; 	
+}
+
+table.third-table-SC td:first-child{
+	 width:50%; 
+}
+
 
 th {
 	border-bottom: 2px solid #1a8cff;
@@ -171,12 +183,23 @@ li:hover{
 	font-size:20px;
 	color:white;
 	border-radius:5px;
-	/* background:#1aff66; */
 	background:#2ce083;
 	text-align:center;
-	margin: 20px auto 10px auto;
+	margin: 50px auto 10px auto;
 	width:100px;
 	line-height:35px;
+	font-family:segoe;
+}
+
+.small-cap-statistics-button{
+	font-size:16px;
+	color:white;
+	border-radius:3px;
+	background:#0d6839;
+	text-align:center;
+	margin: 20px auto 8px auto;
+	width:140px;
+	line-height:30px;
 	font-family:segoe;
 }
 

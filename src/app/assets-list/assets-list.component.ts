@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Asset } from '../asset';
 import { AssetsService } from '../services/assets.service';
 import { WindowService } from '../services/window.service';
+import { UtilsService } from '../services/utils.service';
 
 @Component({
   selector: 'assets-list',
@@ -22,15 +23,15 @@ export class AssetsListComponent implements OnInit {
     isShowETF=true;
     windowWidth;
 
-  constructor(private assetsService: AssetsService, private windowService: WindowService) { }
+  constructor(private assetsService: AssetsService, private windowService: WindowService, private utils: UtilsService) { }
 
   ngOnInit() {
       
-     this.assetsService.getAllAssetsByType("Stock").then(assets => {this.stocksList=assets.sort(compare)}) ;
-     this.assetsService.getAllAssetsByType("Currency").then(assets => this.currenciesList=assets.sort(compare)) ;
-     this.assetsService.getAllAssetsByType("Commodity").then(assets => this.commoditiesList=assets.sort(compare)) ;
-     this.assetsService.getAllAssetsByType("Future").then(assets => this.futuresList=assets.sort(compare)) ;
-     this.assetsService.getAllAssetsByType("ETF").then(assets => this.etfList=assets.sort(compare)) ;
+     this.assetsService.getAllVisibleAssetsByType("Stock").then(assets => {this.stocksList=assets.sort(this.utils.compare(['nameToShow'],true))}) ;
+     this.assetsService.getAllVisibleAssetsByType("Currency").then(assets => this.currenciesList=assets.sort(this.utils.compare(['nameToShow'],true))) ;
+     this.assetsService.getAllVisibleAssetsByType("Commodity").then(assets => this.commoditiesList=assets.sort(this.utils.compare(['nameToShow'],true))) ;
+     this.assetsService.getAllVisibleAssetsByType("Future").then(assets => this.futuresList=assets.sort(this.utils.compare(['nameToShow'],true))) ;
+     this.assetsService.getAllVisibleAssetsByType("ETF").then(assets => this.etfList=assets.sort(this.utils.compare(['nameToShow'],true))) ;
      
       this.windowWidth=this.windowService.getNativeWindow().innerWidth;
       if(this.windowWidth<500){
@@ -119,11 +120,3 @@ export class AssetsListComponent implements OnInit {
 
 }
 
-
-function compare(a,b) {
-      if (a.nameToShow < b.nameToShow)
-        return -1;
-      if (a.nameToShow > b.nameToShow)
-        return 1;
-      return 0;
-    }

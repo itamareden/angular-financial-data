@@ -2,16 +2,11 @@
 
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-12" >
-			<div style='width:250px; margin: 200px auto;'>
-				<div style='font-size:22px; font-weight:bold;'>Last Price:
-					<span style='margin-left:50px;'> {{goldRatio.lastPrice.toFixed(2)}}</span>
-				</div>
-				<div style='font-size:22px; font-weight:bold;'> Day Change: 
-					<span style='margin-left:27px;' [style.color]="goldRatio.dayReturn>0 ? 'green':'red'">{{goldRatio.dayReturn.toFixed(2)}}%</span>
-				</div>
-				<div style='font-size:22px; font-weight:bold;'> Year Change: 
-					<span style='margin-left:20px;'[style.color]="goldRatio.yearReturn>0 ? 'green':'red'">{{goldRatio.yearReturn.toFixed(2)}}%</span>
+		<div class="col-xs-12">
+			<div class='wrapper'>
+				<div class='last-price'>Last Price: {{goldRatio.lastPrice.toFixed(2)}}</div>
+				<div class='bar-chart'>
+					<bar-chart *ngIf='isShowChart' [chartData]="goldRatioArr" [chartProperties]="chartProperties"></bar-chart>
 				</div>
 			</div>
 		</div>

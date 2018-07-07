@@ -11,16 +11,28 @@ td, th {
     border-bottom: 1px solid #1a8cff;
     text-align: left;
     padding: 8px;
-    /* width:70px; */
 }
 
-.first-table td, th{
-	/* width:70px; */	
+table.first-table td, table.first-table th{
+	width:25%;
 }
 
-.second-table td, th{
-	width:0px;	
+table.second-table td, table.second-table th{
+	 width:20%; 	
 }
+
+table.second-table-SC td , table.second-table-SC th{
+	 width:20%; 
+}
+
+table.third-table td:first-child{
+	 width:50%; 	
+}
+
+table.third-table-SC td:first-child{
+	 width:50%; 
+}
+
 
 th {
 	border-bottom: 2px solid #1a8cff;
@@ -72,26 +84,25 @@ td:nth-last-child(2){
 }
 
 .settings-wrapper{
-	margin:8px 0 0 10px;
+	margin:8px 0 30px 10px;
 }
 
 .settings-div{
-	margin-top:5px;
+	margin-top:6px;
+	margin-left:2px;
 }
 
 .check-box{
-	width:19px;
-	height:19px;
+	width:21px;
+	height:21px;
 	border:2px solid #7bcef7;
 	float:left;
 }
 
 .v-mark{
-	color:blue;
-	font-size:13px;
-	position:relative;
-	top:-2px;
-	left:1px;
+	font-size:3px;
+	margin-top:9px;
+	margin-left:1px;
 }
 
 .check-box-note{
@@ -172,12 +183,23 @@ li:hover{
 	font-size:20px;
 	color:white;
 	border-radius:5px;
-	/* background:#1aff66; */
 	background:#2ce083;
 	text-align:center;
-	margin: 20px auto 10px auto;
+	margin: 50px auto 10px auto;
 	width:100px;
 	line-height:35px;
+	font-family:segoe;
+}
+
+.small-cap-statistics-button{
+	font-size:16px;
+	color:white;
+	border-radius:3px;
+	background:#0d6839;
+	text-align:center;
+	margin: 20px auto 8px auto;
+	width:140px;
+	line-height:30px;
 	font-family:segoe;
 }
 
@@ -193,6 +215,26 @@ li:hover{
 	margin-bottom:15px;
 	margin-top:50px;
 	text-decoration:underline;
+}
+
+.qualified-stock-names-list-wrapper{
+	position: relative;
+	cursor: pointer;
+}
+
+.qualified-stock-names-list{
+	position:absolute;
+	left:1px;
+	top:40px;
+	z-index:1;
+	font-weight:bold;
+	font-size:13px;
+	/* border: 1px solid black; */
+	background: #ffbf80;
+}
+
+.qualified-stock-name{
+	margin: 3px 8px;
 }
 
 
@@ -255,6 +297,16 @@ li:hover{
 	
 	.position-change-span{
 	    font-size:13px;
+	}
+	
+	.qualified-stock-names-list{
+		left:1px;
+		top:30px;
+		font-size:11px;
+	}
+
+	.qualified-stock-name{
+		margin: 2px 4px;
 	}
 	
 }

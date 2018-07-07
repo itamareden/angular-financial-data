@@ -1,0 +1,25 @@
+<div class="main-wrapper">
+	<div class="table-header">Relative Performance</div>
+	<div style="margin:25px 0; position:relative">
+		<button class='select-assets-button' (click)='openModal()'>Select Assets</button>
+		<div class="assets-menu-modal">
+			<assets-menu-modal (onContinueButtonClick)="getSelectedAssets($event)"></assets-menu-modal>
+		</div>
+		<input type="date" style='margin-top:20px; margin-left:5%' #dateInput>
+		<button class='calculate-button' (click)='calculate()'>calculate</button>
+	</div>
+	<div class='buttons-wrapper' *ngIf='isShowChart'>
+		<div *ngFor='let feature of (features)'>
+			<div class="switch-view-button" [class.switch-view-button-active]="activeFeature == feature" (click)="changeFeature($event)">{{feature}}</div>			    
+	    </div>
+    	<div style='clear:both'></div>
+		<div *ngFor='let duration of (durations)'>
+			<div class="switch-view-button" [class.switch-view-button-active]="activeDuration == duration" (click)="changeDuration($event)">{{duration}}</div>			    
+	    </div>
+    	<div style='clear:both'></div>
+   	</div>
+	<div class='bar-chart' *ngIf='isShowChart'>
+		<bar-chart  [chartData]="chartData" [chartProperties]="chartProperties" [changeDetector]="change"></bar-chart>
+	</div>
+</div>
+

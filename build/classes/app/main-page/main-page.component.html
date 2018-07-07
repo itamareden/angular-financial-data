@@ -1,64 +1,31 @@
-
 <page-header [isMainPage]="'true'"></page-header>
-
-<div class="background-image" style=" border-bottom:2px solid black;"></div>
-
+<div class="background-image" style=" border-bottom:2px solid black; z-index:-1"></div>
 <div class="container-fluid">
-
-
-	
-	
 	<div class="row" >
-		
 	    <div class="col-xs-12 " >
-	
-				<search-asset class="search-asset" ></search-asset>
-				
+			<search-asset class="search-asset" ></search-asset>
 		</div>
-			
 	</div>
-	
-	
 	<div class="row" >
-		
 	    <div class="col-xs-12 " >
-	    
 			<div class="sentiment-barometers-wrapper">
-			
 				<!-- <sentiment-barometer class="sentiment-barometer-left" [elementId]="0" [scaleType]="'number'"  [header]="'Market Risk'"></sentiment-barometer>
 				<sentiment-barometer class="sentiment-barometer-right" [elementId]="1" [scaleType]="'word'" [header]="'Market Sentiment'"></sentiment-barometer> -->
-			
 			</div>	
-			
 		</div>	
-		
 	</div>
-	
-	
-		
-	
 	<div class="row" style="margin-top:100px; margin-bottom:100px;">
-		
 	    <div class="col-xs-12 ">
-	    
 	    	<div class="the-wrapper">
-
 				<assets-table class="assets-table"></assets-table>
 				<stocks-statistics class="stock-statistics"></stocks-statistics>
 		    	<top-assets-performance class="top-assets-performance"  [num]="5" ></top-assets-performance>
 				<relative-performance class="relative-performance"></relative-performance>
 				<market-cap class="market-cap"></market-cap>
+				<relative-performance-2 style='float:left; margin-left:40px;'></relative-performance-2>
 		    	<div style="margin-top:60px">.</div>
-		    	
 		    	<div class="clearfix"></div>
-		    	
 		    </div>
-		    
-	    	
 	    </div>
-	    
 	</div>
-	
-	
 </div>
-			

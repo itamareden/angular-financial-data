@@ -2,8 +2,6 @@ import { Component, OnInit , Input } from '@angular/core';
 import { Asset } from '../asset'
 import { AssetsService } from '../services/assets.service';
 import { AssetDataService } from '../services/asset-data.service';
-import { AssetInAssetsTable } from '../asset-in-assets-table'
-import { AssetPerformance } from '../asset-performance'
 
 import { Observable } from 'rxjs';
 
@@ -18,12 +16,12 @@ import { Observable } from 'rxjs';
 })
 export class AssetsTableComponent implements OnInit {
         
-    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^NZDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^USDCNH,^XAUUSD,^XAGUSD,HGH18,CLH18,QAH18,ZWH18";
-    observableAssetsTable: Observable<AssetInAssetsTable[]>;
-    allAssets:AssetInAssetsTable[];
-    forexMajorsAssets:AssetInAssetsTable[];
-    forexExoticAssets:AssetInAssetsTable[];
-    commoditiesAssets:AssetInAssetsTable[];
+    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^NZDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^USDCNH,^XAUUSD,^XAGUSD,HGQ18,CLQ18,QAU18,ZWN18";
+    observableAssetsTable: Observable<any[]>;
+    allAssets=[];
+    forexMajorsAssets=[];
+    forexExoticAssets=[];
+    commoditiesAssets=[];
     isShowForexMajors=true;
     isShowForexExotic;
     isShowCommodities;

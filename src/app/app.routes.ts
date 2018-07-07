@@ -7,6 +7,7 @@ import { IndexMatrixComponent } from './index-matrix/index-matrix.component';
 import { AssetsPortfolioComponent } from './assets-portfolio/assets-portfolio.component';
 import { IlsPerformanceComponent } from './ils-performance/ils-performance.component';
 import { InterestRatesComponent } from './interest-rates/interest-rates.component';
+import { MarketHeadlinesComponent } from './market-headlines/market-headlines.component';
 
 
 
@@ -42,6 +43,10 @@ const routes: Routes = [
     {
     path: 'ils-performance',
     component: IlsPerformanceComponent
+  },
+    {
+    path: 'market-headlines',
+    component: MarketHeadlinesComponent
   },
 ];
 

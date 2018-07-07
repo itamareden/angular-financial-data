@@ -2,25 +2,31 @@
 <div class='total-wrapper' *ngIf="isShowData" >
 
 	<div class="table-header">Stocks Valuations</div>
-	<div (click)='toggleSettings()' class='settings-icon'><i class="fa fa-align-justify" style="font-size:22px"></i></div>
+	<div (click)='toggleSettings()' class='settings-icon'><menu-bar style="font-size:3px"></menu-bar></div>
 	<div *ngIf='isSettings' class='settings-wrapper'>
 		<div class='settings-div'>
 			<div  class='check-box' (click)="showPositionChange()">
-				<span *ngIf='isShowPositionChngV' class="glyphicon glyphicon-ok v-mark"></span>
+				<div class='v-mark'>
+					<v-mark *ngIf='isShowPositionChngV'></v-mark>
+				</div>
 			</div>
 			<div class='check-box-note'>Show position change</div>
 			<div style='clear:both'></div>
 		</div>
 		<div *ngIf='isShowPositionChngV' class='settings-div'> <!-- show this check box only if the box above is checked -->
 			<div  class='check-box' (click)="toggleSortByPositionChng()">
-				<span *ngIf='isShowSortByPositionChngV' class="glyphicon glyphicon-ok v-mark"></span>
+				<div class='v-mark'>
+					<v-mark *ngIf='isShowSortByPositionChngV'></v-mark>
+				</div>
 			</div>
 			<div class='check-box-note'>Sort by yearly position change</div>
 			<div style='clear:both'></div>
 		</div>
 		<div class='settings-div'>
 			<div  class='check-box' (click)="toggleSortByPercentChng()">
-				<span *ngIf='isShowSortByPercentChngV' class="glyphicon glyphicon-ok v-mark"></span>
+				<div class='v-mark'>
+					<v-mark *ngIf='isShowSortByPercentChngV'></v-mark>
+				</div>
 			</div>
 			<div class='check-box-note'>Sort by yearly percent change</div>
 			<div style='clear:both'></div>
@@ -44,6 +50,7 @@
 	<p class='explanation-note'>*  Numbers represent market cap in billion $</p>
 	<p class='explanation-note' style='margin-top:0;'>* Click on data to switch to daily/yearly performance</p>
 	<div class='statistics-button'  (click)='toggleStatistics()'>Statistics</div>
+	<div *ngIf='isStatistics' class='small-cap-statistics-button' [style.cursor]="!isShowSCStat ? 'pointer' : 'default'" (click)='calculateSCStatistics()'>Small-Cap Statistics</div>
 	<div *ngIf='isStatistics' class='statistics-div'>
 		<div class='statistics-table-header bold-font'>Market Cap</div>
 		<table class='first-table'>
@@ -60,13 +67,13 @@
 			    <td>{{yearlyMarketCapChng.toFixed(2)}}%</td>
 			  </tr>
 			  <tr>
-			    <td class='bold-font'>Top 5%</td>
+			    <td class='bold-font'>Top 5</td>
 			    <td>{{top5MarketCap[0].toFixed(1)}}%</td>
 			    <td>{{top5MarketCap[1].toFixed(1)}}</td>
 			    <td>{{top5MarketCap[2].toFixed(1)}}</td>
 			  </tr>
 			  <tr>
-			    <td class='bold-font'>Top 10%</td>
+			    <td class='bold-font'>Top 10</td>
 			    <td>{{top10MarketCap[0].toFixed(1)}}%</td>
 			    <td>{{top10MarketCap[1].toFixed(1)}}</td>
 			    <td>{{top10MarketCap[2].toFixed(1)}}</td>
@@ -78,7 +85,7 @@
 			    <th></th>
 			    <th>up</th>
 			    <th>Down</th>
-			    <th>Unchanged</th>
+			    <th>Unchg</th>
 			    <th>Average</th>
 			  </tr>
 			  <tr>
@@ -95,6 +102,104 @@
 			    <td>{{yearlyPerformanceStat[2].toFixed(1)}}%</td>
 			    <td>{{yearlyPerformanceStat[3].toFixed(2)}}%</td>
 			  </tr>
+	   </table>
+	   <table *ngIf='isShowSCStat' class='second-table-SC'>		<!--  for Russell 2000 statistics -->
+			  <tr>
+			    <td class='bold-font'>Daily</td>
+			    <td>{{dailyPerformanceStatSC[0].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[1].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[2].toFixed(1)}}%</td>
+			    <td>{{dailyPerformanceStatSC[3].toFixed(2)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>Yearly</td>
+			    <td>{{yearlyPerformanceStatSC[0].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[1].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[2].toFixed(1)}}%</td>
+			    <td>{{yearlyPerformanceStatSC[3].toFixed(2)}}%</td>
+			  </tr>
+	   </table>
+		<div class='statistics-table-header bold-font'>Records</div>
+		<table class='third-table'>
+			  <tr>
+			    <th></th>
+			    <th>High</th>
+			    <th>Low</th>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>At Record</td>
+			    <td  (click)='toggleQualifiedStocksNames(0)' class='qualified-stock-names-list-wrapper'>{{recordHighData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[0]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of recordHighData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			    <td (click)='toggleQualifiedStocksNames(1)' class='qualified-stock-names-list-wrapper'>{{recordLowData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[1]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of recordLowData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>2% from Record</td>
+			    <td (click)='toggleQualifiedStocksNames(2)' class='qualified-stock-names-list-wrapper'>{{twoPercFromRecordHighData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[2]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of twoPercFromRecordHighData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			    <td (click)='toggleQualifiedStocksNames(3)' class='qualified-stock-names-list-wrapper'>{{twoPercFromRecordLowData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[3]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of twoPercFromRecordLowData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>5% from Record</td>
+			    <td (click)='toggleQualifiedStocksNames(4)' class='qualified-stock-names-list-wrapper'>{{fivePercFromRecordHighData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[4]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of fivePercFromRecordHighData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			    <td (click)='toggleQualifiedStocksNames(5)' class='qualified-stock-names-list-wrapper'>{{fivePercFromRecordLowData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[5]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of fivePercFromRecordLowData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>10% from Record</td>
+			    <td (click)='toggleQualifiedStocksNames(6)' class='qualified-stock-names-list-wrapper'>{{tenPercFromRecordHighData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[6]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of tenPercFromRecordHighData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			    <td (click)='toggleQualifiedStocksNames(7)' class='qualified-stock-names-list-wrapper'>{{tenPercFromRecordLowData[0].toFixed(1)}}%
+			    	<div *ngIf='isShowQualifiedStocksNames[7]' class='qualified-stock-names-list'>
+						<div *ngFor='let name of tenPercFromRecordLowData[1]' class='qualified-stock-name'>{{name}}</div>
+					</div>
+			    </td>
+			  </tr>  
+		</table>
+		<table *ngIf='isShowSCStat' class='third-table-SC'>
+			  <tr>
+			    <td class='bold-font'>At Record</td>
+			    <td>{{recordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{recordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>2% from Record</td>
+			    <td>{{twoPercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{twoPercFromRecordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>5% from Record</td>
+			    <td>{{fivePercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{fivePercFromRecordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>
+			  <tr>
+			    <td class='bold-font'>10% from Record</td>
+			    <td>{{tenPercFromRecordHighDataSC[0].toFixed(1)}}%</td>
+			    <td>{{tenPercFromRecordLowDataSC[0].toFixed(1)}}%</td>
+			  </tr>  
 		</table>
 	</div>
 	<div (click)='expandCollapseList()' class='expand-collapse-button'>{{expandOrCollapse}}</div>

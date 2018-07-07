@@ -1,0 +1,88 @@
+*{
+	font-family: segoe;
+}
+
+ul{
+	list-style-type: none;
+}
+
+li a{
+	color:black;
+}
+
+img{
+	width:150px;
+	height:84px;
+}
+
+.articles-section{
+	margin-top: 50px;
+	max-width: 750px;
+}
+
+.buttons-wrapper{
+	border-top: 1px solid #168fe9;
+	border-bottom: 1px solid #168fe9;
+	margin-left: 40px;
+	margin-bottom: 40px;
+	
+}
+
+.switch-view-button{
+	margin:4px 4px 5px 4px;
+	font-width:bold;
+	color:#168fe9;
+	cursor:pointer;
+	padding:2px 5px;
+	float: left;
+}
+
+.switch-view-button-active{
+	background:#168fe9;
+	color:white;
+	border-radius:5px;
+}
+
+.disclaimer{
+	color: blue;
+	margin-left:40px;
+}
+
+.article{
+	color: black;
+	margin: 0px 0 0px 0;
+	padding: 0 20px;
+	border-bottom: 1px solid #20b2db;
+}
+
+.link{
+	cursor: pointer;
+}
+
+.headline:hover{
+	text-decoration: underline;
+}
+
+.teaser-wrapper{
+	margin:15px 0;
+}
+
+.teaser-image{
+	float:left;
+}
+
+.teaser{
+	float:left;
+	max-width:520px;
+	padding-left:19px;
+	padding-right:19px;
+	color: black;
+	font-size:17px;
+}
+
+.bloomberg-topic-name{
+	margin:50px 0 30px 40px;
+	color: blue;
+	font-weight: bold;
+	text-decoration: underline;
+}

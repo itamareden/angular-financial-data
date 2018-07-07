@@ -35,6 +35,15 @@ import { IlsPerformanceComponent } from './ils-performance/ils-performance.compo
 import { InterestRatesComponent } from './interest-rates/interest-rates.component';
 import { MenuBarComponent } from './icons/menu-bar/menu-bar.component';
 import { VMarkComponent } from './icons/v-mark/v-mark.component';
+import { OpenTriangleComponent } from './icons/open-triangle/open-triangle.component';
+import { BarChartComponent } from './bar-chart/bar-chart.component';
+import { LineChartComponent } from './line-chart/line-chart.component';
+import { RelativePerformance2Component } from './relative-performance-2/relative-performance-2.component';
+import { AssetsMenuModalComponent } from './assets-menu-modal/assets-menu-modal.component';
+import { ArrowIconComponent } from './icons/arrow-icon/arrow-icon.component';
+import { AssetsListFilterPipe } from './pipes/assets-list-filter.pipe';
+import { XIconComponent } from './icons/x-icon/x-icon.component';
+import { MarketHeadlinesComponent } from './market-headlines/market-headlines.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +69,15 @@ import { VMarkComponent } from './icons/v-mark/v-mark.component';
     InterestRatesComponent,
     MenuBarComponent,
     VMarkComponent,
+    OpenTriangleComponent,
+    BarChartComponent,
+    LineChartComponent,
+    RelativePerformance2Component,
+    AssetsMenuModalComponent,
+    ArrowIconComponent,
+    AssetsListFilterPipe,
+    XIconComponent,
+    MarketHeadlinesComponent,
   ],
   imports: [
     BrowserModule,

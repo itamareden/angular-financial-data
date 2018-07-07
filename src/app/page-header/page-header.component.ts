@@ -16,13 +16,11 @@ export class PageHeaderComponent implements OnInit {
   }
     
     toggleMenu():void{      // depends on the size of the window..
-        
-        if(this.isShowMenu){console.log('dfdfdgusdhvkl')
-                this.isShowMenu=false;
-            }else{
-                this.isShowMenu=true;
-            }
-        
+        if(this.isShowMenu){
+            this.isShowMenu=false;
         }
-
+        else{
+            this.isShowMenu=true;
+        }
+    }
 }

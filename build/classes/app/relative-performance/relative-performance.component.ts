@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { SearchAssetComponent } from '../search-asset/search-asset.component';
 import { AssetDataService } from '../services/asset-data.service';
-import { AssetInRelativePerformance } from '../asset-in-relative-performance'
 import { Asset } from '../asset'
 import { AssetData } from '../asset-data'
 import { Candlestick } from '../candlestick'
@@ -21,10 +20,35 @@ export class RelativePerformanceComponent implements OnInit {
      
     /*@ViewChild(SearchAssetComponent) input1:SearchAssetComponent;*/   /*if we only need 1 child (not 2)*/
     @ViewChildren(SearchAssetComponent) inputs: QueryList<SearchAssetComponent>
-    firstAsset:AssetInRelativePerformance= new AssetInRelativePerformance();
-    secondAsset:AssetInRelativePerformance= new AssetInRelativePerformance();
+    firstAsset = {  assetDetails:null,
+                    lastPrice:0,
+                    historicCandles:[],
+                    return:0,
+                    dayReturn:0,   
+                    weekReturn:0,
+                    monthReturn:0,
+                    threeMonthReturn:0,
+                    yearReturn:0,
+                    barTop:0,
+                    barHeight:0,
+                    returnTop:0
+                  }
+    
+    secondAsset = { assetDetails:null,
+                    lastPrice:0,
+                    historicCandles:[],
+                    return:0,
+                    dayReturn:0,   
+                    weekReturn:0,
+                    monthReturn:0,
+                    threeMonthReturn:0,
+                    yearReturn:0,
+                    barTop:0,
+                    barHeight:0,
+                    returnTop:0
+                  }
     relativePerformance;
-    observableAssetData: Observable<AssetInRelativePerformance[]>;
+    observable: Observable<any[]>;
     observableCandlesticks: Observable<Candlestick[]>;    
     
     isShowResults=false;
@@ -65,27 +89,27 @@ export class RelativePerformanceComponent implements OnInit {
             if(mainClass.historyAJAXCounter==2 && mainClass.finishidQuotesAJAX){
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForWeeks(1,mainClass.firstAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.firstAsset.weekReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.firstAsset.lastPrice,mainClass.firstAsset.assetDetails);
+                    mainClass.firstAsset.weekReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.firstAsset.lastPrice);
                 });
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForWeeks(1,mainClass.secondAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.secondAsset.weekReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.secondAsset.lastPrice,mainClass.secondAsset.assetDetails);
+                    mainClass.secondAsset.weekReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.secondAsset.lastPrice);
                 });
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForMonths(1,mainClass.firstAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.firstAsset.monthReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.firstAsset.lastPrice,mainClass.firstAsset.assetDetails);
+                    mainClass.firstAsset.monthReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.firstAsset.lastPrice);
                 });
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForMonths(1,mainClass.secondAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.secondAsset.monthReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.secondAsset.lastPrice,mainClass.secondAsset.assetDetails);
+                    mainClass.secondAsset.monthReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.secondAsset.lastPrice);
                 });
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForMonths(3,mainClass.firstAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.firstAsset.threeMonthReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.firstAsset.lastPrice,mainClass.firstAsset.assetDetails);
+                    mainClass.firstAsset.threeMonthReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.firstAsset.lastPrice);
                 });
                 
                 mainClass.historicalReturnService.getAssetHistoricDataForMonths(3,mainClass.secondAsset.historicCandles).then(candlesticks=>{      
-                    mainClass.secondAsset.threeMonthReturn=mainClass.historicalReturnService.calculateReturnForPeriod2(candlesticks,mainClass.secondAsset.lastPrice,mainClass.secondAsset.assetDetails);
+                    mainClass.secondAsset.threeMonthReturn=mainClass.historicalReturnService.calculateReturnForPeriod(candlesticks,mainClass.secondAsset.lastPrice);
                         mainClass.finishedHistoryAJAX=true;
                 });
                 
@@ -136,12 +160,12 @@ export class RelativePerformanceComponent implements OnInit {
     }
     
     // use the getQuote API to get the last price, daily return and yearly return
-    getAssetsQuotes(firstAsset:AssetInRelativePerformance, secondAsset:AssetInRelativePerformance ){
+    getAssetsQuotes(firstAsset, secondAsset ){
        
         let symbolsInURL=firstAsset.assetDetails.symbol+","+secondAsset.assetDetails.symbol;
         
-        this.observableAssetData=this.assetDataService.getMultipleAssetsData2(symbolsInURL)
-        this.observableAssetData.subscribe(assetsData => {
+        this.observable=this.assetDataService.getMultipleAssetsData(symbolsInURL,'relative-performance',['twelveMnthPct'])
+        this.observable.subscribe(assetsData => {
                 
                 this.firstAsset.dayReturn=assetsData[0].dayReturn;
                 this.firstAsset.yearReturn=assetsData[0].yearReturn;
@@ -256,7 +280,7 @@ export class RelativePerformanceComponent implements OnInit {
     
     
     
-    getAssetHistoricData(asset:AssetInRelativePerformance){
+    getAssetHistoricData(asset){
         
         this.observableCandlesticks = this.assetDataService.getAssetHistoricData(asset.assetDetails,'daily',300);
         this.observableCandlesticks.subscribe(candlesticks => {

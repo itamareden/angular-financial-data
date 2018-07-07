@@ -2,15 +2,6 @@
 	font-family:segoe;
 }
 
-
-
-
-
-
-
-
-
-
 .main-wrapper{
 	width:850px; 
 	border:1px solid #255887;
@@ -20,7 +11,7 @@
 
 .chart-wrapper{
 	position:relative; 
-	width:650px; 
+	width:550px;
 	height:350px; 
 	border-left:1px solid black;
 	margin:60px 0px 40px 50px;
@@ -34,7 +25,7 @@
 }
 
 .x-axis{
-	width:710px; 
+	width:610px; 
 	left:-50px; 
 	height:1px; 
 	border-top:1px solid black;  
@@ -42,14 +33,17 @@
 }
 
 .internal-axis{
-	width:660px; 
+	width:560px; 
 	height:1px; 
 	border-top:1px dotted grey;  
 	position:absolute;
 }
 
 .internal-axis-value{
-	left:-35px;
+	width:50px;
+	left:-50px;
+	text-align: right;
+	padding-right:5px;
 	position:absolute;
 	font-weight:bold;
 	font-family: arial;
@@ -57,7 +51,7 @@
 
 .horizontal-grid-line{
 	position:absolute;
-	width:660px;	/* should be equal to the width of the internal axises  */
+	width:560px;	/* should be equal to the width of the internal axises  */
 	border-bottom: 1px dashed black;
 }
 
@@ -161,7 +155,7 @@
 
 
 .asset-summary-table-wrapper{
-	width:50%;
+	width:100%;
 }
 
 
@@ -187,11 +181,11 @@
 	display:block; 
 	position:relative; 
 	max-width:50%;
-	/* height:45px; */
 	margin:50px 0;
 	font-size:17px;
 	border-bottom: 2px solid #00aaff;
 	color:black;
+	z-index:-1;
 	
 }
 
