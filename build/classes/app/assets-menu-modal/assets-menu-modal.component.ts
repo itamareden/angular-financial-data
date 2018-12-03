@@ -19,7 +19,7 @@ export class AssetsMenuModalComponent implements OnInit {
     screenHeight;
     screenWidth;
     
-    public onContinueButtonClick = new EventEmitter();
+    @Output() onContinueButtonClick = new EventEmitter();
 
     constructor(private assetsService: AssetsService, private utils: UtilsService) { }
 

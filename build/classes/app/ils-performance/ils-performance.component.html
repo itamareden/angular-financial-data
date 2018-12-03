@@ -1,7 +1,7 @@
 <page-header></page-header> 
 <div class="container-fluid">
 	<div class="row">
-		<div class="hidden-xs hidden-sm col-md-12">
+		<div class="col-md-12">
 			<div class='wrapper' >
 				<table>
 					  <tr>
@@ -27,15 +27,15 @@
 					  </tr>
 				</table>
 				<div class='bar-chart'>
-					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartProperties]="regularChartProperties"></bar-chart>
+					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartConfig]="regularChartConfig"></bar-chart>
 				</div>
 				<div class='bar-chart' style='margin-top:100px'>
-					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartProperties]="normalizedChartProperties"></bar-chart>
+					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartConfig]="normalizedChartProperties"></bar-chart>
 				</div>
 				<div style='clear:both'></div>
 			</div>
 		</div>
-		<div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+		<div *ngIf="isMobile" class="col-xs-12">
 			<div class='buttons-wrapper'>
 				<div *ngFor='let duration of (durationsArr)'>
 					<div class="switch-view-button" [class.switch-view-button-active]="activeDuration == duration" (click)="changeDuration($event)">{{duration}}</div>			    
@@ -55,10 +55,10 @@
 				</tr>
 			</table>
 			<div class='bar-chart'>
-					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartProperties]="regularChartProperties"></bar-chart>
+					<bar-chart *ngIf='isShowChart' [chartData]="regularChartData" [chartConfig]="regularChartConfig"></bar-chart>
 			</div>
 			<div class='bar-chart'>
-					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartProperties]="normalizedChartProperties"></bar-chart>
+					<bar-chart *ngIf='isShowChart' [chartData]="normalizedChartData" [chartConfig]="normalizedChartProperties"></bar-chart>
 			</div>
 		</div>
 	</div>

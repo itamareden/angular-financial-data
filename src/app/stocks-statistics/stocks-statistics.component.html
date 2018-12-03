@@ -14,8 +14,8 @@
 		</div>
 	</div>
 	<div class='bar-chart'>
-		<bar-chart *ngIf='chartDuration == "day"' [chartData]="assetsForPerformance" [chartProperties]="chartProperties"></bar-chart>
-		<bar-chart *ngIf='chartDuration == "year"' [chartData]="assetsForPerformance" [chartProperties]="chartProperties"></bar-chart>
+		<bar-chart *ngIf='chartDuration == "day"' [chartData]="assetsForPerformance" [chartConfig]="chartConfig2"></bar-chart>
+		<bar-chart *ngIf='chartDuration == "year"' [chartData]="assetsForPerformance" [chartConfig]="chartConfig2"></bar-chart>
 	</div>
 	<div *ngIf="isShowStatistics" class="statistics-wrapper"> 
 		<div class="statistic" style="margin-left:0;"><span style="color:green">Up: </span>{{advancers.toFixed(1)}}%<span class="delimiter">|</span></div>

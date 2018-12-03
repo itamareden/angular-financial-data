@@ -3,10 +3,22 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12">
-			<div class='wrapper'>
+			<div class='section-wrapper'>
+				<div class='line-chart' *ngIf='isShowLineChart'>
+					<line-chart [chartConfig]="chartConfigGold" [chartData]="goldDataArr"></line-chart>
+				</div>
+				<div class='line-chart' *ngIf='isShowLineChart'>
+					<line-chart [chartConfig]="chartConfigSilver" [chartData]="silverDataArr"></line-chart>
+				</div>
+				<div class='line-chart' *ngIf='isShowLineChart'>
+					<line-chart [chartConfig]="chartConfigRatio" [chartData]="ratioDataArr"></line-chart>
+				</div>
+				<div style="clear:both"></div>
+			</div>
+			<div class='section-wrapper'>
 				<div class='last-price'>Last Price: {{goldRatio.lastPrice.toFixed(2)}}</div>
 				<div class='bar-chart'>
-					<bar-chart *ngIf='isShowChart' [chartData]="goldRatioArr" [chartProperties]="chartProperties"></bar-chart>
+					<bar-chart *ngIf='isShowChart' [chartData]="goldRatioArr" [chartConfig]="chartConfig"></bar-chart>
 				</div>
 			</div>
 		</div>

@@ -4,6 +4,9 @@ import { AssetsService } from '../services/assets.service';
 import { WindowService } from '../services/window.service';
 import { UtilsService } from '../services/utils.service';
 
+import { AssetDataService } from '../services/asset-data.service';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'assets-list',
   templateUrl: './assets-list.component.html',
@@ -23,9 +26,10 @@ export class AssetsListComponent implements OnInit {
     isShowETF=true;
     windowWidth;
 
-  constructor(private assetsService: AssetsService, private windowService: WindowService, private utils: UtilsService) { }
+  constructor(private assetsService: AssetsService, private windowService: WindowService, private utils: UtilsService,private assetData: AssetDataService) { }
 
   ngOnInit() {
+//      this.assetData.getBlabla().subscribe(data =>{console.log(data.json().results)});    for NodeJs practice...
       
      this.assetsService.getAllVisibleAssetsByType("Stock").then(assets => {this.stocksList=assets.sort(this.utils.compare(['nameToShow'],true))}) ;
      this.assetsService.getAllVisibleAssetsByType("Currency").then(assets => this.currenciesList=assets.sort(this.utils.compare(['nameToShow'],true))) ;

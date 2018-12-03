@@ -5,6 +5,10 @@ import { AssetsService } from '../services/assets.service';
 import { AssetDataService } from '../services/asset-data.service';
 import { HistoricalReturnService } from '../services/historical-return.service';
 import { UtilsService } from '../services/utils.service';
+import {DateObject} from '../classes/date-object';
+import { DatesService } from '../services/dates.service';
+
+import { CalendarConfig } from '../calendar-table/calendar-table.component';
 
 import { Observable } from 'rxjs';
 
@@ -30,7 +34,7 @@ export class RelativePerformance2Component implements OnInit {
         { name: null, symbol: "HYG", dataToShow: null, color1: '#f9aaa7', color2: '#fc605a', left: null, top: null, width: null, height: null, returnTop: null },
     ];
 
-    chartProperties = {
+    chartConfig = {
         type: 'Bar Chart',
         totalBarsWidth: 90,
         totalChartHeight: null,
@@ -55,10 +59,32 @@ export class RelativePerformance2Component implements OnInit {
     activeFeature = '';
     change = 0;
     isShowModal = false;
+    isShowCalendar = false;
+    inactiveDays= {
+            laterThan: new DateObject(1, 12, 2018),
+            priorTo: new DateObject(10, 4, 2018),
+        }
+    callback = function(dateStr: string){
+            /*  set function content. function should check if dateStr is an inactive date */
+            let dateObj = this.dates.convertStringToDateObj(dateStr);
+            if(this.dates.isDatePriorTo(dateObj, this.inactiveDays.priorTo) || 
+               this.dates.isDateLaterThan(dateObj, this.inactiveDays.laterThan)){
+                return false;    
+            }
+            return true;
+        }.bind(this);
+    calendarConfig = new CalendarConfig('', 'right', this.inactiveDays, true, this.callback);
+//    calendarConfig = {
+//        color:"blue",
+//        currentMonthSide:'right',
+//        inactiveDays: this.inactiveDays,
+//        isCustomDates: true,
+//        isDateValidCallback: null    
+//    }
 
 
     constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private utils: UtilsService,
-        private historicalReturnService: HistoricalReturnService) { }
+        private historicalReturnService: HistoricalReturnService, private dates: DatesService) { }
 
     ngOnInit() {
     }
@@ -248,8 +274,8 @@ export class RelativePerformance2Component implements OnInit {
         let adjustedFeature = this.adjustActiveFeature(this.activeFeature);
         let adjustedDuration = this.adjustActiveDuration(this.activeDuration);
         this.updateChartData(adjustedDuration,adjustedFeature);
-        if(this.activeFeature == 'Normalized Distance') this.chartProperties.normalized = true;
-        else this.chartProperties.normalized = false;
+        if(this.activeFeature == 'Normalized Distance') this.chartConfig.normalized = true;
+        else this.chartConfig.normalized = false;
         this.change++;  // we must change the value of this input so that bar-chart will be updated
     }
     
@@ -288,6 +314,10 @@ export class RelativePerformance2Component implements OnInit {
             this.assetsSymbolsList.push(assetSymbol);
         }
         this.alreadyGotSelectedAssets = true;
+    }
+    
+    getChosenDates(event){
+        console.log(event.value);   // the value of the chosen dates... 
     }
 
 }

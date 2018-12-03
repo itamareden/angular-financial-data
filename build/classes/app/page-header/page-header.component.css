@@ -34,8 +34,9 @@
 .list-wrapper{
 	width:200px; 
 	color: black;
-	position:relative; 
-	top:-12px;
+	position: absolute; 
+	top:78px;
+	left: 0px;
 	font-weight: bold;
 	z-index:10000;
 	background: white;

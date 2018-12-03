@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { AssetDataService } from '../services/asset-data.service';
 import { TopAssetsPerformanceComponent } from '../top-assets-performance/top-assets-performance.component';
 import { UtilsService } from '../services/utils.service';
+import { BarChartConfig } from '../classes/bar-chart-config';
+import { ChartData } from '../classes/chart-data';
 
 import { Observable } from 'rxjs';
 
@@ -14,18 +16,7 @@ export class StocksStatisticsComponent implements OnInit {
         
     @ViewChild('chart') chart:ElementRef;
     
-    assetsForPerformance = [{name:"S&P", symbol:"SPY", dataToShow:null, color1:'#f9f189', color2:'#f7ec5b', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Nasdaq", symbol:"QQQ", dataToShow:null, color1:'#aff986', color2:'#96f762', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Trans", symbol:"IYT", dataToShow:null, color1:'#8ff7c8', color2:'#66f4b4', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Bio", symbol:"XBI", dataToShow:null, color1:'#d1f6fc', color2:'#61e3f9', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Banks", symbol:"XLF", dataToShow:null, color1:'#66d9ff', color2:'#0099cc', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Russel", symbol:"IWM", dataToShow:null, color1:'#00cccc', color2:'#008080', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"FAANG", symbol:"FB", dataToShow:null, color1:'#c5c8f7', color2:'#5d65f7', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"Bonds", symbol:"TLT", dataToShow:null, color1:'#e1abf4', color2:'#cf59f9', left:null, top:null, width:null, height:null, returnTop:null},
-                            {name:"HYG", symbol:"HYG", dataToShow:null, color1:'#f9aaa7', color2:'#fc605a', left:null, top:null, width:null, height:null, returnTop:null},
-                            ];
-    
-    chartProperties={
+    chartConfig = {
         type:'Bar Chart',
         totalBarsWidth:90,  // width of each bar in %
         totalChartHeight:null,
@@ -33,11 +24,29 @@ export class StocksStatisticsComponent implements OnInit {
         topMargin:40,        // a small space from the top of the chart to the bars area..
         bottomMargin:30,
         xAxisTop:null,
+        isShowBarData: true,
+        barDataPattern: [/([-]?\d+[.]?\d{0,2}).*/g, "$1%"],
+        enableTooltip: false,
+        colorMultiplier: 1.4,
     }
+    
+    assetsForPerformance = [
+                            new ChartData("S&P", "SPY", [], [""], ['#f7ec5b']),
+                            new ChartData("Nasdaq", "QQQ", [], [""], ['#96f762']),
+                            new ChartData("Trans", "IYT", [], [""], ['#66f4b4']),
+                            new ChartData("Bio", "XBI", [], [""], ['#61e3f9']),
+                            new ChartData("Banks", "XLF", [], [""], ['#0099cc']),
+                            new ChartData("Russel", "IWM", [], [""], ['#008080']),
+                            new ChartData("FAANG", "FB", [], [""], ['#5d65f7']),
+                            new ChartData("Bonds", "TLT", [], [""], ['#cf59f9']),
+                            new ChartData("HY", "HYG", [], [""], ['#fc605a']),
+                            ];
+    
+    chartConfig2 = new BarChartConfig(90, 40, 30, true, false, 1.4);
     
     observable: Observable<any>;
     assetsData=[];
-    propArr=['dayReturn','yearReturn','lowInPerc','highInPerc'];
+    propArr=['dayReturn','yearReturn'];
     dataProp='';
     advancers : number = 0;
     decliners : number = 0;
@@ -51,17 +60,17 @@ export class StocksStatisticsComponent implements OnInit {
     alreadyCompensatedForDesktop=false;
     isSettings=false;
     isShowYearlyChngV=false;
-    showOnHover=''; // delete me when there is a better form of showing high and low in the bar chart...
-    isShowOnHover=false; // same here!
-    hoverIndex=-1 // same here!
     
     chartDuration = '';
+    
 
   constructor( private assetDataService: AssetDataService, private utils: UtilsService) { }
 
   ngOnInit() {
       this.createStatistics();
       this.createPerformanceChart();
+//      this.chartDuration = 'day';
+//      this.isShowComponent=true;
   }
     
     
@@ -89,10 +98,10 @@ export class StocksStatisticsComponent implements OnInit {
         
         for(let i=0; i<this.assetsForPerformance.length; i++){
             // concatenate symbols if not FAANG. FAANG is concatenated last for simplicity...
-            this.assetsForPerformance[i].name!="FAANG" ? symbolsURL+=this.assetsForPerformance[i].symbol+"," : indexOfFAANG=i;
+            this.assetsForPerformance[i].name!="FAANG" ? symbolsURL += this.assetsForPerformance[i].symbol + "," : indexOfFAANG = i;
         }
         
-        symbolsURL+=faangSymbols;
+        symbolsURL += faangSymbols;
         
         this.observable = this.assetDataService.getMultipleAssetsData(symbolsURL,'stock-statistics',['twelveMnthPct']);
         this.observable.subscribe(assetsData => {
@@ -141,7 +150,8 @@ export class StocksStatisticsComponent implements OnInit {
                 for(let i=0; i<assetsData.length; i++){
                     let assetArr=assetsData[i];  // each item inside assetsData is an array on its own...   
                     let value=assetArr[index];
-                       assetsArr[i]['dataToShow']=value;
+//                       assetsArr[i]['dataToShow']=value;
+                    assetsArr[i].dataArr.push(value);
                 }
             }
     }
@@ -199,7 +209,7 @@ export class StocksStatisticsComponent implements OnInit {
         let classScope=this; 
         let interval=setInterval(function(){
             // proceed only after the last item in the array has dataToShow 
-              if(classScope.assetsForPerformance[classScope.assetsForPerformance.length-1].dataToShow!=null){
+              if(classScope.assetsForPerformance[classScope.assetsForPerformance.length-1].dataArr.length > 0){
                   clearInterval(interval);
                   classScope.calculateBreadth();
               }
@@ -211,10 +221,10 @@ export class StocksStatisticsComponent implements OnInit {
     }
     
     calculateBreadth(){
-        if(this.assetsForPerformance[0].dataToShow<0 && this.assetsForPerformance[0].dataToShow<this.averagePercChng && this.advancers>this.decliners){
+        if(this.assetsForPerformance[0].totalDataSum < 0 && this.assetsForPerformance[0].totalDataSum < this.averagePercChng && this.advancers > this.decliners){
                 this.breadth="Positive";
         }
-        else if(this.assetsForPerformance[0].dataToShow>0 && this.assetsForPerformance[0].dataToShow>this.averagePercChng && this.advancers<this.decliners){
+        else if(this.assetsForPerformance[0].totalDataSum > 0 && this.assetsForPerformance[0].totalDataSum > this.averagePercChng && this.advancers < this.decliners){
                  this.breadth="Negative";
         }
         else{
@@ -231,23 +241,5 @@ export class StocksStatisticsComponent implements OnInit {
         }   
     }
     
-    showHighAndLow(index){  // delete when better function exists in bar-chart...
-        let lowIndex = this.propArr.indexOf('lowInPerc');
-        let highIndex = this.propArr.indexOf('highInPerc');
-        let assetLowInPerc = this.assetsData[index][lowIndex];
-        let assetHighInPerc = this.assetsData[index][highIndex];
-        this.showOnHover = `${assetLowInPerc.toFixed(2)}%
-                            ${assetHighInPerc.toFixed(2)}%`;
-        this.isShowOnHover = true;
-        this.hoverIndex = index;
-    }
-    
-    stopShowing(){
-        this.isShowOnHover=false; 
-        this.hoverIndex = -1;  
-    }
-    
-    
-
 }
 

@@ -1,21 +1,21 @@
-<div  class="chart-wrapper" (mousemove)='charts.adjustGridLines($event, chart, chartProperties)' (mouseleave)='charts.hideGridLines(chartProperties)' #chart>
-	<div *ngFor="let internalAxis of ( chartProperties.internalAxises );">
+<div  class="chart-wrapper" (mousemove)='charts.adjustGridLines($event, chart, chartConfig)' (mouseleave)='charts.hideGridLines(chartConfig)' #chart>
+	<div *ngFor="let internalAxis of ( chartConfig.internalAxises );">
 		<div class="internal-axis" [style.top]="internalAxis.top+'px'" [style.width]="internalAxis.width+'px'"></div>
 		<div class='internal-axis-value' [style.top]="internalAxis.top-10+'px'">{{internalAxis.value.toFixed(2)}}</div>
 	</div>
-	<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'" [style.left]="chartProperties.xAxisLeft+'px'" [style.width]="chartProperties.xAxisWidth+'px'"></div>
+	<div class="x-axis" [style.top]="chartConfig.xAxisTop+'px'" [style.left]="chartConfig.xAxisLeft+'px'" [style.width]="chartConfig.xAxisWidth+'px'"></div>
 	<div *ngFor="let asset of ( chartData ); let i=index;">	
 		<div class="asset-name" [style.left]="asset.nameLeft+'%'" [style.width]="asset.nameWidth+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
 	</div>
 	<svg height='100%' width='100%'>
-		<polyline [attr.points]="chartProperties.polylinePoints" class='svg-polyline' />
-		<g *ngFor='let coordinates of (chartProperties.circleXY)'>
+		<polyline [attr.points]="chartConfig.polylinePoints" class='svg-polyline' />
+		<g *ngFor='let coordinates of (chartConfig.circleXY)'>
 			<circle class="svg-circle" [attr.cx]="coordinates[0]" [attr.cy]="coordinates[1]" [attr.r]="2" (mouseenter)='forNow()'/>
 		</g>
 	</svg>
-	<div *ngIf='chartProperties.isShowGridLines'> 
-		<div class='horizontal-grid-line' [style.top]="chartProperties.horizontalGridLineTop+'px'"></div>
-		<div class='vertical-grid-line' [style.left]="chartProperties.verticalGridLineLeft+'px'"></div>
-		<div class='Y-axis-orientation' [style.top]="chartProperties.YAxisOrientationTop+'px'">{{chartProperties.YAxisOrientation.toFixed(chartProperties.DADP)}}</div>
+	<div *ngIf='chartConfig.isShowGridLines'> 
+		<div class='horizontal-grid-line' [style.top]="chartConfig.horizontalGridLineTop+'px'"></div>
+		<div class='vertical-grid-line' [style.left]="chartConfig.verticalGridLineLeft+'px'"></div>
+		<div class='Y-axis-orientation' [style.top]="chartConfig.YAxisOrientationTop+'px'">{{chartConfig.YAxisOrientation.toFixed(chartConfig.DADP)}}</div>
 	</div>
 </div>

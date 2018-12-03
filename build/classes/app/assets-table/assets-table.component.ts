@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 })
 export class AssetsTableComponent implements OnInit {
         
-    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^NZDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^USDCNH,^XAUUSD,^XAGUSD,HGN18,CLM18,QAN18,ZWN18";
+    symbolsURL:string="^EURUSD,^GBPUSD,^USDJPY,^AUDUSD,^NZDUSD,^USDCAD,^USDZAR,^USDMXN,^USDBRL,^USDTRY,^USDPLN,^USDCNH,^XAUUSD,^XAGUSD,HGZ18,CLV18,QAX18,ZWZ18";
     observableAssetsTable: Observable<any[]>;
     allAssets=[];
     forexMajorsAssets=[];
@@ -48,19 +48,19 @@ export class AssetsTableComponent implements OnInit {
                 
                 item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
                 
-                if(asset.digitsAfterDecimalPoint!=null){
-                    item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                if(asset.DADP!=null){
+                    item.DADP=asset.DADP;
                 }else{
-                        item.digitsAfterDecimalPoint=2;
+                        item.DADP=2;
                 }
                 
                 item.lowReturn=(100*(item.low-item.previousClose)/item.previousClose).toFixed(2)+'%';
                 item.highReturn=(100*(item.high-item.previousClose)/item.previousClose).toFixed(2)+'%';
                 item.greenWidth= item.high-item.low>0 ? 100*(item.lastPrice-item.low)/(item.high-item.low) : 100;
                 item.redWidth=100-item.greenWidth;
-                item.low=item.low.toFixed(item.digitsAfterDecimalPoint);
-                item.high=item.high.toFixed(item.digitsAfterDecimalPoint);
-                item.open=item.open.toFixed(item.digitsAfterDecimalPoint);
+                item.low=item.low.toFixed(item.DADP);
+                item.high=item.high.toFixed(item.DADP);
+                item.open=item.open.toFixed(item.DADP);
                 item.openPriceLeft=100*(item.open-item.low)/(item.high-item.low);
                 
                 });

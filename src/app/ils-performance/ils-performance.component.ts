@@ -4,6 +4,9 @@ import { AssetsService } from '../services/assets.service';
 import { AssetDataService } from '../services/asset-data.service';
 import { UtilsService } from '../services/utils.service';
 import { HistoricalReturnService } from '../services/historical-return.service';
+import { BarChartConfig } from '../classes/bar-chart-config';
+import { ChartData } from '../classes/chart-data';
+import { WindowService } from '../services/window.service';
 
 import { Observable } from 'rxjs';
 
@@ -14,40 +17,23 @@ import { Observable } from 'rxjs';
 })
 export class IlsPerformanceComponent implements OnInit {
 
-    regularChartData = [{name:"Day", symbol:"dayReturn", dataToShow:null, color1:'#f9f189', color2:'#f7ec5b', left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Week", symbol:"weekReturn", dataToShow:null, color1:'#8ff7c8', color2:'#66f4b4', left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Month", symbol:"monthReturn", dataToShow:null, color1:'#66d9ff', color2:'#0099cc', left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"3 Months", symbol:"threeMonthReturn",dataToShow:null, color1:'#c5c8f7', color2:'#5d65f7', left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Year", symbol:"yearReturn", dataToShow:null, color1:'#f9aaa7', color2:'#fc605a', left:null, top:null, width:null, height:null, returnTop:null},
-                        ];
-    
-    regularChartProperties={
-        type:'Bar Chart',
-        totalBarsWidth:90,    
-        totalChartHeight:null,
-        totalChartWidth:null,   
-        topMargin:50,        
-        bottomMargin:50,
-        xAxisTop:null,
-    }
-    
-    normalizedChartData = [{name:"Day", symbol:"dayReturn", dataToShow:null, left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Week", symbol:"weekReturn", dataToShow:null, left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Month", symbol:"monthReturn", dataToShow:null, left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"3 Months", symbol:"threeMonthReturn",dataToShow:null, left:null, top:null, width:null, height:null, returnTop:null},
-                         {name:"Year", symbol:"yearReturn", dataToShow:null, left:null, top:null, width:null, height:null, returnTop:null},
-                        ];
-    
-    normalizedChartProperties={
-        type:'Bar Chart',
-        totalBarsWidth:90,    
-        totalChartHeight:null,
-        totalChartWidth:null,   
-        topMargin:50,        
-        bottomMargin:50,
-        xAxisTop:null,
-        normalized:true
-    }
+        
+    regularChartData = [
+                new ChartData("Day", "dayReturn", [], [""], ['#f7ec5b']),
+                new ChartData("Week", "weekReturn", [], [""], ['#96f762']),
+                new ChartData("Month", "monthReturn", [], [""], ['#66f4b4']),
+                new ChartData("3 Months", "threeMonthReturn", [], [""], ['#61e3f9']),
+                new ChartData("Year", "yearReturn", [], [""], ['#0099cc']),
+                ];
+    regularChartConfig = new BarChartConfig(90, 50, 50, true, false, 1.4);
+    normalizedChartData = [
+                new ChartData("Day", "dayReturn", [], ["Up", "Down"], ['#f7ec5b', '#96f762']),
+                new ChartData("Week", "weekReturn", [], ["Up", "Down"], ['#f7ec5b', '#96f762']),
+                new ChartData("Month", "monthReturn", [], ["Up", "Down"], ['#f7ec5b', '#96f762']),
+                new ChartData("3 Months", "threeMonthReturn", [], ["Up", "Down"], ['#f7ec5b', '#96f762']),
+                new ChartData("Year", "yearReturn", [], ["Up", "Down"], ['#f7ec5b', '#96f762']),
+                ];
+    normalizedChartProperties = new BarChartConfig(90, 50, 50, true, true, 1.4);
     
     symbolsArr=['^USDILS','^EURILS','^GBPILS','^JPYILS','^CHFILS','^AUDILS','^CADILS','^SEKILS','^ZARILS','^PLNILS','^USDMXN','^USDBRL','^USDTRY','^USDCNH','^USDKRW','^NZDUSD'];
     observable: Observable<object[]>;
@@ -59,22 +45,25 @@ export class IlsPerformanceComponent implements OnInit {
     finishedSimpleDataFunc = false;
     finishedHistoricDataFunc = false;
     isShowChart = false;
+    isMobile = false;
     
     
     constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private utils: UtilsService,
-                private historicalReturnService:HistoricalReturnService) { }
+                private historicalReturnService:HistoricalReturnService, private windowService: WindowService) { }
 
   
     ngOnInit() {
         setTimeout(function(){
             this.getILSSimpleData(this.symbolsArr);       // for each pair we get last price and daily and yearly performance
-            this.getILSHistoricData(this.symbolsArr);     // for each pair we get historic performance (weekly, monthly etc.)
+//            this.getILSHistoricData(this.symbolsArr);     // for each pair we get historic performance (weekly, monthly etc.)
             this.utils.doOnlyWhen(this.fillDataForCharts.bind(this),
                 this.checkIfAllDataArrived.bind(this), 40, 800, function(){
                     console.log("Error: the data didn't arrive in full");
                 }
             );
         }.bind(this), 1000);
+        let windowWidth=this.windowService.getNativeWindow().innerWidth;
+        if(windowWidth <= 400) this.isMobile = true;
     }
     
     
@@ -96,7 +85,6 @@ export class IlsPerformanceComponent implements OnInit {
                 }
             });
             this.finishedSimpleDataFunc = true;    
-            
          });
       });
             
@@ -114,7 +102,6 @@ export class IlsPerformanceComponent implements OnInit {
                 }.bind(this), 
             6, 1000);
         });
-        
     }
     
     
@@ -141,7 +128,7 @@ export class IlsPerformanceComponent implements OnInit {
     
     
     checkIfAllDataArrived(){
-        return !!(this.finishedSimpleDataFunc && this.finishedHistoricDataFunc);
+        return !!(this.finishedSimpleDataFunc /*&& this.finishedHistoricDataFunc*/);
     }
     
     
@@ -185,13 +172,17 @@ export class IlsPerformanceComponent implements OnInit {
     
     calculateDataForRegularChart(){
         for(let i=0; i<this.regularChartData.length; i++){
-            this.regularChartData[i]['dataToShow'] = this.calculateAverageReturn(this.regularChartData[i]['symbol'],this.ilsPairs);
+            this.regularChartData[i].dataArr.push(this.calculateAverageReturn(this.regularChartData[i]['symbol'],this.ilsPairs));
+//            this.regularChartData[i].dataArr.push(1.25);
         }
     }
     
     calculateDataForNormalizedChart(){
-        for(let i=0; i<this.regularChartData.length; i++){
-            this.normalizedChartData[i]['dataToShow'] = this.calculatePostiveRetrunRatio(this.regularChartData[i]['symbol'],this.ilsPairs);
+        for(let i=0; i<this.normalizedChartData.length; i++){
+            let positiveReturn = this.calculatePostiveRetrunRatio(this.regularChartData[i]['symbol'],this.ilsPairs);
+            let negativeReturn = 100 - positiveReturn;
+            this.normalizedChartData[i]['dataArr'].push(positiveReturn);
+            this.normalizedChartData[i]['dataArr'].push(negativeReturn);    // maybe use splice!
         }
     }
     

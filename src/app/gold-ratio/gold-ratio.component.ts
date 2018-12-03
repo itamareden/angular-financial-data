@@ -4,6 +4,8 @@ import { AssetsService } from '../services/assets.service';
 import { AssetDataService } from '../services/asset-data.service';
 import { UtilsService } from '../services/utils.service';
 import { HistoricalReturnService } from '../services/historical-return.service';
+import { BarChartConfig } from '../classes/bar-chart-config';
+import { ChartData } from '../classes/chart-data';
 
 import { Observable } from 'rxjs';
 
@@ -14,21 +16,62 @@ import { Observable } from 'rxjs';
 })
 export class GoldRatioComponent implements OnInit {
 
-    goldRatioArr = [{name:"Day", dataToShow:null, color1:'#f9f189', color2:'#f7ec5b', left:null, top:null, width:null, height:null, returnTop:null},
-                    {name:"Week", dataToShow:null, color1:'#8ff7c8', color2:'#66f4b4', left:null, top:null, width:null, height:null, returnTop:null},
-                    {name:"Month", dataToShow:null, color1:'#66d9ff', color2:'#0099cc', left:null, top:null, width:null, height:null, returnTop:null},
-                    {name:"3 Months", dataToShow:null, color1:'#c5c8f7', color2:'#5d65f7', left:null, top:null, width:null, height:null, returnTop:null},
-                    {name:"Year", dataToShow:null, color1:'#f9aaa7', color2:'#fc605a', left:null, top:null, width:null, height:null, returnTop:null},
+    goldRatioArr = [
+                    new ChartData("Day", "", [], [""], ['#f7ec5b']),
+                    new ChartData("Week", "", [], [""], ['#96f762']),
+                    new ChartData("Month", "", [], [""], ['#66f4b4']),
+                    new ChartData("3 Months", "", [], [""], ['#61e3f9']),
+                    new ChartData("Year", "", [], [""], ['#0099cc']),
                     ];
+    chartConfig = new BarChartConfig(90, 50, 50, true, false, 1.4);
     
-    chartProperties={
-        type:'Bar Chart',
-        totalBarsWidth:90,    
-        totalChartHeight:null,
-        totalChartWidth:null,   
-        topMargin:50,        
+    goldDataArr = [];
+    silverDataArr = [];
+    ratioDataArr = [];
+    chartConfigGold={
+        type:'Line Chart',
+        totalBarsWidth:88, 
+        totalChartHeight:null, 
+        totalChartWidth:null,     
+        topMargin:50,       
         bottomMargin:50,
         xAxisTop:null,
+        DADP: 0,
+        roundTarget: 0.1,    
+        lowestIsZero: false,   
+        svg: true,
+        polylinePoints: '',
+        gridLineActive: true,
+    }
+    chartConfigSilver={
+        type:'Line Chart',
+        totalBarsWidth:88, 
+        totalChartHeight:null, 
+        totalChartWidth:null,     
+        topMargin:50,       
+        bottomMargin:50,
+        xAxisTop:null,
+        DADP: 0,
+        roundTarget: 0.1,    
+        lowestIsZero: false,   
+        svg: true,
+        polylinePoints: '',
+        gridLineActive: true,
+    }
+    chartConfigRatio={
+        type:'Line Chart',
+        totalBarsWidth:88, 
+        totalChartHeight:null, 
+        totalChartWidth:null,     
+        topMargin:50,       
+        bottomMargin:50,
+        xAxisTop:null,
+        DADP: 0,
+        roundTarget: 0.1,    
+        lowestIsZero: false,   
+        svg: true,
+        polylinePoints: '',
+        gridLineActive: true,
     }
     
     symbolsURL:string="^XAUUSD,^XAGUSD";
@@ -41,6 +84,7 @@ export class GoldRatioComponent implements OnInit {
                 lastPrice:0
               };
     isShowChart = false;
+    isShowLineChart = false;
     historicArr=[];
     
     constructor(private assetsService: AssetsService, private assetDataService: AssetDataService, private utils: UtilsService,
@@ -50,18 +94,23 @@ export class GoldRatioComponent implements OnInit {
     ngOnInit() {
       
       this.getGoldRatioData(this.symbolsURL).then(goldRatioObject => {
-          this.assetDataService.getHistoricalDataForMultipleAssets(['^XAUUSD','^XAGUSD']).then(dataArr=>{
+          this.assetDataService.getHistoricalDataForMultipleAssets(['^XAUUSD','^XAGUSD'],'daily').then(dataArr=>{
+              this.setAssetDataArr(dataArr[0], this.goldDataArr);
+              this.setAssetDataArr(dataArr[1], this.silverDataArr);
+              this.isShowLineChart = true;
+              
                 let isDataClean = this.utils.adjustArraysBasedOnProp(dataArr[0], dataArr[1], 'tradingDay');
                 if(isDataClean){
                     this.historicArr = this.utils.getSyntheticAssetHistoricData(dataArr[0], dataArr[1], 'divide');
+                    this.setAssetDataArr(this.historicArr, this.ratioDataArr);
                     this.historicalReturnService.getAssetHistoricDataForWeeks(1,this.historicArr).then(candlesticks=>{   // one week.
-                        this.goldRatioArr[1].dataToShow = this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close');   
+                        this.goldRatioArr[1].dataArr.push(this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close'));   
                     });
                     this.historicalReturnService.getAssetHistoricDataForMonths(1,this.historicArr).then(candlesticks=>{   // one month.
-                        this.goldRatioArr[2].dataToShow = this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close');
+                        this.goldRatioArr[2].dataArr.push(this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close'));
                     });
                     this.historicalReturnService.getAssetHistoricDataForMonths(3,this.historicArr).then(candlesticks=>{   // 3 months.
-                        this.goldRatioArr[3].dataToShow = this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close');
+                        this.goldRatioArr[3].dataArr.push(this.historicalReturnService.calculateReturnForPeriod(candlesticks,goldRatioObject.lastPrice,'close'));
                     });
                     this.isShowChart = true;
                 }
@@ -72,7 +121,15 @@ export class GoldRatioComponent implements OnInit {
       
     }
     
-    
+    setAssetDataArr(rawDataArr, assetDataArr){
+        rawDataArr.forEach(function(item){
+            let itemObj = {
+                name: '',
+                dataToShow: item.close
+            }
+            assetDataArr.push(itemObj);
+        })
+    }
     
     getGoldRatioData(symbolsInURL:string): Promise<any>{
     
@@ -82,8 +139,8 @@ export class GoldRatioComponent implements OnInit {
             this.metals = assetsData;
             
             this.goldRatio=this.utils.getSyntheticAssetData(this.metals[0],this.metals[1],'divide','^XAUUSD', 'Gold/Silver Ratio');
-            this.goldRatioArr[0].dataToShow = this.goldRatio.dayReturn;
-            this.goldRatioArr[4].dataToShow = this.goldRatio.yearReturn;
+            this.goldRatioArr[0].dataArr.push(this.goldRatio.dayReturn);
+            this.goldRatioArr[4].dataArr.push(this.goldRatio.yearReturn);
         });
         let classScope=this;
         let promise = new Promise(function(resolve) {

@@ -8,17 +8,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 
-let digitsAfterDecimalPoint;
+let DADP;
 
 
 @Injectable()
 export class AssetDataService {
 
     
-    urlForProxy:string='https://cors-anywhere.herokuapp.com/';   // for overcoming CORS issues
-    key:string='24bead7b883216bccdf756c20982808c'
-    urlForPresentAssetData:string=this.urlForProxy+'http://marketdata.websol.barchart.com/getQuote.json?key='+this.key;
-    urlForHistoricAssetData:string=this.urlForProxy+'http://marketdata.websol.barchart.com/getHistory.json?key='+this.key;
+    urlForProxy:string='https://cors-anywhere.herokuapp.com/';   // for overcoming CORS issues. don't need it anymore
+    key:string = '24bead7b883216bccdf756c20982808c'
+    urlForPresentAssetData:string = 'https://marketdata.websol.barchart.com/getQuote.json?key='+this.key;
+    urlForHistoricAssetData:string = 'https://marketdata.websol.barchart.com/getHistory.json?key='+this.key;
     regularFields:string='fiftyTwoWkHigh%2CfiftyTwoWkLow%2CpreviousClose%2CtwelveMnthPct%2ctwentyDayAvgVol';
     extraFieldsForStock:string="sharesOutstanding%2CdividendYieldAnnual";
     extraFieldsForFuture:string="impliedVolatility%2cexpirationDate%2copenInterest";
@@ -27,23 +27,23 @@ export class AssetDataService {
   constructor(private http : Http) { }
     
     
-    
+    /*  for NodeJs practice..
+    getBlabla(){
+        let me =this.http.get('http://localhost:2121/?symbols=GOOG').map(res=>{return res;});
+        return me;
+        
+    }*/
     
 
     getAssetData(asset:Asset): Observable<AssetData> {
          
-         if(asset.digitsAfterDecimalPoint==null){
-             
-           digitsAfterDecimalPoint=2;  
-             
-             }else{
-             
-                 digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;  
-               
-             }
-         
+         if(asset.DADP==null){
+            DADP=2;  
+         }
+         else{
+            DADP=asset.DADP;  
+         }
          let fields=this.regularFields; // For currencies, gold, silver...
-         
          if(asset.type=="Stock"){
              
              fields+="%2c"+this.extraFieldsForStock;
@@ -130,7 +130,6 @@ export class AssetDataService {
             observable = this.getAssetHistoricData(assetsSymbols[i],timeFrame,maxRecords); 
             observable.subscribe(candlesticks => arrayToReturn[i]=candlesticks);           
         }
-
         let promise = new Promise(function(resolve) {
              let interval = window.setInterval(function() {
                  if(arrayToReturn.length == assetsSymbols.length){
@@ -157,18 +156,18 @@ function mapAssetData(res: Response): any {
     let assetData = <any> ({
     
     startTime: result[0].tradeTimestamp.toString(), 
-    open: result[0].open.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
-    low: result[0].low.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
-    high: result[0].high.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
-    lastPrice: result[0].lastPrice.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    open: result[0].open.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    low: result[0].low.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    high: result[0].high.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    lastPrice: result[0].lastPrice.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
     lastPriceAsNumber: result[0].lastPrice,
-    netChange: (result[0].lastPrice-result[0].previousClose).toFixed(digitsAfterDecimalPoint),
+    netChange: (result[0].lastPrice-result[0].previousClose).toFixed(DADP),
     netChangePercent: (100*(result[0].lastPrice-result[0].previousClose)/result[0].previousClose),
     volume: result[0].volume.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
     monthlyAverageVolume: result[0].twentyDayAvgVol.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
-    previousClose: result[0].previousClose.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
-    fiftyTwoWkHigh: result[0].fiftyTwoWkHigh<this.high ? this.high : result[0].fiftyTwoWkHigh.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
-    fiftyTwoWkLow:  result[0].fiftyTwoWkLow>this.low ? this.low : result[0].fiftyTwoWkLow.toFixed(digitsAfterDecimalPoint).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    previousClose: result[0].previousClose.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    fiftyTwoWkHigh: result[0].fiftyTwoWkHigh<this.high ? this.high : result[0].fiftyTwoWkHigh.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
+    fiftyTwoWkLow:  result[0].fiftyTwoWkLow>this.low ? this.low : result[0].fiftyTwoWkLow.toFixed(DADP).toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,"),
     twelveMnthPct: result[0].twelveMnthPct.toFixed(2),
   });
     

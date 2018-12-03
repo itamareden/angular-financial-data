@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, ChangeDetectorRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartsService } from '../services/Charts.service';
 import { WindowService } from '../services/window.service';
+import { BarChartConfig } from '../classes/bar-chart-config';
 
 @Component({
   selector: 'bar-chart',
@@ -10,18 +11,17 @@ import { WindowService } from '../services/window.service';
 export class BarChartComponent implements OnInit {
         
     @ViewChild('chart') chart: ElementRef;
-    @Input() chartProperties: any;
-    @Input() chartData: [any];
+    @Input() chartConfig: BarChartConfig;
+    @Input() chartData: [any];  // change to ChartData[]
     @Input() changeDetector: number;
     hasHeight=false;
     screenSize = '';
+    hoveredBar = -1;
     DADP;
     
     constructor(private charts: ChartsService, private cd: ChangeDetectorRef, private windowService: WindowService) { }
 
-    ngOnInit() {
-        if(this.chartProperties) this.chartProperties.type = 'Bar Chart'    // just making sure
-    }
+    ngOnInit() {}
     
     ngAfterViewChecked() {
         if(this.chart && !this.hasHeight){
@@ -35,16 +35,48 @@ export class BarChartComponent implements OnInit {
     }
     
     ngOnChanges(changes: SimpleChanges) {
-        this.createChart();
-        
+        if(changes["changeDetector"] && !changes["changeDetector"]["firstChange"]){
+            console.log(changes["changeDetector"])
+            this.createChart();   // if there was a changes in the detector, create the chart again
+        }
     }
     
     
     createChart(){
-        this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
-        this.chartProperties.totalChartWidth=this.chart.nativeElement.offsetWidth;
-        if(this.chartProperties.normalized) this.charts.createNormalizedBarChart(this.chartData, this.chartProperties);
-        else this.charts.createBarChart(this.chartData, this.chartProperties, 'dataToShow');
+        this.chartConfig.totalChartHeight=this.chart.nativeElement.offsetHeight;
+        this.chartConfig.totalChartWidth=this.chart.nativeElement.offsetWidth;
+        this.charts.createBarChart(this.chartData, this.chartConfig);
+        console.log(this.chartData)
+    }
+        
+    showTooltip(index){
+        this.hoveredBar = index;
+    }
+    
+    hideTooltip(){
+        this.hoveredBar = -1;
+    }
+        
+    isShowTooltip(i,j){ 
+        return !!(this.chartConfig.isEnableTooltip && i == this.hoveredBar && j == 0);
+    }
+    
+    calcTooltipDistance(){
+        let tooltipLeft = 0;
+        if(this.chartData[0].width && this.chartConfig.totalChartWidth){
+            tooltipLeft = this.chartData[0].width + 15;    // bar width plus extra..
+        }
+        return tooltipLeft + "px";
+    }
+    
+    setDirection(index){
+        if(index != this.chartData.length -1) return "left";
+        else return "right";
+    }
+    
+    setClass(index){
+        if(index != this.chartData.length -1) return "left-triangle";
+        else return "right-triangle";
     }
     
     
@@ -57,13 +89,13 @@ export class BarChartComponent implements OnInit {
         // maybe not...
         if(windowWidth <= 700){ 
             if(this.screenSize == 'desktop'){
-                this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
+                this.chartConfig.totalChartHeight = this.chart.nativeElement.offsetHeight;
                 this.createChart();
                 this.screenSize = 'mobile';
             }
         }
         else if(this.screenSize == 'mobile'){
-            this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
+            this.chartConfig.totalChartHeight=this.chart.nativeElement.offsetHeight;
             this.createChart();
             this.screenSize = 'desktop'
         }

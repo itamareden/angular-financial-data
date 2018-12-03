@@ -58,7 +58,9 @@ export class TopAssetsPerformanceComponent implements OnInit {
         this.observable = this.assetDataService.getMultipleAssetsData(assets,'top-assets-performance',['previousVolume','sharesOutstanding','twelveMnthPct','fiftyTwoWkHigh','fiftyTwoWkLow']);    
         this.observable.subscribe(assetsData => {
             for(let i=0; i<assetsData.length; i++){
-                TopAssetsPerformanceComponent.assetsData.push(assetsData[i]);
+                if(!!assetsData[i].lastPrice){
+                    TopAssetsPerformanceComponent.assetsData.push(assetsData[i]);                    
+                }
             }
         });
     }
@@ -67,22 +69,22 @@ export class TopAssetsPerformanceComponent implements OnInit {
            this.bestPerformingAssets = assetsData.sort(comparePercentChangeHighToLow).slice(0,Number(this.num));
            this.bestPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{
                     item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
-                    if(asset.digitsAfterDecimalPoint!=null){
-                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                    if(asset.DADP!=null){
+                        item.DADP=asset.DADP;
                     }
                     else{
-                        item.digitsAfterDecimalPoint=2;
+                        item.DADP=2;
                     }
                 });
             }); 
             this.worstPerformingAssets = assetsData.sort(comparePercentChangeLowToHigh).slice(0,Number(this.num));
-            this.worstPerformingAssets.map(item=>{this.assetsService.getAsset(item.symbol).then(asset=>{
+            this.worstPerformingAssets.map(item => {this.assetsService.getAsset(item.symbol).then(asset => {
                     item.name=asset.nameToShow;
-                    if(asset.digitsAfterDecimalPoint!=null){
-                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                    if(asset.DADP!=null){
+                        item.DADP=asset.DADP;
                     }
                     else{
-                        item.digitsAfterDecimalPoint=2;
+                        item.DADP=2;
                     }
                 });
             });
@@ -98,11 +100,11 @@ export class TopAssetsPerformanceComponent implements OnInit {
                 }
                 this.assetsService.getAsset(item.symbol).then(asset=>{
                     item.name=asset.nameToShow;
-                    if(asset.digitsAfterDecimalPoint!=null){
-                        item.digitsAfterDecimalPoint=asset.digitsAfterDecimalPoint;
+                    if(asset.DADP!=null){
+                        item.DADP=asset.DADP;
                     }
                     else{
-                        item.digitsAfterDecimalPoint=2;
+                        item.DADP=2;
                     }
                 });
             });

@@ -6,7 +6,13 @@
 			<assets-menu-modal (onContinueButtonClick)="getSelectedAssets($event)"></assets-menu-modal>
 		</div>
 		<input type="date" style='margin-top:20px; margin-left:5%' #dateInput>
-		<button class='calculate-button' (click)='calculate()'>calculate</button>
+		<div>
+			<button (click)="isShowCalendar=true">Choose Period</button>
+			<button class='calculate-button' (click)='calculate()'>calculate</button>
+			<div *ngIf="isShowCalendar" style="position: absolute; top:0px">
+				<calendar-table [calendarConfig]="calendarConfig" (onApplyButtonClick)="getChosenDates($event)" (onXButtonClick)="isShowCalendar=false"></calendar-table>
+			</div>
+		</div>
 	</div>
 	<div class='buttons-wrapper' *ngIf='isShowChart'>
 		<div *ngFor='let feature of (features)'>
@@ -19,7 +25,7 @@
     	<div style='clear:both'></div>
    	</div>
 	<div class='bar-chart' *ngIf='isShowChart'>
-		<bar-chart  [chartData]="chartData" [chartProperties]="chartProperties" [changeDetector]="change"></bar-chart>
+		<bar-chart  [chartData]="chartData" [chartConfig]="chartConfig" [changeDetector]="change"></bar-chart>
 	</div>
 </div>
 

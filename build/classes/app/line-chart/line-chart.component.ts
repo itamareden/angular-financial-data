@@ -10,7 +10,7 @@ import { WindowService } from '../services/window.service';
 export class LineChartComponent implements OnInit {
         
     @ViewChild('chart') chart: ElementRef;
-    @Input() chartProperties: any;
+    @Input() chartConfig: any;
     @Input() chartData: [any];
     @Input() changeDetector: number;
     hasHeight=false;
@@ -20,7 +20,7 @@ export class LineChartComponent implements OnInit {
     constructor(public charts: ChartsService, private cd: ChangeDetectorRef, private windowService: WindowService) { }
 
     ngOnInit() {
-        if(this.chartProperties) this.chartProperties.type = 'Line Chart'    // just making sure
+        if(this.chartConfig) this.chartConfig.type = 'Line Chart'    // just making sure
     }
     
     ngAfterViewChecked() {
@@ -40,9 +40,9 @@ export class LineChartComponent implements OnInit {
     
     
     createChart(){
-        this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
-        this.chartProperties.totalChartWidth=this.chart.nativeElement.offsetWidth;
-        this.charts.createLineChart(this.chartData, this.chartProperties, 'dataToShow', true);
+        this.chartConfig.totalChartHeight=this.chart.nativeElement.offsetHeight;
+        this.chartConfig.totalChartWidth=this.chart.nativeElement.offsetWidth;
+        this.charts.createLineChart(this.chartData, this.chartConfig, 'dataToShow', true);
     }
     
     
@@ -55,13 +55,13 @@ export class LineChartComponent implements OnInit {
         // maybe not...
         if(windowWidth <= 700){ 
             if(this.screenSize == 'desktop'){
-                this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
+                this.chartConfig.totalChartHeight=this.chart.nativeElement.offsetHeight;
                 this.createChart();
                 this.screenSize = 'mobile';
             }
         }
         else if(this.screenSize == 'mobile'){
-            this.chartProperties.totalChartHeight=this.chart.nativeElement.offsetHeight;
+            this.chartConfig.totalChartHeight=this.chart.nativeElement.offsetHeight;
             this.createChart();
             this.screenSize = 'desktop'
         }

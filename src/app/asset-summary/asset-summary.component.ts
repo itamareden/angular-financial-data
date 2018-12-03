@@ -89,8 +89,8 @@ export class AssetSummaryComponent implements OnInit {
     .switchMap((params: ParamMap) => this.assetsService.getAsset(params.get('symbol')))
     .subscribe(asset => {this.isShowTable=false; // for now! for the chart.. it wasn't here before...
                          this.asset = asset;
-                         this.asset.digitsAfterDecimalPoint==null ? this.asset.digitsAfterDecimalPoint=2 : this.asset.digitsAfterDecimalPoint; // Configure how many digits to show after the decimal point
-                         this.chartProperties.DADP=this.asset.digitsAfterDecimalPoint;
+                         this.asset.DADP==null ? this.asset.DADP=2 : this.asset.DADP; // Configure how many digits to show after the decimal point
+                         this.chartProperties.DADP=this.asset.DADP;
                          this.isShowAssetData=false;
                          this.isShowHistoricData=false;
                          this.isRefreshPerformanceData=true;
@@ -152,8 +152,8 @@ export class AssetSummaryComponent implements OnInit {
                 this.historicalReturnService.getAssetHistoricDataForWeeks(1,this.candlestick).then(candlesticks=>{   // one week.   
                     
                     this.oneWeekPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
-                    this.oneWeekPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    this.oneWeekPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneWeekPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneWeekPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneWeekPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
                     this.oneWeekPerformance.redWidth=100-this.oneWeekPerformance.greenWidth;
                     this.oneWeekPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneWeekPerformance.low,candlesticks);
@@ -163,8 +163,8 @@ export class AssetSummaryComponent implements OnInit {
                 this.historicalReturnService.getAssetHistoricDataForMonths(1,this.candlestick).then(candlesticks=>{    // one month
                     
                     this.oneMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
-                    this.oneMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    this.oneMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.oneMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.oneMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
                     this.oneMonthPerformance.redWidth=100-this.oneMonthPerformance.greenWidth;
                     this.oneMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.oneMonthPerformance.low,candlesticks);
@@ -175,8 +175,8 @@ export class AssetSummaryComponent implements OnInit {
                 this.historicalReturnService.getAssetHistoricDataForMonths(3,this.candlestick).then(candlesticks=>{    // three months
                 
                     this.threeMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
-                    this.threeMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    this.threeMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.threeMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.threeMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.threeMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
                     this.threeMonthPerformance.redWidth=100-this.threeMonthPerformance.greenWidth;
                     this.threeMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.threeMonthPerformance.low,candlesticks);
@@ -186,8 +186,8 @@ export class AssetSummaryComponent implements OnInit {
                 this.historicalReturnService.getAssetHistoricDataForMonths(4,this.candlestick).then(candlesticks=>{    // six months
                 
                     this.sixMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
-                    this.sixMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    this.sixMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.sixMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.sixMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.sixMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
                     this.sixMonthPerformance.redWidth=100-this.sixMonthPerformance.greenWidth;
                     this.sixMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.sixMonthPerformance.low,candlesticks);
@@ -197,8 +197,8 @@ export class AssetSummaryComponent implements OnInit {
                 this.historicalReturnService.getAssetHistoricDataForMonths(5,this.candlestick).then(candlesticks=>{    // nine months
                 
                     this.nineMonthPerformance.return=this.historicalReturnService.calculateReturnForPeriod(candlesticks,this.assetData.lastPriceAsNumber);
-                    this.nineMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    this.nineMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.nineMonthPerformance.low=this.findPeriodLow(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+                    this.nineMonthPerformance.high=this.findPeriodHigh(candlesticks,this.assetData,this.asset).toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
                     this.nineMonthPerformance.greenWidth=this.calculateGreenWidth(candlesticks,this.assetData);
                     this.nineMonthPerformance.redWidth=100-this.nineMonthPerformance.greenWidth;
                     this.nineMonthPerformance.lowReturn=this.calculatePeriodLowReturn(this.nineMonthPerformance.low,candlesticks);
@@ -383,7 +383,7 @@ export class AssetSummaryComponent implements OnInit {
         
         let movingAverage=sum/duration;
         
-        return movingAverage.toFixed(this.asset.digitsAfterDecimalPoint).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+        return movingAverage.toFixed(this.asset.DADP).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
         
         }
     

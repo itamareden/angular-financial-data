@@ -1,22 +1,32 @@
 <div  class="chart-wrapper" #chart>
-	<div *ngIf="!chartProperties.normalized">
-		<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'" [style.left]="chartProperties.xAxisLeft+'px'" [style.width]="chartProperties.xAxisWidth+'px'"></div>
-		<div *ngFor="let asset of ( chartData ); let i=index;">	
-			<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
-			<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" 
-			[style.width]="asset.width+'%'" [style.background]="'linear-gradient('+asset.color1+','+asset.color2+')'"></div>
-			<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.dataToShow.toFixed(chartProperties.DADP)}}%</div>
-		</div> 
-	</div>	
-	<div *ngIf="chartProperties.normalized">
-		<div class="x-axis" [style.top]="chartProperties.xAxisTop+'px'" [style.left]="chartProperties.xAxisLeft+'px'" [style.width]="chartProperties.xAxisWidth+'px'"></div>
-		<div *ngFor="let asset of ( chartData ); let i=index;">	
-			<div class="asset-name" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'" [routerLink]="['/asset', asset.symbol]">{{asset.name}}</div>
-			<div style="position:absolute" [style.top]="asset.top+'px'" [style.height]="asset.height+'px'" [style.left]="asset.left+'%'" [style.width]="asset.width+'%'">
-				<div class='negative-bar' [style.height]="100-asset.dataToShow+'%'"></div>
-  				<div class='positive-bar' [style.height]="asset.dataToShow+'%'"></div>
-			</div>
-			<div class="asset-return" [style.left]="asset.left+'%'"  [style.width]="asset.width+'%'" [style.top]="asset.returnTop+'px'">{{asset.dataToShow.toFixed(1)}}%</div>
-		</div>
-	</div>
+    <div>
+        <div class="x-axis" [style.top]="chartConfig.xAxisTop+'px'" [style.left]="chartConfig.xAxisLeft+'px'" [style.width]="chartConfig.xAxisWidth+'px'"></div>
+        <div *ngFor="let miniGrid of ( chartConfig.miniGridLeftArr)">
+			<div class="mini-grid" [style.left]="miniGrid+'px'" [style.top]="chartConfig.xAxisTop+'px'"></div>        
+        </div>
+        <div *ngFor="let bar of ( chartData ); let i=index; let lastBar = last" (mouseenter)="showTooltip(i)" (mouseleave)="hideTooltip()">
+            <div class="bar-name" [style.left]="bar.left+'px'" [style.width]="bar.width+'px'" [style.top]="chartConfig.dataNameTop+'px'">{{bar.name}}</div>
+            <div *ngFor="let subBar of ( bar['dataArr'] ); let j=index;">
+                <div class="bar" [style.top]="bar.top[j]+'px'" [style.height]="bar.height[j]+'px'" [style.left]="bar.left+'px'" 
+                     [style.width]="bar.width+'px'" [style.background]="bar.colors[j].color1 ? 'linear-gradient('+bar.colors[j].color1+','+bar.colors[j].color2+')' : bar.colors[j]">
+                    <div *ngIf="isShowTooltip(i,j)" class="tooltip-container" [style.left]="!lastBar ? calcTooltipDistance():null" [style.right]="lastBar ? calcTooltipDistance():null">
+                    	<div class="tooltip-data-wrapper">
+	                        <div *ngFor="let data of (bar['patternedDataArr']) let k=index;" class="tooltip-data" [style.paddingTop]="k==0 ? '15px' : null">
+	                        	<div class="left">{{bar['dataNames'][k]}}:</div>
+	                            <div class="right">{{data}}</div> 
+	                            <div class="clear"></div> 
+	                        </div>
+	                        <div class="tooltip-data-sum upperline">
+	                        	<div class="left">Total:</div>
+	                        	<div class="right">{{bar['barData']}}</div>
+	                        	<div class="clear"></div> 
+                        	</div>
+	                        <triangle-icon [direction]="setDirection(i)" [triangleColor]="'lightblue'" [ngClass]="setClass(i)"></triangle-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="chartConfig.isShowBarData && bar.barData != undefined" class="bar-data" [style.left]="bar.left+'px'"  [style.width]="bar.width+'px'" [style.top]="bar.barDataTop+'px'">{{bar.barData}}</div>
+        </div> 
+    </div>	
 </div>

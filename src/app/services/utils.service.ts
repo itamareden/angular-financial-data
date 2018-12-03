@@ -219,7 +219,6 @@ export class UtilsService {
     }
     
     calculateModuloSafely(dividend: number,divisor: number):number{ // to overcome javascript inability to deal with floating numbers
-        
         let multiplyCounter=0;
         while(!this.isInteger(dividend) || !this.isInteger(divisor)){
             dividend*=10;
@@ -228,6 +227,48 @@ export class UtilsService {
         }
         if(multiplyCounter==0) return dividend%divisor;
         else return (dividend%divisor)/(10*multiplyCounter);
+    }
+
+    convertHexToRgb(colorInHexFormat: string):any{
+        let RGBComponents = colorInHexFormat.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+        if(RGBComponents && RGBComponents.length == 4){
+            let rgbObj = {
+                r: parseInt(RGBComponents[1], 16),
+                g: parseInt(RGBComponents[2], 16),
+                b: parseInt(RGBComponents[3], 16)
+            }
+            return rgbObj;
+        }
+        else{
+            return null;
+        }
+    }
+
+    convertRgbToHex(r: number, g: number, b: number):string{
+        if(Math.floor(r) > 255) r = 255;
+        if(Math.floor(g) > 255) g = 255;
+        if(Math.floor(b) > 255) b = 255;
+        var rHex = Math.floor(r).toString(16).length == 1 ? "0" + Math.floor(r).toString(16) : Math.floor(r).toString(16);
+        var gHex = Math.floor(g).toString(16).length == 1 ? "0" + Math.floor(g).toString(16) : Math.floor(g).toString(16);
+        var bHex = Math.floor(b).toString(16).length == 1 ? "0" + Math.floor(b).toString(16) : Math.floor(b).toString(16);
+        return "#" + rHex + gHex + bHex;
+    }
+    
+    brightenColor(colorInHexFormat: string, multiplier?:number):string{
+        if(multiplier == undefined) multiplier = 1;
+        let originalColorRGB = this.convertHexToRgb(colorInHexFormat);   // original color as rgb object
+        if(!!originalColorRGB){
+            let newColorObj = {r:null,g:null,b:null,};
+            newColorObj.r = multiplier * originalColorRGB.r;
+            newColorObj.g = multiplier * originalColorRGB.g;
+            newColorObj.b = multiplier * originalColorRGB.b;
+            let newColorStr = this.convertRgbToHex(newColorObj.r, newColorObj.g, newColorObj.b);
+            return newColorStr;
+        }
+        else{
+            this.printError("error. color is not in HEX format.");
+            return colorInHexFormat;
+        } 
     }
 
 }

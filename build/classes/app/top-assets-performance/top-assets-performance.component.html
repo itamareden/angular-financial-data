@@ -13,7 +13,7 @@
 			        
 				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
 				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
 				          
 				          <p  class="list-group-item-text asset-net-change"
 				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
@@ -22,28 +22,21 @@
 			          
 	         </li >
 	 </ul>
-	       
 	<ul class="list-group " *ngIf="isShowWorstPerforming">
-	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( worstPerformingAssets ); let lastRow=last" >
-			        
-				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
-				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
-				          
-				          <p  class="list-group-item-text asset-net-change"
-				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
-				          
-				          <div class="clearfix"></div>
-			          
-	         </li >
-	 </ul>
-	         
+	    <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( worstPerformingAssets ); let lastRow=last" >
+	      <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
+	      <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
+	      <p  class="list-group-item-text asset-net-change"
+	       [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
+	      <div class="clearfix"></div>
+	    </li >
+ 	</ul>
 	 <ul class="list-group " *ngIf="isShowMostActive">
 	         <li class="list-group-item row-in-table" [ngClass]="{'last-row': lastRow}"  *ngFor="let asset of ( mostActiveAssets ); let lastRow=last" >
 			        
 				          <p class="list-group-item-text asset-name"><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></p>
 				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
 				          
 				          <p  class="list-group-item-text asset-net-change">${{asset.volume.toFixed(2)}}{{asset.volumeNotation}}</p>
 				          

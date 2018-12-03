@@ -1,0 +1,75 @@
+<div class="wrapper" [style.width]="mainContainerWidth + 'px'" [style.borderColor]="calendarConfig.color" [style.boxShadow]="'0 0 10px ' + calendarConfig.color">
+	<x-icon class="x-icon" [squareBackground]="calendarConfig.color" [xBackground]="'white'" (click)="closeCalendar()"></x-icon>	<!-- position absolute -->
+	<div class="main">
+		<div *ngIf="calendarConfig.isCustomDates" class="custom-dates-container" [style.borderRight]="'1px solid ' + calendarConfig.color">
+			<div style="text-align:left; position:relative; width:120px; left:20px;">
+				<h3 class="big-header">Custom Dates</h3>
+				<div class="underline" [style.background]="calendarConfig.color"></div>
+				<div class="small-header">Start Date</div>
+				<input type="text" [(ngModel)]="inputStartDate" placeholder="dd / mm / yyyy" (onStateChange)="checkStartDate($event)"
+				 [style.border]="startDateInputBorderColor" dateValidator [callback]="calendarConfig.isDateValidCallback">
+				<div class="small-header">End Date</div>
+				<input type="text" [(ngModel)]="inputEndDate" placeholder="dd / mm / yyyy" (onStateChange)="checkEndDate($event)"
+				 [style.border]="endDateInputBorderColor" dateValidator [callback]="calendarConfig.isDateValidCallback">		
+			</div>
+		</div>
+		<div class="frames-container">
+			<triangle-icon class="triangle tilted-left"  [direction]="'left'" [triangleColor]="calendarConfig.color" (click)="setCalendar(monthInit-1,yearInit)"></triangle-icon>	<!-- position absolute -->
+			<triangle-icon class="triangle tilted-right"  [direction]="'right'" [triangleColor]="calendarConfig.color" (click)="setCalendar(monthInit+1,yearInit)"></triangle-icon>  <!-- position absolute -->
+			<div class="left-frame left" [style.borderColor]="calendarConfig.color">
+				<div class="month-header" [style.background]="calendarConfig.color">
+					<span class="month-span left">{{leftFrameMonthName}}</span> 
+					<span class="year-span right">{{leftFrameYear}}</span>
+				</div>
+				<div class="month-table-wrapper">
+					<table>
+						<tr>
+							<th>Sun</th>
+							<th>Mon</th>
+							<th>Tue</th>
+							<th>Wed</th>
+							<th>Thu</th>
+							<th>Fri</th>
+							<th>Sat</th>
+						</tr>
+						<tr *ngFor="let week of leftFrameMatrix">
+							<td *ngFor="let day of week" (click)="manageChoosingDates(day)">
+								<div [ngClass]="setDateClass(day)" [style.background]="day.isChosen ? calendarConfig.brightenedColor : 'white'">{{day.day}}</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="right-frame left">
+				<div class="month-header" [style.background]="calendarConfig.color">
+					<span class="month-span left">{{rightFrameMonthName}}</span> 
+					<span class="year-span right">{{rightFrameYear}}</span>
+				</div>
+				<div class="month-table-wrapper">
+					<table>
+						<tr>
+							<th>Sun</th>
+							<th>Mon</th>
+							<th>Tue</th>
+							<th>Wed</th>
+							<th>Thu</th>
+							<th>Fri</th>
+							<th>Sat</th>
+						</tr>
+						<tr *ngFor="let week of rightFrameMatrix">
+							<td *ngFor="let day of week" (click)="manageChoosingDates(day)">
+								<div [ngClass]="setDateClass(day)" [style.background]="day.isChosen ? calendarConfig.brightenedColor : 'white'">{{day.day}}</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="clear-float"></div>
+		</div>
+		<div class="clear-float"></div>
+	</div>
+	<div class="footer" [style.background]="calendarConfig.color">
+		<button class="clear-button" [disabled]="isDisableClearButton()" [style.color]="setClearButtonColor()"  (click)="clearChosenDates()">Clear</button>
+		<button class="apply-button" [disabled]="isDisableApplyButton()" [style.color]="setApplyButtonColor()"  (click)="sendDatesToParent()">Apply</button>
+	</div>
+</div>

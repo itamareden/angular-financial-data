@@ -44,6 +44,11 @@ import { ArrowIconComponent } from './icons/arrow-icon/arrow-icon.component';
 import { AssetsListFilterPipe } from './pipes/assets-list-filter.pipe';
 import { XIconComponent } from './icons/x-icon/x-icon.component';
 import { MarketHeadlinesComponent } from './market-headlines/market-headlines.component';
+import { CalendarTableComponent } from './calendar-table/calendar-table.component';
+import { TriangleIconComponent } from './icons/triangle-icon/triangle-icon.component';
+import { DateValidatorDirective } from './directives/date-validator.directive';
+import { BrokenLineComponent } from './icons/broken-line/broken-line.component';
+import { DatesService } from './services/dates.service';
 
 @NgModule({
   declarations: [
@@ -78,6 +83,10 @@ import { MarketHeadlinesComponent } from './market-headlines/market-headlines.co
     AssetsListFilterPipe,
     XIconComponent,
     MarketHeadlinesComponent,
+    CalendarTableComponent,
+    TriangleIconComponent,
+    DateValidatorDirective,
+    BrokenLineComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +94,7 @@ import { MarketHeadlinesComponent } from './market-headlines/market-headlines.co
       HttpModule,
       appRouterModule
   ],
-  providers: [AssetsService,AssetDataService,MarketSentimentService,WindowService,HistoricalReturnService,ChartsService,UtilsService],
+  providers: [AssetsService,AssetDataService,WindowService,HistoricalReturnService,ChartsService,UtilsService, DatesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

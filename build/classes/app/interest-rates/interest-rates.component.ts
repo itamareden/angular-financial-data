@@ -59,7 +59,7 @@ export class InterestRatesComponent implements OnInit {
                     {name:"03/21", symbol:"FEH21", dataToShow:null},
                     ];
 
-    chartPropertiesFedFunds={
+    chartConfigFedFunds={
         type:'Line Chart',
         totalBarsWidth:88,  // width of each bar in %
         totalChartHeight:null, 
@@ -75,7 +75,7 @@ export class InterestRatesComponent implements OnInit {
         circleXY:[],    // coordinates for small circles
         gridLineActive: true,
     }
-    chartPropertiesEurodollar={
+    chartConfigEurodollar={
         type:'Line Chart',
         totalBarsWidth:88, 
         totalChartHeight:null, 
@@ -91,7 +91,7 @@ export class InterestRatesComponent implements OnInit {
         circleXY:[],   
         gridLineActive: true,
     }
-    chartPropertiesEuribor={
+    chartConfigEuribor={
         type:'Line Chart',
         totalBarsWidth:88, 
         totalChartHeight:null, 

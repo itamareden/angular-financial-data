@@ -17,7 +17,7 @@
 			        
 				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
 				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
 				          
 				          <p  class="list-group-item-text asset-net-change"
 				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
@@ -39,7 +39,7 @@
 			        
 				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
 				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
 				          
 				          <p  class="list-group-item-text asset-net-change"
 				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>
@@ -61,7 +61,7 @@
 			        
 				          <div class="list-group-item-text asset-name" ><span [routerLink]="['/asset', asset.symbol]" class="asset-name-span">{{asset.name}}</span></div>
 				          
-				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.digitsAfterDecimalPoint)}}</p>
+				          <p class="list-group-item-text asset-last-price">{{asset.lastPrice.toFixed(asset.DADP)}}</p>
 				          
 				          <p  class="list-group-item-text asset-net-change"
 				           [style.color]="asset.netChangePercent!=0 ?  asset.netChangePercent > 0 ? 'green' : 'red' : 'black'">{{asset.netChangePercent.toFixed(2)}}%</p>

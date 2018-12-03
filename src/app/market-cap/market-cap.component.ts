@@ -88,33 +88,31 @@ export class MarketCapComponent implements OnInit {
        let interval=setInterval(function(){
           if(TopAssetsPerformanceComponent.assetsData.length>75){
               clearInterval(interval);
-              console.log(TopAssetsPerformanceComponent.assetsData.length); // to inform how many stocks we got back in the response
-              
-              classScope.stocksData=TopAssetsPerformanceComponent.assetsData;
-              classScope.stocksData.sort(classScope.utils.compare('marketCap'));
-              classScope.stocksData.map(item=>{classScope.assetsService.getAsset(item.symbol).then(asset=>{
-                    
-                    item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
-                    item.position=index;    // to compare with yesterday's position or last year's position
-                    index++;
-                    
-                    });
-                });
-              
-              classScope.isShowData=true;
-              classScope.calculateMarketCapStat();
-              classScope.top5MarketCap=classScope.calculateTopMarketCapStat(5);
-              classScope.top10MarketCap=classScope.calculateTopMarketCapStat(10);
-              classScope.dailyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'daily');
-              classScope.yearlyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'yearly');
-              classScope.calculateAllDesiredRatios();   // calculate all the 52 week high and low ratios
-              
-              
-              setTimeout(function(){        // we need to wait for the Promise (asynchronous) to resolve...
-                  classScope.calculatePositionChng('last day'); 
-                  classScope.calculatePositionChng('last year'); 
+              setTimeout(function(){
+                  console.log("stocks number: " + TopAssetsPerformanceComponent.assetsData.length); // to inform how many stocks we got back in the response
+                  classScope.stocksData=TopAssetsPerformanceComponent.assetsData;
+                  classScope.stocksData.sort(classScope.utils.compare('marketCap'));
+                  classScope.stocksData.map(item=>{classScope.assetsService.getAsset(item.symbol).then(asset=>{
+                        item.name=asset.nameToShow;     // convert the names to the names I set in assets.service
+                        item.position=index;    // to compare with yesterday's position or last year's position
+                        index++;
+                        
+                        });
+                  });
+                  classScope.isShowData=true;
+                  classScope.calculateMarketCapStat();
+                  classScope.top5MarketCap=classScope.calculateTopMarketCapStat(5);
+                  classScope.top10MarketCap=classScope.calculateTopMarketCapStat(10);
+                  classScope.dailyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'daily');
+                  classScope.yearlyPerformanceStat=classScope.calculatePerformanceStat(classScope.stocksData, 'yearly');
+                  classScope.calculateAllDesiredRatios();   // calculate all the 52 week high and low ratios
+                  setTimeout(function(){        // we need to wait for the Promise (asynchronous) to resolve...
+                      classScope.calculatePositionChng('last day'); 
+                      classScope.calculatePositionChng('last year'); 
                   },500);
-          }
+                      
+              }, 500);
+           }
          },200);  
         
     }

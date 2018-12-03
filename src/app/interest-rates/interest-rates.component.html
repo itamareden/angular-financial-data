@@ -5,15 +5,15 @@
 			<div class='main-wrapper'>
 				<h1>Fed Funds Futures</h1>
 				<div class='line-chart' *ngIf='isShowChart'>
-					<line-chart [chartProperties]="chartPropertiesFedFunds" [chartData]="fedFundsArr" [changeDetector]="change"></line-chart>
+					<line-chart [chartConfig]="chartConfigFedFunds" [chartData]="fedFundsArr" [changeDetector]="change"></line-chart>
 				</div>
 				<h1>Eurodollar Futures</h1>
 				<div class='line-chart' *ngIf='isShowChart'>
-					<line-chart [chartProperties]="chartPropertiesEurodollar" [chartData]="eurodollarArr"></line-chart>
+					<line-chart [chartConfig]="chartConfigEurodollar" [chartData]="eurodollarArr"></line-chart>
 				</div>
 				<h1>Euribor Futures</h1>
 				<div class='line-chart' *ngIf='isShowChart'>
-					<line-chart [chartProperties]="chartPropertiesEuribor" [chartData]="euriborArr"></line-chart>
+					<line-chart [chartConfig]="chartConfigEuribor" [chartData]="euriborArr"></line-chart>
 				</div>
 			</div>
 		</div>

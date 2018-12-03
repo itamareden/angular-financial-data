@@ -5,7 +5,7 @@ export interface Asset {
     name:string;
     nameToShow:string;
     type:string;
-    digitsAfterDecimalPoint?:number;
+    DADP?:number;
     hide?:boolean;
     
 }
